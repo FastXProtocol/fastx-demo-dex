@@ -3,18 +3,12 @@ import { connect } from 'react-redux';
 
 import FixedMenuLayout from '../components/Layouts/FixedMenuLayout';
 
-export class AssetList extends Component {
+export default class AssetList extends Component {
     render() {
         return (
             <div>
-            <h1>Hello</h1>
-            <FixedMenuLayout />
+                <FixedMenuLayout />
             </div>
         );
     };
 }
-
-
-export default connect(
-    state => ({})
-)(AssetList);
