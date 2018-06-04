@@ -3,7 +3,9 @@ import { Switch, Route, withRouter } from 'react-router-dom'
 
 import SiteHeader from './components/SiteHeader';
 import SiteFooter from './components/SiteFooter';
+import SiteMenu from './components/SiteMenu';
 import AssetList from './containers/AssetList';
+import AssetDetail from './containers/AssetDetail';
 import Account from './containers/Account';
 
 export default class App extends Component {
@@ -13,7 +15,8 @@ export default class App extends Component {
         <SiteHeader />
         <Switch>
           <Route path='/account' component={Account} />
-          <Route path='/assets' component={AssetList} />
+          <Route exact path='/assets' component={AssetList} />
+          <Route path='/assets/:id' component={AssetDetail} />
           {/* <Route path='/b/:hash/:name/' component={withRouter(WithBoard(BoardPage))} /> */}
         </Switch>
         <SiteFooter />

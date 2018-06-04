@@ -1,0 +1,11 @@
+.dropdown-right{
+	float: right;
+}
+
+.dropdown-basic i{
+	background-color: transparent !important;
+}
+
+.dropdown-mini{
+	font-size: .78571429rem !important;
+}
