@@ -2,7 +2,7 @@ import _ from 'lodash';
 import React from 'react';
 import faker from 'faker';
 import { Card, Container, Divider, Dropdown, Grid, Header, Image, List, Menu, Segment, Icon } from 'semantic-ui-react';
-import SearchStandard from '../Search/SearchStandard';
+import FilterSearch from '../../containers/SearchStandard';
 import { assentsOptions } from '../Common';
 import '../Search/Search.css';
 import '../Card.css';
@@ -34,7 +34,7 @@ const FixedMenuLayout = () => (
       <Grid >
         <Grid.Row>
           <Grid.Column width={12}>
-            <SearchStandard input={{ icon: 'search', iconPosition: 'left' }} placeholder='Search all crypto assets' fluid className='search-fluid' />
+            <FilterSearch input={{ icon: 'search', iconPosition: 'left' }} placeholder='Search all crypto assets' fluid className='search-fluid' />
           </Grid.Column>
           <Grid.Column width={4}>
             <Dropdown selection options={assentsOptions} defaultValue={assentsOptions[0].value}/>
