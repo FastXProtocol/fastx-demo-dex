@@ -9,7 +9,7 @@ const initialState = {
   value: ''
 };
 
-export default function reducer(state = initialState, action = {}) {
+export default function search(state = initialState, action = {}) {
   switch (action.type) {
     case RESET_SEARCH_OPTION:
       return {

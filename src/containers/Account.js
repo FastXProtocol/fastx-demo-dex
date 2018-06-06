@@ -1,6 +1,7 @@
 import _ from 'lodash';
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
+import { bindActionCreators } from 'redux';
 import {
     Button,
     Container,
@@ -24,6 +25,7 @@ import {
   } from 'semantic-ui-react';
 import { bidsOptions } from '../components/Common';
 import '../components/Card.css';
+import * as accountActions from '../actions/account'
 
 const cards = _.times(3, i => (
   <Grid.Column key={i} mobile={16} tablet={8} computer={4}>
@@ -38,7 +40,17 @@ const cards = _.times(3, i => (
   </Grid.Column>
 ))
 
-export default class Account extends Component {
+class Account extends Component {
+    componentDidMount() {
+        let that = this;
+        
+        that.props.getBalance();
+        that.props.getCoinbase();
+        // setTimeout(() => {
+        //     console.log(that.props.balance)
+        // }, 1000)
+    }
+
     render() {
         const panes = [
             { menuItem: 'My Items', render: () => <Tab.Pane attached={false}>
@@ -77,7 +89,7 @@ export default class Account extends Component {
                                       <Feed.Content>
                                         <Feed.Date content='ETH' />
                                         <Feed.Summary>
-                                          10.399
+                                          {this.props.balance}
                                         </Feed.Summary>
                                       </Feed.Content>
                                     </Feed.Event>
@@ -106,7 +118,7 @@ export default class Account extends Component {
                               <Item.Content verticalAlign='bottom'>
                                 <Item.Header style={{ color: 'grey', fontSize: '32px', fontWeight:'100'}} >Anonymous account</Item.Header>
                                 <Item.Meta>
-                                    <span style={{ marginRight: '10px'}}>0x7a0c61edd8b5c0c5c1437aeb571d7ddbf8022be4</span>
+                                    <span style={{ marginRight: '10px'}}>{this.props.ownerAddress}</span>
                                     <Button basic size='mini' ><Icon name='setting' />SETTINGS</Button>
                                     <Dropdown text='SHARE' icon='share alternate' floating labeled button basic className='icon dropdown-basic dropdown-mini'>
                                         <Dropdown.Menu>
@@ -131,3 +143,21 @@ export default class Account extends Component {
         );
     };
 }
+
+function mapStateToProps(state){
+    return {
+       balance: state.account.balance,
+       ownerAddress: state.account.ownerAddress
+    }
+}
+
+function mapDispatchToProps(dispatch) {
+    return {
+        ...bindActionCreators(accountActions, dispatch)
+    }
+}
+
+export default connect(
+    mapStateToProps,
+    mapDispatchToProps
+)(Account)
