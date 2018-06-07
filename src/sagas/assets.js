@@ -16,5 +16,5 @@ export const watchSetAssetsFilterAsync = function* () {
 }
 
 export const watchSearchAssetsTitleAsync = function* () {
-    yield takeEvery('SEARCH_ASSETS_TITLE', getAssetsAsync)
+    yield takeEvery('SEARCH', getAssetsAsync)
 }

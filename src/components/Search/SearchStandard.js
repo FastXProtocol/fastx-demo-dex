@@ -11,33 +11,17 @@ const source = _.times(5, () => ({
 }))
 
 export default class SearchStandard extends Component {
-  componentWillMount() {}
-
-  handleResultSelect = (e, { result }) => this.props.searchSelected(result.title)
-
-  handleSearchChange = (e, { value }) => {
-    this.props.searchStart(value)
-    
-    setTimeout(() => {
-      if (this.props.value.length < 1) return this.props.resetData()
-
-      const re = new RegExp(_.escapeRegExp(this.props.value), 'i')
-      const isMatch = result => re.test(result.title)
-
-      this.props.searchEnd(_.filter(source, isMatch))
-    }, 300)
+  componentWillMount() {
+    this.props.assetsSearch('')
   }
 
   render() {
-    const { isLoading, value, results, resetData, searchStart, searchEnd, searchSelected, ...rest} = this.props
+    const { search, assetsSearch, ...rest} = this.props
 
     return (
       <Search
-        loading={isLoading}
-        onResultSelect={this.handleResultSelect}
-        onSearchChange={_.debounce(this.handleSearchChange, 500, { leading: true })}
-        results={results}
-        value={value}
+        onSearchChange={_.debounce(this.props.assetsSearch, 500, { leading: true })}
+        showNoResults={false}
         {...rest}
       />
     )

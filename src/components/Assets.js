@@ -2,11 +2,11 @@ import _ from 'lodash';
 import React from 'react';
 import faker from 'faker';
 import { Card, Container, Divider, Dropdown, Grid, Header, Image, List, Menu, Segment, Icon } from 'semantic-ui-react';
-import FilterSearch from '../../containers/SearchStandard';
-import { assentsOptions } from '../Common';
-import '../Search/Search.css';
-import '../Card.css';
-console.log(this.props)
+import FilterSearch from '../containers/SearchStandard';
+import { assentsOptions } from './Common';
+import './Search/Search.css';
+import './Card.css';
+
 const cards = _.times(6, i => (
   <Grid.Column key={i} mobile={16} tablet={8} computer={4}>
     <Card>
@@ -28,7 +28,7 @@ const cards = _.times(6, i => (
   </Grid.Column>
 ))
 
-const FixedMenuLayout = () => (
+const Assets = ( {setAssetsFilter} ) => (
   <div>
     <Container style={{ marginTop: '7em' }}>
       <Grid >
@@ -37,7 +37,7 @@ const FixedMenuLayout = () => (
             <FilterSearch input={{ icon: 'search', iconPosition: 'left' }} placeholder='Search all crypto assets' fluid className='search-fluid' />
           </Grid.Column>
           <Grid.Column width={4}>
-            <Dropdown selection options={assentsOptions} defaultValue={assentsOptions[0].value}  />
+            <Dropdown selection options={assentsOptions} defaultValue={assentsOptions[0].value} onChange={setAssetsFilter} />
           </Grid.Column>
         </Grid.Row>
       </Grid>
@@ -48,4 +48,4 @@ const FixedMenuLayout = () => (
   </div>
 )
 
-export default FixedMenuLayout
+export default Assets

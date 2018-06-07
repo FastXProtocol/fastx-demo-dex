@@ -11,17 +11,17 @@ export const assetsReceived = (results) => {
   }
 }
 
-export const setAssetsFilter = (filter) => {
+export const setAssetsFilter = (e, target) => {
+  console.log(target && target.value)
   return {
     type: "SET_ASSETS_FILTER",
-    filter: filter
+    filter: target && target.value
   };
 }
 
-export const searchAssetsTitle = (search) => {
+export const assetsSearch = (e, target) => {
   return {
-    type: "SEARCH_ASSETS_TITLE",
-    search: search
+    type: "ASSETS_SEARCH",
+    search: target && target.value
   };
 }
-

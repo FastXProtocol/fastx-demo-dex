@@ -1,7 +1,7 @@
 const GET_ASSETS = 'GET_ASSETS';
 const SET_ASSETS_FILTER = 'SET_ASSETS_FILTER';
-const SEARCH_ASSETS_TITLE = 'SEARCH_ASSETS_TITLE';
 const ASSETS_RECEIVED = 'ASSETS_RECEIVED';
+const ASSETS_SEARCH = 'ASSETS_SEARCH';
 
 const initialState = {
   isLoading: false,
@@ -26,7 +26,7 @@ export default function assets(state = initialState, action = {}) {
         ...state,
         filter: action.filter
       };
-    case SEARCH_ASSETS_TITLE:
+    case ASSETS_SEARCH:
       return {
         ...state,
         search: action.search

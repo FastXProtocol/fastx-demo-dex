@@ -2,23 +2,8 @@ import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 
-import FixedMenuLayout from '../components/Layouts/FixedMenuLayout';
+import Assets from '../components/Assets';
 import * as assetsActions from '../actions/assets'
-
-class Assets extends Component {
-	componentDidMount() {
-		let that = this;
-		that.props.getAssets();
-	}
-
-    render() {
-        return (
-            <div>
-               <FixedMenuLayout />
-            </div>
-        );
-    };
-}
 
 function mapStateToProps(state){
     return {
