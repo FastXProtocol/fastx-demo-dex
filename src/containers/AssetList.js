@@ -8,11 +8,7 @@ import * as assetsActions from '../actions/assets'
 class Assets extends Component {
 	componentDidMount() {
 		let that = this;
-		console.log(that.props.results)
 		that.props.getAssets();
-		setTimeout(() => {
-			console.log(that.props.results)
-		}, 1000)
 	}
 
     render() {

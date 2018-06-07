@@ -1,8 +1,6 @@
 import { put, takeEvery, all ,take} from 'redux-saga/effects'
-import client from '../api/plasma_js_client_dev'
 
-function* getAssetsAsync() {
-	console.log(client)
+function* getAssetsAsync(params) {
     yield put({
 	  type: 'ASSETS_RECEIVED',
 	  results: [1,2,3]

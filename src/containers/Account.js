@@ -45,7 +45,7 @@ class Account extends Component {
         let that = this;
         
         that.props.getBalance();
-        that.props.getCoinbase();
+        that.props.getAccount();
         // setTimeout(() => {
         //     console.log(that.props.balance)
         // }, 1000)
@@ -133,7 +133,7 @@ class Account extends Component {
                         </Item.Group>
                     </Grid.Column>
                     <Grid.Column width={4} textAlign='center'>
-                        <p style={{ color: 'dodgerblue', fontSize: '30px', margin: '0'}}>0 ETH</p>
+                        <p style={{ color: 'dodgerblue', fontSize: '30px', margin: '0'}}>{this.props.balance} ETH</p>
                         <p style={{ color: 'grey', fontSize: '18px'}}>Balance</p>
                     </Grid.Column>
                 </Grid>

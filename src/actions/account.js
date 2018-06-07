@@ -4,8 +4,8 @@ export const getBalance = () => {
   };
 }
 
-export const getCoinbase = () => {
+export const getAccount = () => {
   return {
-    type: "GET_COINBASE"
+    type: "GET_ACCOUNT"
   };
 }

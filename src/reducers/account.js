@@ -1,7 +1,7 @@
 const GET_BALANCE = 'GET_BALANCE';
 const BALANCE_RECEIVED = 'BALANCE_RECEIVED';
-const GET_COINBASE = 'GET_COINBASE';
-const COINBASE_RECEIVED = 'COINBASE_RECEIVED';
+const GET_ACCOUNT = 'GET_ACCOUNT';
+const ACCOUNT_RECEIVED = 'ACCOUNT_RECEIVED';
 
 const initialState = {
   balance: 0,
@@ -19,11 +19,11 @@ export default function assets(state = initialState, action = {}) {
         ...state,
         balance: action.balance
       };
-    case GET_COINBASE:
+    case GET_ACCOUNT:
       return {
         ...state
       };
-    case COINBASE_RECEIVED:
+    case ACCOUNT_RECEIVED:
       return {
         ...state,
         ownerAddress: action.ownerAddress
