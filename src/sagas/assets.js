@@ -1,10 +1,26 @@
 import { put, takeEvery, all ,take} from 'redux-saga/effects'
+import { delay } from 'redux-saga'
 
 function* getAssetsAsync(params) {
 	console.log(params)
+	yield delay(1000)
     yield put({
 	  type: 'ASSETS_RECEIVED',
-	  results: [1,2,3]
+	  results: [{
+	  	id: 7127,
+	  	name: "Matthew",
+	  	image: "/assets/images/avatar/large/elliot.jpg",
+	  	leftTime: "19 hours left",
+	  	prePrice: 0.01,
+	  	nowPrice: 1.07
+	  },{
+	  	id: 5127,
+	  	name: "ChicMic",
+	  	image: "/assets/images/avatar/large/elliot.jpg",
+	  	leftTime: "29 hours left",
+	  	prePrice: 0.34,
+	  	nowPrice: 3.27
+	  }]
 	})
 }
 

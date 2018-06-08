@@ -9,6 +9,7 @@ import {
     Divider,
     Dropdown,
     Feed,
+    Form,
     Grid,
     Header,
     Icon,
@@ -25,7 +26,9 @@ import {
   } from 'semantic-ui-react';
 import { bidsOptions } from '../components/Common';
 import '../components/Card.css';
-import * as accountActions from '../actions/account'
+import * as accountActions from '../actions/account';
+import '../components/Label.css';
+import { assentsOptions } from '../components/Common';
 
 const cards = _.times(3, i => (
   <Grid.Column key={i} mobile={16} tablet={8} computer={4}>
@@ -106,6 +109,36 @@ class Account extends Component {
                    
                     
                 </Grid>
+            </Tab.Pane> },
+            { menuItem: 'Sell', render: () => <Tab.Pane attached={false}>
+                <Form>
+                    <Form.Field inline>
+                      <label className='align_right_label'>Date Ends</label>
+                      <Input type='date' placeholder='' />
+                    </Form.Field>
+                    <Form.Field inline>
+                        <label className='align_right_label' />
+                        <p style={{color: 'grey'}}>Date when your listing will expire. Defaults to 30 days.</p>
+                    </Form.Field>
+                    <Form.Field inline>
+                      <label className='align_right_label'>Categroy</label>
+                      <Dropdown selection options={assentsOptions} defaultValue={assentsOptions[0].value} />
+                    </Form.Field>
+                    <Form.Field inline>
+                      <label className='align_right_label'>ID*</label>
+                      <Input type='text' placeholder='' />
+                    </Form.Field>
+                    <Form.Field inline>
+                        <label className='align_right_label' />
+                        <p style={{ color: 'grey'}}>For crypto kitties this will be a number. For Moon Cats, this will be a hex code like 0x008275cc0b</p>
+                    </Form.Field>
+                    <Form.Field inline>
+                      <label className='align_right_label'>Price*</label>
+                      <Input label='ETH' type='number' placeholder='' />
+                    </Form.Field>
+                    <Button type='submit' color='teal' style={{marginLeft:'110px'}}>Submit</Button>
+                </Form>
+
             </Tab.Pane> },
             ];
         return (
