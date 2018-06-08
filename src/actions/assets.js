@@ -12,7 +12,6 @@ export const assetsReceived = (results) => {
 }
 
 export const setAssetsFilter = (e, target) => {
-  console.log(target && target.value)
   return {
     type: "SET_ASSETS_FILTER",
     filter: target && target.value

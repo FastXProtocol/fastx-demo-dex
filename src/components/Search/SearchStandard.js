@@ -16,7 +16,7 @@ export default class SearchStandard extends Component {
   }
 
   render() {
-    const { search, assetsSearch, ...rest} = this.props
+    const { search, assetsSearch, getAssets, assetsReceived, setAssetsFilter, ...rest} = this.props
 
     return (
       <Search

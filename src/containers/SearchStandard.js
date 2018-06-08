@@ -4,7 +4,7 @@ import React, { Component } from 'react'
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux'
 import { Search, Grid, Header } from 'semantic-ui-react'
-import { assetsSearch } from '../actions/assets'
+import * as searchActions from '../actions/assets'
 import SearchStandard from '../components/Search/SearchStandard'
 
 function mapStateToProps(state){
@@ -15,9 +15,7 @@ function mapStateToProps(state){
 
 function mapDispatchToProps(dispatch) {
     return {
-    	assetsSearch: () => {
-    		dispatch(assetsSearch())
-    	}
+    	...bindActionCreators(searchActions, dispatch)
     }
 }
 
