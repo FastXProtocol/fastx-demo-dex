@@ -6,6 +6,7 @@ export default function* rootSaga() {
   	fork(require('./assets').watchSetAssetsFilterAsync),
   	fork(require('./assets').watchSearchAssetsTitleAsync),
   	fork(require('./account').watchGetBalanceAsync),
-  	fork(require('./account').watchGetAccount)
+  	fork(require('./account').watchGetAccount),
+  	fork(require('./account').watchSellAsset)
   ])
 }

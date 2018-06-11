@@ -16,7 +16,7 @@ export default class App extends Component {
         <Switch>
           <Route path='/account' component={Account} />
           <Route exact path='/assets' component={AssetList} />
-          <Route path='/assets/:id' component={AssetDetail} />
+          <Route path='/assets/:category/:id' component={AssetDetail} />
           {/* <Route path='/b/:hash/:name/' component={withRouter(WithBoard(BoardPage))} /> */}
         </Switch>
         <SiteFooter />

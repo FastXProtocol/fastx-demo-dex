@@ -1,26 +1,30 @@
-import { put, takeEvery, all ,take} from 'redux-saga/effects'
-import { delay } from 'redux-saga'
+import { put, takeEvery, all ,take} from 'redux-saga/effects';
+import { delay } from 'redux-saga';
+import axios from 'axios';
 
 function* getAssetsAsync(params) {
-	console.log(params)
-	yield delay(1000)
+	let categories = yield axios({
+        method: 'get',
+        url: 'http://dev.msan.cn:9000/api/asset_categories'
+    })
+
+    let categoriesUrls = [];
+    let assets = [];
+    for(let value of categories.data){
+    	if(!value.hidden)categoriesUrls.push(value.address)
+    }
+
+	for(let value of categoriesUrls){	
+    	let asset = yield axios({
+	        method: 'get',
+	        url: 'http://dev.msan.cn:9000/api/asset_list/'+value
+	    })
+	    assets = assets.concat(asset['data']['assets'])
+    }
+
     yield put({
 	  type: 'ASSETS_RECEIVED',
-	  results: [{
-	  	id: 7127,
-	  	name: "Matthew",
-	  	image: "/assets/images/avatar/large/elliot.jpg",
-	  	leftTime: "19 hours left",
-	  	prePrice: 0.01,
-	  	nowPrice: 1.07
-	  },{
-	  	id: 5127,
-	  	name: "ChicMic",
-	  	image: "/assets/images/avatar/large/elliot.jpg",
-	  	leftTime: "29 hours left",
-	  	prePrice: 0.34,
-	  	nowPrice: 3.27
-	  }]
+	  results: assets
 	})
 }
 

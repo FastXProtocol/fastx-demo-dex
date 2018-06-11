@@ -1,4 +1,4 @@
 .align_right_label{
-	width: 100px !important;
+	min-width: 100px !important;
 	text-align: right;
 }
