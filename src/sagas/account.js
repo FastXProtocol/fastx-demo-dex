@@ -5,7 +5,7 @@ import erc721_abi from "../contract_data/ERC721Token.abi.json";
 import moment from 'moment';
 
 const fastx = new window.plasmaClient.client(chainOptions);
-let nftContract = "";
+let asset_contract = "";
 console.log(fastx)
 function* getBalanceAsync() {
 	// const balance = yield fastx.getBalance("0x7a0C61EdD8b5c0c5C1437AEb571d7DDbF8022Be4")
@@ -25,28 +25,30 @@ function* getAccountAsync() {
 	  ownerAddress: address
 	})
 }
-const depositNFT = async (nftContract, tokenid) => {
-	console.log(nftContract)
-	let nft_contract = new fastx.web3.eth.Contract( erc721_abi, nftContract);
-	let amount = 0;
-    if(!tokenid) amount = 1;
-	console.log(chainOptions.rootChainAddress)
-    console.log(tokenid)
-    console.log(fastx.web3.eth.defaultAccount)
-    //await fastx.approve(nftContract, amount, tokenid, {from: fastx.web3.eth.defaultAccount})
-    await nft_contract.methods.approve(chainOptions.rootChainAddress, tokenid != 0? tokenid: amount)
-        .send({from: fastx.web3.eth.defaultAccount})
-        .on('transactionHash', 
-        	(hash) => {
-                console.log(hash);
-            }
-        );
-    console.log( 'New owner address: ', await nft_contract.methods.ownerOf(tokenid).call() );
-    
-    await fastx.deposit(nftContract, amount, tokenid, {from: fastx.web3.eth.defaultAccount});
-    console.log('return')
+const depositNFT = async (asset_contract, token_id) => {
+    console.log(asset_contract)
+
+    const ownerAddress = fastx.web3.eth.defaultAccount;
+    let nft_contract = new fastx.web3.eth.Contract( erc721_abi, asset_contract);
+
+    // create a new token for testing
+    const totalSupply = await nft_contract.methods.totalSupply().call();
+    const tokenid = parseInt(totalSupply) + 10;
+    console.log('Creating new token: '+tokenid);
+    await nft_contract.methods.mint(ownerAddress, tokenid)
+        .send({from: ownerAddress, gas: 3873385})
+        .on('transactionHash', console.log);
+
+    console.log('Approving token # '+tokenid+' to '+chainOptions.rootChainAddress);
+    //await fastx.approve(asset_contract, amount, tokenid, {from: ownerAddress})
+    await nft_contract.methods.approve(chainOptions.rootChainAddress, tokenid)
+        .send({from: ownerAddress})
+        .on('transactionHash', console.log);
+    console.log( 'Approved address: ', await nft_contract.methods.getApproved(tokenid).call() );
+
+    await fastx.deposit(asset_contract, 0, tokenid, {from: ownerAddress});
     return {
-        category: nftContract, 
+        category: asset_contract, 
         tokenId: tokenid
     };
 }
@@ -92,7 +94,7 @@ const postAd = async (data) => {
 function* watchSellAssetAsync(data) {
 	data = {
 		params: {
-			categroy: '0x40eb59a8cc2d865baf536dd9d0ec3108934afced',
+			categroy: "0x952CE607bD9ab82e920510b2375cbaD234d28c8F",
 			end: '2018-06-13',
 			sellPrice: '2',
 			sellId: '283'
