@@ -30,18 +30,18 @@ import * as accountActions from '../actions/account';
 import '../components/Label.css';
 import { categroyOptions } from '../components/Common';
 
-const cards = _.times(3, i => (
-  <Grid.Column key={i} mobile={16} tablet={8} computer={4}>
-    <Card>
-      <Image src='/assets/images/avatar/large/elliot.jpg' />
-      <Card.Content>
-        <Card.Header>
-          Matthew · #7127  
-        </Card.Header>
-      </Card.Content>
-    </Card>
-  </Grid.Column>
-))
+// const cards = _.times(3, i => (
+//   <Grid.Column key={i} mobile={16} tablet={8} computer={4}>
+//     <Card>
+//       <Image src='/assets/images/avatar/large/elliot.jpg' />
+//       <Card.Content>
+//         <Card.Header>
+//           Matthew · #7127  
+//         </Card.Header>
+//       </Card.Content>
+//     </Card>
+//   </Grid.Column>
+// ))
 
 export default class Account extends Component {
     componentDidMount() {
@@ -55,6 +55,18 @@ export default class Account extends Component {
     }
 
     render() {
+        let cards = this.props.items.map((item, i) => {
+            <Grid.Column key={i} mobile={16} tablet={8} computer={4}>
+                <Card>
+                  <Image src='/assets/images/avatar/large/elliot.jpg' />
+                  <Card.Content>
+                    <Card.Header>
+                      Matthew · #7127  
+                    </Card.Header>
+                  </Card.Content>
+                </Card>
+            </Grid.Column>
+        })
         const panes = [
             { menuItem: 'My Items', render: () => <Tab.Pane attached={false}>
                 <Grid>
@@ -143,7 +155,7 @@ export default class Account extends Component {
                 </Form>
 
             </Tab.Pane> },
-            { menuItem: 'deposit', render: () => <Tab.Pane attached={false}>
+            { menuItem: 'Deposit', render: () => <Tab.Pane attached={false}>
                 <Form>
                     <Form.Field inline>
                       <label className='align_right_label'>Price*</label>

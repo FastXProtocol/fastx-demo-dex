@@ -8,14 +8,19 @@ const fastx = new window.plasmaClient.client(chainOptions);
 
 function* getBalanceAsync() {
 	fastx.defaultAccount = fastx.web3.eth.defaultAccount;
-	// 	const balance = yield fastx.getBalance(fastx.defaultAccount)
-	// console.log(balance)
+	const balance = yield fastx.getBalance(fastx.defaultAccount)
+    console.log('balance:',balance)
 	let wei = yield fastx.web3.eth.getBalance(fastx.defaultAccount);
 	let ether = yield fastx.web3.utils.fromWei(wei, 'ether');
     yield put({
 	  type: 'BALANCE_RECEIVED',
 	  balance: parseFloat(parseFloat(ether).toFixed(4))
 	})
+console.log(balance.data.result.NFT)
+    yield put({
+      type: 'USER_ITEMS_RECEIVED',
+      items: balance.data.result.NFT
+    })
 }
 
 function* getAccountAsync() {
@@ -110,6 +115,10 @@ function* watchSellAssetAsync(data) {
 	postAd(data);
 }
 
+function* watchDepositAsync(action) {
+    yield fastx.deposit("0x0", action.depositPrice, 0, { from: fastx.defaultAccount});
+}
+
 export const watchGetBalanceAsync = function* () {
     yield takeEvery('GET_BALANCE', getBalanceAsync)
 }
@@ -121,3 +130,8 @@ export const watchGetAccount = function* () {
 export const watchSellAsset = function* () {
     yield takeEvery('SELL_ASSET', watchSellAssetAsync)
 }
+
+export const watchDeposit = function* () {
+    yield takeEvery('DEPOSIT', watchDepositAsync)
+}
+

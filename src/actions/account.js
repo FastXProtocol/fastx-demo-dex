@@ -51,3 +51,10 @@ export const setDepositPrice = (e, target) => {
     sellPrice: target && target.value
   };
 }
+
+export const deposit = (depositPrice) => {
+  return {
+    type: "DEPOSIT",
+    depositPrice
+  };
+}

@@ -8,6 +8,7 @@ const SET_SELL_CATEGROY = 'SET_SELL_CATEGROY';
 const SET_SELL_ID = 'SET_SELL_ID';
 const SET_SELL_PRICE = 'SET_SELL_PRICE';
 const SET_DEPOSIT_PRICE = 'SET_DEPOSIT_PRICE';
+const USER_ITEMS_RECEIVED = 'USER_ITEMS_RECEIVED';
 
 const initialState = {
   balance: 0,
@@ -16,7 +17,8 @@ const initialState = {
   categroy: '',
   sellId: '',
   sellPrice: 0,
-  depositPrice: 0
+  depositPrice: 0,
+  items: []
 };
 
 export default function assets(state = initialState, action = {}) {
@@ -68,6 +70,11 @@ export default function assets(state = initialState, action = {}) {
       return {
         ...state,
         depositPrice: action.depositPrice
+      }
+    case USER_ITEMS_RECEIVED:
+      return {
+        ...state,
+        items: action.items
       }
     default:
       return state;
