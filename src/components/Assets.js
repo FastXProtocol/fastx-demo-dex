@@ -18,7 +18,7 @@ export default class Assets extends Component {
   }
 
   render() {
-    const { search, assetsSearch, getAssets, assetsReceived, setAssetsFilter, getAssetDetail, ...rest} = this.props
+    const { error, search, assetsSearch, getAssets, assetsReceived, setAssetsFilter, getAssetDetail, ...rest} = this.props
 
     let assets = this.props.results;
 	let listItems = assets.map((item, i) => {

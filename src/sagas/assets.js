@@ -14,25 +14,9 @@ const allPsTransactions = async () => {
 }
 
 function* getAssetsAsync(params) {
-	// let categories = yield axios({
- //        method: 'get',
- //        url: 'http://dev.msan.cn:9000/api/asset_categories'
- //    })
+    let categories = {};
 
- //    let categoriesUrls = [];
- //    let assets = [];
- //    for(let value of categories.data){
- //    	if(!value.hidden)categoriesUrls.push(value.address)
- //    }
-
-	// for(let value of categoriesUrls){	
- //    	let asset = yield axios({
-	//         method: 'get',
-	//         url: 'http://dev.msan.cn:9000/api/asset_list/'+value
-	//     })
-	//     assets = assets.concat(asset['data']['assets'])
- //    }
- 
+    let categoriesUrls = [];
     let assets = [];
     let allPs = yield allPsTransactions();
     yield put({
@@ -41,10 +25,15 @@ function* getAssetsAsync(params) {
     })
 
     for(let value of allPs){
-        let kittyRes = yield axios({
-            method: 'get',
-            url: 'https://api.cryptokitties.co/kitties/'+value.tokenid2
-        })
+        let kittyRes = {};
+        try {
+            kittyRes = yield axios({
+                method: 'get',
+                url: 'https://api.cryptokitties.co/kitties/'+value.tokenid2
+            })
+        } catch (error) {
+            return yield put({ type: 'ASSET_CATEGORIES_REQUEST_FAILED', error })
+        }
         let kitty = kittyRes.data;
         if(!kitty.auction)kitty.auction = {};
         kitty.auction.discount = 0;
@@ -87,20 +76,23 @@ function* getAssetsDetailAsync(action) {
 const bidAd = async (category,tokenId,fillTx) => {
     console.log(fillTx)
     let receiverAddress = fastx.web3.eth.defaultAccount;
-    //await fastx.deposit("0x0", 1, 0, { from: receiverAddress});
+    console.log('receiverAddress',receiverAddress);
+    console.log('defaultAccount: ', fastx.defaultAccount);
+
+    // await fastx.deposit("0x0", 1, 0, { from: receiverAddress});
     let utxos = await fastx.getAllUTXO(receiverAddress);
-    console.log('utxos:',utxos)
+    console.log('utxos:',utxos.data)
     let utxo = await fastx.searchUTXO({
             category: fillTx.contractaddress1, 
             tokenId: fillTx.tokenid1, 
             amount: fillTx.amount1
         }, { from: receiverAddress });
     console.log('\nUTXO',utxo);
-    console.log('receiverAddress',receiverAddress)
-   
- 
+   if (utxo.length > 0) {
     const [_blknum, _txindex, _oindex, _contract, _balance, _tokenid] = utxo;
-    await fastx.sendPsTransactionFill(fillTx, _blknum, _txindex, _oindex, receiverAddress, receiverAddress);
+    let res = await fastx.sendPsTransactionFill(fillTx, _blknum, _txindex, _oindex, receiverAddress, receiverAddress);
+    console.log(res);
+   }
 }
 
 function* assetBuyAsync(action) {

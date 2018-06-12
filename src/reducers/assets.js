@@ -5,6 +5,8 @@ const ASSETS_SEARCH = 'ASSETS_SEARCH';
 const ASSET_DETAIL_RECEIVED = 'ASSET_DETAIL_RECEIVED';
 const ALLPS_RECEIVED = 'ALLPS_RECEIVED';
 
+const ASSET_CATEGORIES_REQUEST_FAILED = 'ASSET_CATEGORIES_REQUEST_FAILED';
+
 const initialState = {
   isLoading: false,
   results: [],
@@ -46,6 +48,11 @@ export default function assets(state = initialState, action = {}) {
         ...state,
         allPs: action.allPs
       };
+    case ASSET_CATEGORIES_REQUEST_FAILED:
+        return {
+            ...state,
+            error: action.error
+        };
     default:
       return state;
   }

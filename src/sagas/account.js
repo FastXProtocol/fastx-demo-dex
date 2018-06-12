@@ -8,9 +8,12 @@ import axios from 'axios';
 const fastx = new window.plasmaClient.client(chainOptions);
 
 function* getBalanceAsync() {
-	fastx.defaultAccount = fastx.web3.eth.defaultAccount;
-	const balance = yield fastx.getBalance(fastx.defaultAccount)
-    console.log('balance:',balance)
+    fastx.defaultAccount = fastx.web3.eth.defaultAccount;
+    console.log('Account: ',fastx.defaultAccount);
+    let utxos = yield fastx.getAllUTXO(fastx.defaultAccount);
+    console.log('utxos:',utxos.data);
+	const balance = yield fastx.getBalance(fastx.defaultAccount);
+    console.log('balance:',balance);
 	let wei = yield fastx.web3.eth.getBalance(fastx.defaultAccount);
 	let ether = yield fastx.web3.utils.fromWei(wei, 'ether');
 
