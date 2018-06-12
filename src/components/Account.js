@@ -55,17 +55,20 @@ export default class Account extends Component {
     }
 
     render() {
+        console.log(this.props.items)
         let cards = this.props.items.map((item, i) => {
-            <Grid.Column key={i} mobile={16} tablet={8} computer={4}>
-                <Card>
-                  <Image src='/assets/images/avatar/large/elliot.jpg' />
-                  <Card.Content>
-                    <Card.Header>
-                      Matthew · #7127  
-                    </Card.Header>
-                  </Card.Content>
-                </Card>
-            </Grid.Column>
+            return (
+                <Grid.Column key={i} mobile={16} tablet={8} computer={4}>
+                    <Card>
+                      <Image src={item.image_url_cdn} />
+                      <Card.Content>
+                        <Card.Header>
+                          {item.name} · #{item.id}
+                        </Card.Header>
+                      </Card.Content>
+                    </Card>
+                </Grid.Column>
+            )
         })
         const panes = [
             { menuItem: 'My Items', render: () => <Tab.Pane attached={false}>
