@@ -42,12 +42,14 @@ export default class Assets extends Component {
 			nowHtml = 'NOW: ㆔' + current_price;
 			if(auction.ending_at){
 				let diffDate = moment(auction.ending_at*1000).diff(moment(), 'days');
+				dateHtml = <div className='card-duration'><Icon name='clock outline' /> { diffDate } days left</div>;
 				if(diffDate>30){
 					diffDate = moment(auction.ending_at*1000).diff(moment(), 'months');
+					dateHtml = <div className='card-duration'><Icon name='clock outline' /> { diffDate } months left</div>;
 				}else if(diffDate<1){
 					diffDate = moment(auction.ending_at*1000).diff(moment(), 'hours');
+					dateHtml = <div className='card-duration'><Icon name='clock outline' /> { diffDate } hours left</div>;
 				}
-				dateHtml = <div className='card-duration'><Icon name='clock outline' /> { diffDate } days left</div>;
 			}
 		}
 
