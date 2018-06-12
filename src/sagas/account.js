@@ -40,9 +40,7 @@ const depositNFT = async (asset_contract, token_id) => {
         .on('transactionHash', console.log);
 
     console.log('Approving token # '+tokenid+' to '+chainOptions.rootChainAddress);
-    //await fastx.approve(asset_contract, amount, tokenid, {from: ownerAddress})
-    await nft_contract.methods.approve(chainOptions.rootChainAddress, tokenid)
-        .send({from: ownerAddress})
+    await fastx.approve(asset_contract, 0, tokenid, {from: ownerAddress})
         .on('transactionHash', console.log);
     console.log( 'Approved address: ', await nft_contract.methods.getApproved(tokenid).call() );
 
@@ -97,7 +95,7 @@ function* watchSellAssetAsync(data) {
 			categroy: "0x952CE607bD9ab82e920510b2375cbaD234d28c8F",
 			end: '2018-06-13',
 			sellPrice: '2',
-			sellId: '283'
+			tokenId: '283'
 		}
 	}
 	console.log(data.params)
