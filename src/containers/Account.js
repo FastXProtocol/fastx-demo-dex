@@ -16,7 +16,8 @@ function mapStateToProps(state){
         end: state.account.end,
         categroy: state.account.categroy,
         sellId: state.account.sellId,
-        sellPrice: state.account.sellPrice
+        sellPrice: state.account.sellPrice,
+        depositPrice: state.account.depositPrice
     }
 }
 

@@ -44,3 +44,10 @@ export const setSellPrice = (e, target) => {
     sellPrice: target && target.value
   };
 }
+
+export const setDepositPrice = (e, target) => {
+  return {
+    type: "SET_DEPOSIT_PRICE",
+    sellPrice: target && target.value
+  };
+}

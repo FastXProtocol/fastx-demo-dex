@@ -18,31 +18,34 @@ export default class Assets extends Component {
   }
 
   render() {
-    const { search, assetsSearch, getAssets, assetsReceived, setAssetsFilter, ...rest} = this.props
+    const { search, assetsSearch, getAssets, assetsReceived, setAssetsFilter, getAssetDetail, ...rest} = this.props
 
     let assets = this.props.results;
 	let listItems = assets.map((item, i) => {
-		let url = '/assets/'+item.asset_contract.address+'/'+item.token_id;
-		let auctions = item.auctions[0];
+		let url = '/assets/952ce607bd9ab82e920510b2375cbad234d28c8f/'+item.id;
+		let auction = item.auction?item.auction:null;
 		let current_price = 0;
 		let starting_price = 0;
 		let preHtml, nowHtml, dateHtml;
-		if(auctions){
-			current_price = client.web3.utils.fromWei(auctions.current_price, 'ether');
-			current_price = parseFloat(current_price).toFixed(1);
-			starting_price = client.web3.utils.fromWei(auctions.starting_price, 'ether');
-			starting_price = parseFloat(starting_price).toFixed(1);
+	
+		if(auction){
+			// current_price = client.web3.utils.fromWei(auction.current_price, 'ether');
+			// current_price = parseFloat(current_price).toFixed(1);
+			// starting_price = client.web3.utils.fromWei(auction.starting_price, 'ether');
+			// starting_price = parseFloat(starting_price).toFixed(1);
+			current_price = auction.current_price;
+			starting_price = auction.starting_price;
 			preHtml = 'New!';
-			if(auctions.discount != 0){
+			if(auction.discount != 0){
 				preHtml = 'Pre. ㆔ ' + starting_price ;
 			}
 			nowHtml = 'NOW: ㆔' + current_price;
-			if(auctions.ending_at){
-				let diffDate = moment(auctions.ending_at*1000).diff(moment(), 'days');
+			if(auction.ending_at){
+				let diffDate = moment(auction.ending_at*1000).diff(moment(), 'days');
 				if(diffDate>30){
-					diffDate = moment(auctions.ending_at*1000).diff(moment(), 'months');
+					diffDate = moment(auction.ending_at*1000).diff(moment(), 'months');
 				}else if(diffDate<1){
-					diffDate = moment(auctions.ending_at*1000).diff(moment(), 'hours');
+					diffDate = moment(auction.ending_at*1000).diff(moment(), 'hours');
 				}
 				dateHtml = <div className='card-duration'><Icon name='clock outline' /> { diffDate } days left</div>;
 			}
@@ -51,11 +54,11 @@ export default class Assets extends Component {
 		return (
 			<Grid.Column key={i} mobile={16} tablet={8} computer={4} onClick={() => this.props.toAssetDetail(url)}>
 				<Card>
-				  <Image src={item.image_url} />
+				  <Image src={item.image_url_cdn} />
 				  { dateHtml }
 				  <Card.Content>
 				    <Card.Header>
-				      {item.name} · #{item.token_id}
+				      {item.name} · #{item.id}
 				    </Card.Header>
 				    <Card.Meta>
 				      <span>{ preHtml }</span>

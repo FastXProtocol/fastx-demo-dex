@@ -1,25 +1,57 @@
 import { put, takeEvery, all ,take} from 'redux-saga/effects';
 import { delay } from 'redux-saga';
 import axios from 'axios';
+import '../api/plasma_js_client';
+import { chainOptions } from '../config';
+import erc721_abi from "../contract_data/ERC721Token.abi.json";
+
+const fastx = new window.plasmaClient.client(chainOptions);
+
+const allPsTransactions = async () => {
+    let allPsRes = await fastx.getAllPsTransactions();
+    console.log(allPsRes)
+    return allPsRes.data.result;
+}
 
 function* getAssetsAsync(params) {
-	let categories = yield axios({
-        method: 'get',
-        url: 'http://dev.msan.cn:9000/api/asset_categories'
+	// let categories = yield axios({
+ //        method: 'get',
+ //        url: 'http://dev.msan.cn:9000/api/asset_categories'
+ //    })
+
+ //    let categoriesUrls = [];
+ //    let assets = [];
+ //    for(let value of categories.data){
+ //    	if(!value.hidden)categoriesUrls.push(value.address)
+ //    }
+
+	// for(let value of categoriesUrls){	
+ //    	let asset = yield axios({
+	//         method: 'get',
+	//         url: 'http://dev.msan.cn:9000/api/asset_list/'+value
+	//     })
+	//     assets = assets.concat(asset['data']['assets'])
+ //    }
+ 
+    let assets = [];
+    let allPs = yield allPsTransactions();
+    yield put({
+      type: 'ALLPS_RECEIVED',
+      allPs: allPs
     })
 
-    let categoriesUrls = [];
-    let assets = [];
-    for(let value of categories.data){
-    	if(!value.hidden)categoriesUrls.push(value.address)
-    }
-
-	for(let value of categoriesUrls){	
-    	let asset = yield axios({
-	        method: 'get',
-	        url: 'http://dev.msan.cn:9000/api/asset_list/'+value
-	    })
-	    assets = assets.concat(asset['data']['assets'])
+    for(let value of allPs){
+        let kittyRes = yield axios({
+            method: 'get',
+            url: 'https://api.cryptokitties.co/kitties/'+value.tokenid2
+        })
+        let kitty = kittyRes.data;
+        if(!kitty.auction)kitty.auction = {};
+        kitty.auction.discount = 0;
+        kitty.auction.ending_at = value.expiretimestamp;
+        kitty.auction.current_price = value.amount1.toString();
+        kitty.auction.starting_price = '0';
+        assets.push(kitty);
     }
 
     yield put({
@@ -28,8 +60,60 @@ function* getAssetsAsync(params) {
 	})
 }
 
+function* getAssetsDetailAsync(action) {
+    let kittyRes = yield axios({
+        method: 'get',
+        url: 'https://api.cryptokitties.co/kitties/'+action.id
+    })
+    let kitty = kittyRes.data;
+    if(!kitty.auction)kitty.auction = {};
+    kitty.auction.discount = 0;
+    kitty.auction.ending_at = 1528905600;
+    kitty.auction.current_price = '0';
+    kitty.auction.starting_price = '0';
+
+    let allPs = yield allPsTransactions();
+    yield put({
+      type: 'ALLPS_RECEIVED',
+      allPs: allPs
+    })
+
+    yield put({
+      type: 'ASSET_DETAIL_RECEIVED',
+      asset: kitty
+    })
+}
+
+const bidAd = async (category,tokenId,fillTx) => {
+    console.log(fillTx)
+    let receiverAddress = fastx.web3.eth.defaultAccount;
+    //await fastx.deposit("0x0", 1, 0, { from: receiverAddress});
+    let utxos = await fastx.getAllUTXO(receiverAddress);
+    console.log('utxos:',utxos)
+    let utxo = await fastx.searchUTXO({
+            category: fillTx.contractaddress1, 
+            tokenId: fillTx.tokenid1, 
+            amount: fillTx.amount1
+        }, { from: receiverAddress });
+    console.log('\nUTXO',utxo);
+    console.log('receiverAddress',receiverAddress)
+   
+ 
+    const [_blknum, _txindex, _oindex, _contract, _balance, _tokenid] = utxo;
+    await fastx.sendPsTransactionFill(fillTx, _blknum, _txindex, _oindex, receiverAddress, receiverAddress);
+}
+
+function* assetBuyAsync(action) {
+    console.log(action)
+    yield bidAd(action.category, action.id, action.fillTx)
+} 
+
 export const watchGetAssetsAsync = function* () {
     yield takeEvery('GET_ASSETS', getAssetsAsync)
+}
+
+export const watchGetAssetsDetailAsync = function* () {
+    yield takeEvery('GET_ASSET_DETAIL', getAssetsDetailAsync)
 }
 
 export const watchSetAssetsFilterAsync = function* () {
@@ -38,4 +122,8 @@ export const watchSetAssetsFilterAsync = function* () {
 
 export const watchSearchAssetsTitleAsync = function* () {
     yield takeEvery('ASSETS_SEARCH', getAssetsAsync)
+}
+
+export const watchassetBuyAsync = function* () {
+    yield takeEvery('ASSETS_BUY', assetBuyAsync)
 }

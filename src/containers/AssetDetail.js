@@ -10,16 +10,13 @@ function mapStateToProps(state, props){
     return {
        id: props.match.params.id,
        category: props.match.params.category,
-       assets: state.assets.results
+       asset: state.assets.asset,
+       allPs: state.assets.allPs
     }
 }
 
 function mapDispatchToProps(dispatch) {
     return {
-    	buyAssets: (category, id) => {
-    		console.log(category)
-    		console.log(id)
-    	},
         ...bindActionCreators(assetsActions, dispatch)
     }
 }
