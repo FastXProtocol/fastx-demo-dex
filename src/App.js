@@ -6,6 +6,7 @@ import SiteFooter from './components/SiteFooter';
 import SiteMenu from './components/SiteMenu';
 import AssetList from './containers/AssetList';
 import AssetDetail from './containers/AssetDetail';
+import AssetSell from './containers/AssetSell';
 import Account from './containers/Account';
 
 export default class App extends Component {
@@ -16,7 +17,8 @@ export default class App extends Component {
         <Switch>
           <Route path='/account' component={Account} />
           <Route exact path='/assets' component={AssetList} />
-          <Route path='/assets/:category/:id' component={AssetDetail} />
+          <Route exact path='/assets/:category/:id' component={AssetDetail} />
+          <Route exact path='/assets/:category/:id/sell' component={AssetSell} />
           {/* <Route path='/b/:hash/:name/' component={withRouter(WithBoard(BoardPage))} /> */}
         </Switch>
         <SiteFooter />

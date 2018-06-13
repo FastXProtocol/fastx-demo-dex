@@ -62,15 +62,14 @@ const normalizeAddress = (address) => {
     return new Buffer(address, 'hex');
 }
 
-const depositNFT = async (asset_contract, token_id) => {
-    console.log(asset_contract)
-
+const depositNFT = async (asset_contract, tokenid) => {
+    console.log('asset_contract:',asset_contract)
     const ownerAddress = fastx.defaultAccount;
     let nft_contract = new fastx.web3.eth.Contract( erc721_abi, asset_contract);
 
-    // create a new token for testing
+    create a new token for testing
     const totalSupply = await nft_contract.methods.totalSupply().call();
-    const tokenid = parseInt(totalSupply) + 10;
+    tokenid = parseInt(totalSupply) + 10;
     console.log('Creating new token: '+tokenid);
     await nft_contract.methods.mint(ownerAddress, tokenid)
         .send({from: ownerAddress, gas: 3873385})
@@ -119,7 +118,7 @@ const postAd = async (data) => {
 	await logBalance();
 	const end = moment(data.params.end).add(1, 'days').unix();
 	const price = parseFloat(data.params.sellPrice);
-	await postNftAd(nft_ad.category, nft_ad.sellId, end, price);
+	await postNftAd(nft_ad.category, nft_ad.tokenId, end, price);
 }
 
 function* watchSellAssetAsync(data) {
