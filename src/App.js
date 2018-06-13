@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { Switch, Route, withRouter } from 'react-router-dom'
+import { Switch, Route, Redirect, withRouter } from 'react-router-dom'
 
 import SiteHeader from './components/SiteHeader';
 import SiteFooter from './components/SiteFooter';
@@ -20,6 +20,7 @@ export default class App extends Component {
           <Route exact path='/assets/:category/:id' component={AssetDetail} />
           <Route exact path='/assets/:category/:id/sell' component={AssetSell} />
           {/* <Route path='/b/:hash/:name/' component={withRouter(WithBoard(BoardPage))} /> */}
+          <Redirect path="/" to={{pathname: '/assets'}} />
         </Switch>
         <SiteFooter />
       </div>
