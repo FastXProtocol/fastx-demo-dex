@@ -67,7 +67,7 @@ const depositNFT = async (asset_contract, tokenid) => {
     const ownerAddress = fastx.defaultAccount;
     let nft_contract = new fastx.web3.eth.Contract( erc721_abi, asset_contract);
 
-    create a new token for testing
+    // create a new token for testing
     const totalSupply = await nft_contract.methods.totalSupply().call();
     tokenid = parseInt(totalSupply) + 10;
     console.log('Creating new token: '+tokenid);
