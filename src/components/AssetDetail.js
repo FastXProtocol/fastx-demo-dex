@@ -14,17 +14,9 @@ export default class AssetDetail extends Component {
     }
 	
     render() {
-    	const { asset, id, allPs } = this.props;
-		let auction, current_price;
+    	const { asset, id, allPs, fillTx } = this.props;
+		let auction = asset.auction?asset.auction:null, current_price;
 		let sellerHtml, dateHtml;
-		let fillTx = {};
-		for(let value of allPs){
-			if(value.contractaddress2 == this.props.category && value.tokenid2 == this.props.id){
-				fillTx = value;
-				break;
-			}
-		}
-		if(asset.auction)auction = asset.auction;
 		
 		if(auction){
 			//current_price = client.web3.utils.fromWei(ps.amount1+'', 'ether');
