@@ -8,7 +8,6 @@ import { assentsOptions } from './Common';
 import './Search/Search.css';
 import './Card.css';
 import { chainOptions } from '../config';
-import '../api/plasma_js_client_dev';
 
 const client = new window.plasmaClient.client(chainOptions);
 

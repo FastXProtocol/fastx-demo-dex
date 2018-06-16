@@ -1,7 +1,6 @@
 import { put, takeEvery, all ,take} from 'redux-saga/effects';
 import { delay } from 'redux-saga';
 import axios from 'axios';
-import '../api/plasma_js_client';
 import { chainOptions } from '../config';
 import erc721_abi from "../contract_data/ERC721Token.abi.json";
 

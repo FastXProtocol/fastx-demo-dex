@@ -4,7 +4,6 @@ import moment from 'moment';
 import { Card, Container, Divider, Dropdown, Grid, Header, Image, List, Menu, Segment, Icon, Button, Feed} from 'semantic-ui-react';
 import '../components/Dropdown.css';
 import { chainOptions } from '../config';
-import '../api/plasma_js_client_dev';
 
 const client = new window.plasmaClient.client(chainOptions);
 
