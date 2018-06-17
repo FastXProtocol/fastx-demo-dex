@@ -2,5 +2,5 @@ export const chainOptions = {
     debug: true,
     gethRpc: "//localhost:8545",
     fastXRpc: "//fastx-rinkeby.msan.cn/jsonrpc",
-    rootChainAddress: "0xD9FA1cbB70b74f3Ef259CE0eb48029F02eE0FcD1",
+    rootChainAddress: "0xC47e711ac6A3D16Db0826c404d8C5d8bDC01d7b1",
 }
