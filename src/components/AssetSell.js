@@ -45,13 +45,13 @@ export default class AssetDetail extends Component {
 							    	<Form>
 					                    <Form.Field inline style={{ marginTop: '2em' }}>
 					                      <label className='align_right_label'>Date Ends</label>
-					                      <Input type='date' placeholder='' onChange={this.props.setSellEnd}/>
+					                      <Input type='date' placeholder='' onChange={this.props.setSellEnd} value={this.props.end}/>
 					                    </Form.Field>
 					                    <Form.Field inline style={{ marginTop: '2em' }}>
 					                      <label className='align_right_label'>Price*</label>
 					                      <Input label='ETH' type='number' placeholder='' onChange={this.props.setSellPrice} />
 					                    </Form.Field>
-					                    <Button type='submit' color='teal' style={{marginLeft:'110px',marginTop: '2em'}} onClick={() => this.props.sellAsset({  end: this.props.end,
+					                    <Button type='submit' color='teal' style={{marginLeft:'110px',marginTop: '2em'}} onClick={() => this.props.sellContractAsset({  end: this.props.end,
 					  categroy: this.props.category,
 					  sellId: this.props.id,
 					  sellPrice: this.props.sellPrice})}>Sell</Button>

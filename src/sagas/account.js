@@ -7,46 +7,56 @@ import axios from 'axios';
 const fastx = new window.plasmaClient.client(chainOptions);
 
 function* getBalanceAsync() {
-    fastx.defaultAccount = fastx.web3.eth.defaultAccount;
-    console.log('Account: ',fastx.defaultAccount);
-    let utxos = yield fastx.getAllUTXO(fastx.defaultAccount);
-    console.log('utxos:',utxos.data);
-	const balance = yield fastx.getBalance(fastx.defaultAccount);
-    console.log('balance:',balance);
-	let wei = yield fastx.web3.eth.getBalance(fastx.defaultAccount);
-	let ether = yield fastx.web3.utils.fromWei(wei, 'ether');
+    try {
+        let accounts = yield fastx.web3.eth.getAccounts();
+        fastx.defaultAccount = accounts[0];
+        console.log('Account: ',fastx.defaultAccount);
+        let utxos = yield fastx.getAllUTXO(fastx.defaultAccount);
+        console.log('utxos:',utxos.data);
+        const balanceRes = yield fastx.getBalance(fastx.defaultAccount);
+        let balanceFT = balanceRes.data.result.FT;
+        let balance = 0;
+        for(let value of balanceFT){
+            if(value[0] == "0000000000000000000000000000000000000000"){
+                balance = value[1];
+                break;
+            }
+        }
+        console.log('balance:',balance);
+        // let wei = yield fastx.web3.eth.getBalance(fastx.defaultAccount);
+        // let ether = yield fastx.web3.utils.fromWei(wei, 'ether');
 
-    yield put({
-	  type: 'BALANCE_RECEIVED',
-	  balance: parseFloat(parseFloat(ether).toFixed(4))
-	})
-
-    let assets = []
-    for(let value of balance.data.result.NFT){
-        let kittyRes = yield axios({
-            method: 'get',
-            url: 'https://api.cryptokitties.co/kitties/'+value[1]
+        yield put({
+          type: 'BALANCE_RECEIVED',
+          balance: parseFloat(balance)
         })
-        let kitty = kittyRes.data;
-        if(!kitty.auction)kitty.auction = {};
-        // kitty.auction.discount = 0;
-        // kitty.auction.ending_at = value.expiretimestamp;
-        // kitty.auction.current_price = value.amount1.toString();
-        // kitty.auction.starting_price = '0';
-        assets.push(kitty);
-    }
 
-    yield put({
-      type: 'USER_ITEMS_RECEIVED',
-      items: assets
-    })
+        let assets = []
+        for(let value of balanceRes.data.result.NFT){
+            let kittyRes = yield axios({
+                method: 'get',
+                url: 'https://api.cryptokitties.co/kitties/'+value[1]
+            })
+            let kitty = kittyRes.data;
+            if(!kitty.auction)kitty.auction = {};
+            assets.push(kitty);
+        }
+
+        yield put({
+          type: 'USER_ITEMS_RECEIVED',
+          items: assets
+        })
+    }catch (e){
+        console.log(e)
+    }  
 }
 
 function* getAccountAsync() {
-	let address = fastx.web3.eth.defaultAccount;
+	let accounts = yield fastx.web3.eth.getAccounts();
+    console.log('getAccountAddress:',accounts[0]);
     yield put({
 	  type: 'ACCOUNT_RECEIVED',
-	  ownerAddress: address
+	  ownerAddress: accounts[0]
 	})
 }
 
@@ -67,12 +77,12 @@ const depositNFT = async (asset_contract, tokenid) => {
     let nft_contract = new fastx.web3.eth.Contract( erc721_abi, asset_contract);
 
     // create a new token for testing
-    const totalSupply = await nft_contract.methods.totalSupply().call();
-    tokenid = parseInt(totalSupply) + 10;
-    console.log('Creating new token: '+tokenid);
-    await nft_contract.methods.mint(ownerAddress, tokenid)
-        .send({from: ownerAddress, gas: 3873385})
-        .on('transactionHash', console.log);
+    // const totalSupply = await nft_contract.methods.totalSupply().call();
+    // tokenid = parseInt(totalSupply) + 10;
+    // console.log('Creating new token: '+tokenid);
+    // await nft_contract.methods.mint(ownerAddress, tokenid)
+    //     .send({from: ownerAddress, gas: 3873385})
+    //     .on('transactionHash', console.log);
 
     console.log('Approving token # '+tokenid+' to '+chainOptions.rootChainAddress);
     await fastx.approve(asset_contract, 0, tokenid, {from: ownerAddress})
@@ -94,7 +104,13 @@ const logBalance = async (address) => {
 
 const postNftAd = async (contract, tokenid, end, price, options={}) => {
 	let from = options.from || fastx.defaultAccount;
-    let categoryContract = normalizeAddress(contract).toString('hex');
+    let categoryContract;
+    console.log(contract)
+    try{
+        categoryContract = normalizeAddress(contract).toString('hex');
+    }catch (e){
+        console.log(e)
+    }
     console.log('from: '+from + ', contract: '+categoryContract+', tokenid: '+tokenid);
 
     let utxo = await fastx.searchUTXO({
@@ -129,8 +145,16 @@ function* watchSellAssetAsync(data) {
 	// 		sellId: '283'
 	// 	}
 	// }
-	console.log(data.params)
+	console.log("sellAssetParams:",data.params)
 	postAd(data);
+}
+
+function* watchSellContractAssetAsync(data) {
+    const end = moment(data.params.end).add(1, 'days').unix();
+    const price = parseFloat(data.params.sellPrice);
+    console.log("sellContractAssetParams",data.params)
+    let result = yield postNftAd(data.params.categroy, data.params.sellId, end, price);
+    console.log("postNftAdResult:",result);
 }
 
 function* watchDepositAsync(action) {
@@ -147,6 +171,10 @@ export const watchGetAccount = function* () {
 
 export const watchSellAsset = function* () {
     yield takeEvery('SELL_ASSET', watchSellAssetAsync)
+}
+
+export const watchSellContractAsset = function* () {
+    yield takeEvery('SELL_CONTRACT_ASSET', watchSellContractAssetAsync)
 }
 
 export const watchDeposit = function* () {

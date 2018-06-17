@@ -130,7 +130,7 @@ export default class Account extends Component {
                 <Form>
                     <Form.Field inline>
                       <label className='align_right_label'>Date Ends</label>
-                      <Input type='date' placeholder='' onChange={this.props.setSellEnd}/>
+                      <Input type='date' placeholder='' onChange={this.props.setSellEnd} value={this.props.end}/>
                     </Form.Field>
                     <Form.Field inline>
                         <label className='align_right_label' />
@@ -180,21 +180,13 @@ export default class Account extends Component {
                                 <Item.Header style={{ color: 'grey', fontSize: '32px', fontWeight:'100'}} >Anonymous account</Item.Header>
                                 <Item.Meta>
                                     <span style={{ marginRight: '10px'}}>{this.props.ownerAddress}</span>
-                                    <Button basic size='mini' ><Icon name='setting' />SETTINGS</Button>
-                                    <Dropdown text='SHARE' icon='share alternate' floating labeled button basic className='icon dropdown-basic dropdown-mini'>
-                                        <Dropdown.Menu>
-                                            <Dropdown.Item icon='linkify' text='COPY URL' />
-                                            <Dropdown.Item icon='facebook f' text='share on facebook' />
-                                            <Dropdown.Item icon='twitter' text='share on twitter' />
-                                        </Dropdown.Menu>
-                                    </Dropdown>
                                 </Item.Meta>
                               </Item.Content>
                             </Item>
                         </Item.Group>
                     </Grid.Column>
                     <Grid.Column width={4} textAlign='center'>
-                        <p style={{ color: 'dodgerblue', fontSize: '30px', margin: '0'}}>{this.props.balance} ETH</p>
+                        <p style={{ color: 'dodgerblue', fontSize: '30px', margin: '0'}}>{this.props.balance} WEI</p>
                         <p style={{ color: 'grey', fontSize: '18px'}}>Balance</p>
                     </Grid.Column>
                 </Grid>

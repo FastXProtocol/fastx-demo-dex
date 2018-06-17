@@ -1,3 +1,5 @@
+import moment from 'moment';
+
 const GET_BALANCE = 'GET_BALANCE';
 const BALANCE_RECEIVED = 'BALANCE_RECEIVED';
 const GET_ACCOUNT = 'GET_ACCOUNT';
@@ -13,7 +15,7 @@ const USER_ITEMS_RECEIVED = 'USER_ITEMS_RECEIVED';
 const initialState = {
   balance: 0,
   ownerAddress: '',
-  end: '',
+  end: moment().add(1,'days').format("YYYY-MM-DD"),
   categroy: '',
   sellId: '',
   sellPrice: 0,

@@ -17,6 +17,13 @@ export const sellAsset = (params) => {
   };
 }
 
+export const sellContractAsset = (params) => {
+  return {
+    type: "SELL_CONTRACT_ASSET",
+    params
+  };
+}
+
 export const setSellEnd = (e, target) => {
   return {
     type: "SET_SELL_END",
