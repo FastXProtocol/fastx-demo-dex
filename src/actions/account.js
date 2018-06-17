@@ -48,7 +48,7 @@ export const setSellPrice = (e, target) => {
 export const setDepositPrice = (e, target) => {
   return {
     type: "SET_DEPOSIT_PRICE",
-    sellPrice: target && target.value
+    depositPrice: target && target.value
   };
 }
 

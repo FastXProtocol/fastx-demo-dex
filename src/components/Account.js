@@ -163,7 +163,7 @@ export default class Account extends Component {
                 <Form>
                     <Form.Field inline>
                       <label className='align_right_label'>Price*</label>
-                      <Input label='ETH' type='number' placeholder='' onChange={this.props.setSellPrice} />
+                      <Input label='ETH' type='number' placeholder='' onChange={this.props.setDepositPrice} />
                     </Form.Field>
                     <Button type='submit' color='teal' style={{marginLeft:'110px'}} onClick={() => this.props.deposit(this.props.depositPrice)}>Submit</Button>
                 </Form>
