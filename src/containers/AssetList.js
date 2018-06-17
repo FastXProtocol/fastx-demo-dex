@@ -9,7 +9,8 @@ import * as assetsActions from '../actions/assets'
 function mapStateToProps(state){
     return {
        results: state.assets.results,
-       error: state.assets.error
+       error: state.assets.error,
+       isLoading: state.assets.isLoading
     }
 }
 

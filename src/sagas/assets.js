@@ -17,6 +17,11 @@ function* getAssetsAsync(params) {
 
     let categoriesUrls = [];
     let assets = [];
+    yield put({
+      type: 'SET_ASSETS_LOADING',
+      isLoading: true
+    })
+
     let allPs = yield allPsTransactions();
     yield put({
       type: 'ALLPS_RECEIVED',
@@ -46,6 +51,11 @@ function* getAssetsAsync(params) {
 	  type: 'ASSETS_RECEIVED',
 	  results: assets
 	})
+
+    yield put({
+      type: 'SET_ASSETS_LOADING',
+      isLoading: false
+    })
 }
 
 function* getAssetsDetailAsync(action) {

@@ -1,7 +1,7 @@
 import _ from 'lodash';
 import React, { Component } from 'react';
 import faker from 'faker';
-import { Card, Container, Divider, Dropdown, Grid, Header, Image, List, Menu, Segment, Icon } from 'semantic-ui-react';
+import { Card, Container, Divider, Dropdown, Dimmer, Grid, Header, Image, List, Loader, Menu, Segment, Icon } from 'semantic-ui-react';
 import moment from 'moment';
 import FilterSearch from '../containers/SearchStandard';
 import { assentsOptions } from './Common';
@@ -70,10 +70,18 @@ export default class Assets extends Component {
 			</Grid.Column>
 		);
     });
+	console.log()
+	let loaderHtml = ""
+	if(this.props.isLoading) {
+		loaderHtml = <Dimmer active >
+	        <Loader >Loading</Loader>
+	      </Dimmer>;
+	}
 
     return (
      <div>
 	    <Container style={{ marginTop: '7em' }}>
+	      {loaderHtml}
 	      <Grid >
 	        <Grid.Row>
 	          <Grid.Column width={12}>

@@ -4,6 +4,7 @@ const ASSETS_RECEIVED = 'ASSETS_RECEIVED';
 const ASSETS_SEARCH = 'ASSETS_SEARCH';
 const ASSET_DETAIL_RECEIVED = 'ASSET_DETAIL_RECEIVED';
 const ALLPS_RECEIVED = 'ALLPS_RECEIVED';
+const SET_ASSETS_LOADING = 'SET_ASSETS_LOADING';
 
 const ASSET_CATEGORIES_REQUEST_FAILED = 'ASSET_CATEGORIES_REQUEST_FAILED';
 
@@ -22,6 +23,11 @@ export default function assets(state = initialState, action = {}) {
     case GET_ASSETS:
       return {
         ...state
+      };
+    case SET_ASSETS_LOADING:
+      return {
+        ...state,
+        isLoading: action.isLoading
       };
     case ASSETS_RECEIVED:
       return {
