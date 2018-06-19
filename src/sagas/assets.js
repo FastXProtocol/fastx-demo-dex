@@ -7,9 +7,15 @@ import erc721_abi from "../contract_data/ERC721Token.abi.json";
 const fastx = new window.plasmaClient.client(chainOptions);
 
 const allPsTransactions = async () => {
-    let allPsRes = await fastx.getAllPsTransactions();
-    console.log(allPsRes)
-    return allPsRes.data.result;
+    let allPsRes;
+    try{
+        allPsRes = await fastx.getAllPsTransactions();
+        console.log('allPsRes:',allPsRes)
+        return allPsRes.data.result;
+    }catch(e) {
+        console.log('allPsTransactionsError',e)
+        return [];
+    }
 }
 
 function* getAssetsAsync(params) {
@@ -63,10 +69,18 @@ function* getAssetsDetailAsync(action) {
       type: 'SET_ASSETS_LOADING',
       isLoading: true
     })
-    let kittyRes = yield axios({
-        method: 'get',
-        url: 'https://api.cryptokitties.co/kitties/'+action.id
-    })
+
+    let kittyRes = {};
+    try {
+        kittyRes = yield axios({
+            method: 'get',
+            url: 'https://api.cryptokitties.co/kitties/'+action.id
+        })
+    } catch (e) {
+        console.log('getAssetsDetailError:',e)
+        return yield put({ type: 'ASSET_CATEGORIES_REQUEST_FAILED', e })
+    }
+
     let kitty = kittyRes.data;
     if(!kitty.auction)kitty.auction = {};
     kitty.auction.discount = 0;
