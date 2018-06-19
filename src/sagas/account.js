@@ -1,44 +1,17 @@
 import { put, takeEvery, all ,take} from 'redux-saga/effects';
-import { chainOptions } from '../config';
+import { delay } from 'redux-saga';
+import { chainOptions, retry} from '../config';
 import erc721_abi from "../contract_data/ERC721Token.abi.json";
 import moment from 'moment';
 import axios from 'axios';
 
 const fastx = new window.plasmaClient.client(chainOptions);
 
-function* getBalanceAsync() {
+const getAssent = async (NFT) => {
+    let assets = [];
     try {
-        yield put({
-          type: 'SET_ASSETS_LOADING',
-          isLoading: true
-        })
-
-        let accounts = yield fastx.web3.eth.getAccounts();
-        fastx.defaultAccount = accounts[0];
-        console.log('Account: ',fastx.defaultAccount);
-        let utxos = yield fastx.getAllUTXO(fastx.defaultAccount);
-        console.log('utxos:',utxos.data);
-        const balanceRes = yield fastx.getBalance(fastx.defaultAccount);
-        let balanceFT = balanceRes.data.result.FT;
-        let balance = 0;
-        for(let value of balanceFT){
-            if(value[0] == "0000000000000000000000000000000000000000"){
-                balance = value[1];
-                break;
-            }
-        }
-        console.log('balance:',balance);
-        // let wei = yield fastx.web3.eth.getBalance(fastx.defaultAccount);
-        // let ether = yield fastx.web3.utils.fromWei(wei, 'ether');
-
-        yield put({
-          type: 'BALANCE_RECEIVED',
-          balance: parseFloat(balance)
-        })
-
-        let assets = []
-        for(let value of balanceRes.data.result.NFT){
-            let kittyRes = yield axios({
+        for(let value of NFT){
+            let kittyRes = await axios({
                 method: 'get',
                 url: 'https://api.cryptokitties.co/kitties/'+value[1]
             })
@@ -46,25 +19,87 @@ function* getBalanceAsync() {
             if(!kitty.auction)kitty.auction = {};
             assets.push(kitty);
         }
+    } catch(err) {
+        console.log("get assent info err:",err)
+    }
 
-        yield put({
-          type: 'USER_ITEMS_RECEIVED',
-          items: assets
-        })
+    return assets;
+}
 
-        yield put({
-          type: 'SET_ASSETS_LOADING',
-          isLoading: false
-        })
-        
-    }catch (e){
-        console.log(e)
-    }  
+function* getBalanceAsync() {   
+    yield put({
+      type: 'SET_ASSETS_LOADING',
+      isLoading: true
+    })
+
+    yield getAccountAsync();
+    
+    let balanceFT = [],balanceNFT = [],utxos,balanceRes;
+    for (let i = 1; i<=retry.count; i++){
+        try {
+            utxos = yield fastx.getAllUTXO(fastx.defaultAccount);
+            console.log('utxos:',utxos.data);
+            balanceRes = yield fastx.getBalance(fastx.defaultAccount);
+            console.log('balanceRes:',balanceRes.data);
+            balanceFT = balanceRes.data.result.FT;
+            balanceNFT = balanceRes.data.result.NFT
+            break; 
+        }catch(err){
+            if(i <= retry.count) {
+                console.log("getBalanceErr:",i,err)
+                yield delay(retry.time);
+            }else{
+                throw new Error('getBalanceErr request failed');
+            }
+        }
+    }
+
+    let balance = 0;
+    for(let value of balanceFT){
+        if(value[0] == "0000000000000000000000000000000000000000"){
+            balance = value[1];
+            break;
+        }
+    }
+    console.log('balance:',balance);
+    // let wei = yield fastx.web3.eth.getBalance(fastx.defaultAccount);
+    // let ether = yield fastx.web3.utils.fromWei(wei, 'ether');
+
+    yield put({
+      type: 'BALANCE_RECEIVED',
+      balance: parseFloat(balance)
+    })
+
+    let assets = yield getAssent(balanceNFT);
+    yield put({
+      type: 'USER_ITEMS_RECEIVED',
+      items: assets
+    })
+
+    yield put({
+      type: 'SET_ASSETS_LOADING',
+      isLoading: false
+    }) 
 }
 
 function* getAccountAsync() {
-	let accounts = yield fastx.web3.eth.getAccounts();
-    console.log('getAccountAddress:',accounts[0]);
+    let accounts = [];
+    for (let i = 1; i<=retry.count; i++){
+        try {
+            accounts = yield fastx.web3.eth.getAccounts();
+            break; 
+        }catch(err){
+            if(i <= retry.count) {
+                console.log("getAccountErr:",i,err)
+                yield delay(retry.time);
+            }else{
+                throw new Error('getAccount request failed');
+            }
+        }
+    }
+	
+    fastx.defaultAccount = accounts[0];
+    console.log('getAccountAddress:',fastx.defaultAccount);
     yield put({
 	  type: 'ACCOUNT_RECEIVED',
 	  ownerAddress: accounts[0]

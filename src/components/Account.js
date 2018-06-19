@@ -34,11 +34,9 @@ import { categroyOptions } from '../components/Common';
 export default class Account extends Component {
     componentDidMount() {
         this.props.getBalance();
-        this.props.getAccount();
     }
 
     render() {
-        console.log(this.props.items)
         let cards = this.props.items.map((item, i) => {
             let url = '/assets/952ce607bd9ab82e920510b2375cbad234d28c8f/'+item.id+'/sell';
             return (
