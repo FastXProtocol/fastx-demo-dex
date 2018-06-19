@@ -4,7 +4,13 @@ import { push } from 'react-router-redux';
 
 import { Card, Container, Divider, Dropdown, Grid, Image, List, Menu, Segment } from 'semantic-ui-react';
 
+import * as accountActions from '../actions/account';
+
 class SiteHeader extends Component {
+    componentDidMount() {
+        this.props.getAccount();
+    }
+
     state = {}
 
     menuItemClick = (e, { name }) => {
@@ -46,11 +52,15 @@ class SiteHeader extends Component {
 
 function mapStateToProps(state){
     return {
+
     }
 }
 
 function mapDispatchToProps(dispatch) {
     return {
+        getAccount: () => {
+            dispatch(accountActions.getAccount())
+        },
         toMarketplace: () => dispatch(push('/assets')),
         toAccounnt: () => dispatch(push('/account'))
     }

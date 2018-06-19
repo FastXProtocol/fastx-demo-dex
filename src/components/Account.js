@@ -45,13 +45,8 @@ import { categroyOptions } from '../components/Common';
 
 export default class Account extends Component {
     componentDidMount() {
-        let that = this;
-        
-        that.props.getBalance();
-        that.props.getAccount();
-        // setTimeout(() => {
-        //     console.log(that.props.balance)
-        // }, 1000)
+        this.props.getBalance();
+        //this.props.getAccount();
     }
 
     render() {

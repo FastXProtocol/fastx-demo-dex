@@ -23,14 +23,16 @@ export default class AssetDetail extends Component {
 				<Modal size='small' open={this.props.modal.open} onClose={this.props.close}>
 					<Modal.Header>提示</Modal.Header>
 					<Modal.Content>
-						<p>这件商品您已发布广告，是否要发布新的广告？</p>
+						<p>这件商品您已经过发布广告了</p>
 					</Modal.Content>
 					<Modal.Actions>
-						<Button negative onClick={this.props.close}>取消</Button>
-						<Button positive icon='checkmark' labelPosition='right' content='发布' onClick={ () => this.props.confirm({  end: this.props.end,
-					  categroy: this.props.category,
-					  sellId: this.props.id,
-					  sellPrice: this.props.sellPrice})} />
+						<Button positive onClick={this.props.close}>知道了</Button>
+						{
+						// <Button positive icon='checkmark' labelPosition='right' content='发布' onClick={ () => this.props.confirm({  end: this.props.end,
+					 //  categroy: this.props.category,
+					 //  sellId: this.props.id,
+					 //  sellPrice: this.props.sellPrice})} />
+						}
 					</Modal.Actions>
 				</Modal>
             	<Grid>

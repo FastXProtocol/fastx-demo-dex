@@ -84,9 +84,10 @@ function* getAssetsDetailAsync(action) {
 
 const bidAd = async (category,tokenId,fillTx) => {
     console.log(fillTx)
-    let receiverAddress = fastx.web3.eth.defaultAccount;
+    let accounts = await fastx.web3.eth.getAccounts();
+    fastx.defaultAccount = accounts[0];
+    let receiverAddress = fastx.defaultAccount;
     console.log('receiverAddress',receiverAddress);
-    console.log('defaultAccount: ', fastx.defaultAccount);
 
     // await fastx.deposit("0x0", 1, 0, { from: receiverAddress});
     let utxos = await fastx.getAllUTXO(receiverAddress);
