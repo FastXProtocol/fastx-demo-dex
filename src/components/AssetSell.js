@@ -1,15 +1,17 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import moment from 'moment';
-import { Card, Container, Divider, Dropdown, Form, Grid, Header, Input, Image, List, Menu, Segment, Icon, Button, Feed} from 'semantic-ui-react';
+import { Card, Container, Divider, Dropdown, Form, Grid, Header, Input, Image, List, Menu, Modal, Segment, Icon, Button, Feed} from 'semantic-ui-react';
 import '../components/Dropdown.css';
 import { chainOptions } from '../config';
+import './modalModify.css';
 
 const client = new window.plasmaClient.client(chainOptions);
 
 export default class AssetDetail extends Component {
 	componentWillMount() {
 		this.props.getAssetDetail(this.props.id);
+		this.props.getPublishStatus(this.props.category, this.props.id);
     }
 	
     render() {
@@ -18,6 +20,19 @@ export default class AssetDetail extends Component {
 
         return (
             <Container style={{ marginTop: '7em' }}>
+				<Modal size='small' open={this.props.modal.open} onClose={this.props.close}>
+					<Modal.Header>提示</Modal.Header>
+					<Modal.Content>
+						<p>这件商品您已发布广告，是否要发布新的广告？</p>
+					</Modal.Content>
+					<Modal.Actions>
+						<Button negative onClick={this.props.close}>取消</Button>
+						<Button positive icon='checkmark' labelPosition='right' content='发布' onClick={ () => this.props.confirm({  end: this.props.end,
+					  categroy: this.props.category,
+					  sellId: this.props.id,
+					  sellPrice: this.props.sellPrice})} />
+					</Modal.Actions>
+				</Modal>
             	<Grid>
 				    <Grid.Column width={8}>
 				      <Image src={ asset.image_url_cdn } />
@@ -51,10 +66,10 @@ export default class AssetDetail extends Component {
 					                      <label className='align_right_label'>Price*</label>
 					                      <Input label='ETH' type='number' placeholder='' onChange={this.props.setSellPrice} />
 					                    </Form.Field>
-					                    <Button type='submit' color='teal' style={{marginLeft:'110px',marginTop: '2em'}} onClick={() => this.props.sellContractAsset({  end: this.props.end,
+					                    <Button type='submit' color='teal' style={{marginLeft:'110px',marginTop: '2em'}} onClick={() => this.props.sellCheck({  end: this.props.end,
 					  categroy: this.props.category,
 					  sellId: this.props.id,
-					  sellPrice: this.props.sellPrice})}>Sell</Button>
+					  sellPrice: this.props.sellPrice}, this.props.hasPublished)}>Sell</Button>
 					                </Form>
 							    </Card.Content>
 							</Card>

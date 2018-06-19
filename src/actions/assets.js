@@ -40,3 +40,12 @@ export const assetBuy = (category, id, fillTx) => {
     fillTx
   };
 }
+
+export const getPublishStatus = (category, id) => {
+  return {
+    type: "GET_PUBLISH_STATUS",
+    category,
+    id
+  };
+}
+

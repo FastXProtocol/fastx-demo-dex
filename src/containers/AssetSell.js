@@ -6,6 +6,7 @@ import { push } from 'react-router-redux';
 import AssetSell from '../components/AssetSell';
 import * as assetsActions from '../actions/assets';
 import * as accountActions from '../actions/account';
+import * as modalActions from '../actions/modal';
 
 const getFillTx = (category, id, allPs) => {
   let fillTx = {};
@@ -26,12 +27,27 @@ function mapStateToProps(state, props){
        allPs: state.assets.allPs,
        fillTx: getFillTx(props.match.params.category, props.match.params.id, state.assets.allPs),
        end: state.account.end,
-       sellPrice: state.account.sellPrice
+       sellPrice: state.account.sellPrice,
+       hasPublished: state.assets.hasPublished,
+       modal: state.modal
     }
 }
 
 function mapDispatchToProps(dispatch) {
     return {
+        confirm: (params) => {
+          dispatch(accountActions.sellContractAsset(params))
+          dispatch(modalActions.close())
+        },
+        sellCheck: (params, hasPublished) => {
+          console.log('hasPublished:',hasPublished)
+          if(hasPublished){
+            dispatch(modalActions.open());
+          }else{
+            dispatch(accountActions.sellContractAsset(params));
+          }
+        },
+        ...bindActionCreators(modalActions, dispatch),
         ...bindActionCreators(assetsActions, dispatch),
         ...bindActionCreators(accountActions, dispatch)
     }

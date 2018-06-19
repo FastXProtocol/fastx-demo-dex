@@ -109,6 +109,18 @@ function* assetBuyAsync(action) {
     yield bidAd(action.category, action.id, action.fillTx)
 } 
 
+function* publishStatusAsync(action) {
+    let allPs = yield allPsTransactions();
+    let hasPublished = false;
+    for(let value of allPs){
+        if(value.contractaddress2 == action.category && value.tokenid2 == action.id)hasPublished = true;
+    }
+    yield put({
+      type: 'SET_PUBLISH_STATUS',
+      hasPublished
+    })
+}
+
 export const watchGetAssetsAsync = function* () {
     yield takeEvery('GET_ASSETS', getAssetsAsync)
 }
@@ -127,4 +139,8 @@ export const watchSearchAssetsTitleAsync = function* () {
 
 export const watchassetBuyAsync = function* () {
     yield takeEvery('ASSETS_BUY', assetBuyAsync)
+}
+
+export const watchPublishStatusAsync = function* () {
+    yield takeEvery('GET_PUBLISH_STATUS', publishStatusAsync)
 }
