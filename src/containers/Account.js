@@ -19,7 +19,8 @@ function mapStateToProps(state){
         sellId: state.account.sellId,
         sellPrice: state.account.sellPrice,
         depositPrice: state.account.depositPrice,
-        items: state.account.items
+        items: state.account.items,
+        isLoading: state.assets.isLoading
     }
 }
 

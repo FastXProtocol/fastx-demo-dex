@@ -17,6 +17,7 @@ import {
     Input,
     Image,
     List,
+    Loader,
     Menu,
     Responsive,
     Segment,
@@ -46,7 +47,7 @@ import { categroyOptions } from '../components/Common';
 export default class Account extends Component {
     componentDidMount() {
         this.props.getBalance();
-        //this.props.getAccount();
+        this.props.getAccount();
     }
 
     render() {
@@ -66,9 +67,16 @@ export default class Account extends Component {
                 </Grid.Column>
             )
         })
+
+        let loaderHtml = '';
+        if(this.props.isLoading) {
+            loaderHtml = <div style={{width:"100%",textAlign:'center',padding:'20px'}}><Loader active inline /></div>;
+        }
+
         const panes = [
             { menuItem: 'My Items', render: () => <Tab.Pane attached={false}>
                 <Grid>
+                {loaderHtml}
                 {cards}
                 </Grid>
             </Tab.Pane> },

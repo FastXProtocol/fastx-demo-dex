@@ -23,7 +23,8 @@ function mapStateToProps(state, props){
        category: props.match.params.category,
        asset: state.assets.asset,
        allPs: state.assets.allPs,
-       fillTx: getFillTx(props.match.params.category, props.match.params.id, state.assets.allPs)
+       fillTx: getFillTx(props.match.params.category, props.match.params.id, state.assets.allPs),
+       isLoading: state.assets.isLoading
     }
 }
 

@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import moment from 'moment';
-import { Card, Container, Divider, Dropdown, Form, Grid, Header, Input, Image, List, Menu, Modal, Segment, Icon, Button, Feed} from 'semantic-ui-react';
+import { Card, Container, Divider, Dropdown,Dimmer, Form, Grid, Header, Input, Image, List,Loader, Menu, Modal, Segment, Icon, Button, Feed} from 'semantic-ui-react';
 import '../components/Dropdown.css';
 import { chainOptions } from '../config';
 import './modalModify.css';
@@ -17,9 +17,16 @@ export default class AssetDetail extends Component {
     render() {
     	const { asset, id, allPs, fillTx } = this.props;
 		let auction = asset.auction?asset.auction:null, current_price;
+		let loaderHtml = ""
+		if(this.props.isLoading) {
+			loaderHtml = <Dimmer active >
+		        <Loader >Loading</Loader>
+		      </Dimmer>;
+		}
 
         return (
             <Container style={{ marginTop: '7em' }}>
+            	{loaderHtml}
 				<Modal size='small' open={this.props.modal.open} onClose={this.props.close}>
 					<Modal.Header>提示</Modal.Header>
 					<Modal.Content>

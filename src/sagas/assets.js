@@ -59,6 +59,10 @@ function* getAssetsAsync(params) {
 }
 
 function* getAssetsDetailAsync(action) {
+    yield put({
+      type: 'SET_ASSETS_LOADING',
+      isLoading: true
+    })
     let kittyRes = yield axios({
         method: 'get',
         url: 'https://api.cryptokitties.co/kitties/'+action.id
@@ -79,6 +83,11 @@ function* getAssetsDetailAsync(action) {
     yield put({
       type: 'ASSET_DETAIL_RECEIVED',
       asset: kitty
+    })
+
+    yield put({
+      type: 'SET_ASSETS_LOADING',
+      isLoading: false
     })
 }
 

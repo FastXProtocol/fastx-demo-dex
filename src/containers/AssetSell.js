@@ -29,6 +29,7 @@ function mapStateToProps(state, props){
        end: state.account.end,
        sellPrice: state.account.sellPrice,
        hasPublished: state.assets.hasPublished,
+       isLoading: state.assets.isLoading,
        modal: state.modal
     }
 }

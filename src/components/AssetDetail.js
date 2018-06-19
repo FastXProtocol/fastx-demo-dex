@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import moment from 'moment';
-import { Card, Container, Divider, Dropdown, Grid, Header, Image, List, Menu, Segment, Icon, Button, Feed} from 'semantic-ui-react';
+import { Card, Container, Divider, Dropdown, Dimmer, Grid, Header, Image, List, Loader, Menu, Segment, Icon, Button, Feed} from 'semantic-ui-react';
 import '../components/Dropdown.css';
 import { chainOptions } from '../config';
 
@@ -47,8 +47,16 @@ export default class AssetDetail extends Component {
 			}
 		}
 
+		let loaderHtml = ""
+		if(this.props.isLoading) {
+			loaderHtml = <Dimmer active >
+		        <Loader >Loading</Loader>
+		      </Dimmer>;
+		}
+
         return (
             <Container style={{ marginTop: '7em' }}>
+            	{loaderHtml}
             	<Grid>
 				    <Grid.Column width={8}>
 				      <Image src={ asset.image_url_cdn } />

@@ -8,6 +8,11 @@ const fastx = new window.plasmaClient.client(chainOptions);
 
 function* getBalanceAsync() {
     try {
+        yield put({
+          type: 'SET_ASSETS_LOADING',
+          isLoading: true
+        })
+
         let accounts = yield fastx.web3.eth.getAccounts();
         fastx.defaultAccount = accounts[0];
         console.log('Account: ',fastx.defaultAccount);
@@ -46,6 +51,12 @@ function* getBalanceAsync() {
           type: 'USER_ITEMS_RECEIVED',
           items: assets
         })
+
+        yield put({
+          type: 'SET_ASSETS_LOADING',
+          isLoading: false
+        })
+        
     }catch (e){
         console.log(e)
     }  

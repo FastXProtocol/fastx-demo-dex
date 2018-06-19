@@ -70,7 +70,7 @@ export default class Assets extends Component {
 			</Grid.Column>
 		);
     });
-	console.log()
+    
 	let loaderHtml = ""
 	if(this.props.isLoading) {
 		loaderHtml = <Dimmer active >
