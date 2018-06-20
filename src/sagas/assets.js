@@ -2,7 +2,6 @@ import { put, takeEvery, all ,take} from 'redux-saga/effects';
 import { delay } from 'redux-saga';
 import axios from 'axios';
 import { chainOptions } from '../config';
-import erc721_abi from "../contract_data/ERC721Token.abi.json";
 
 const fastx = new window.plasmaClient.client(chainOptions);
 
@@ -113,19 +112,24 @@ const bidAd = async (category,tokenId,fillTx) => {
     console.log('receiverAddress',receiverAddress);
 
     // await fastx.deposit("0x0", 1, 0, { from: receiverAddress});
-    let utxos = await fastx.getAllUTXO(receiverAddress);
-    console.log('utxos:',utxos.data)
-    let utxo = await fastx.searchUTXO({
-            category: fillTx.contractaddress1, 
-            tokenId: fillTx.tokenid1, 
-            amount: fillTx.amount1
-        }, { from: receiverAddress });
-    console.log('\nUTXO',utxo);
-   if (utxo.length > 0) {
-    const [_blknum, _txindex, _oindex, _contract, _balance, _tokenid] = utxo;
-    let res = await fastx.sendPsTransactionFill(fillTx, _blknum, _txindex, _oindex, receiverAddress, receiverAddress);
-    console.log(res);
-   }
+    // let utxos = await fastx.getAllUTXO(receiverAddress);
+    // console.log('utxos:',utxos.data)
+    // let utxo = await fastx.searchUTXO({
+    //         category: fillTx.contractaddress1, 
+    //         tokenId: fillTx.tokenid1, 
+    //         amount: fillTx.amount1
+    //     }, { from: receiverAddress });
+    // console.log('\nUTXO',utxo);
+
+
+    let utxo = await fastx.getOrNewEthUtxo(fillTx.amount1, {from:fastx.defaultAccount})
+    console.log('utxo:',utxo)
+
+    if (utxo.length > 0) {
+        const [_blknum, _txindex, _oindex, _contract, _balance, _tokenid] = utxo;
+        let res = await fastx.sendPsTransactionFill(fillTx, _blknum, _txindex, _oindex, receiverAddress, receiverAddress);
+        console.log(res);
+    }
 }
 
 function* assetBuyAsync(action) {
