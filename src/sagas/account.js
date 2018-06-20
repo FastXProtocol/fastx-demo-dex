@@ -37,12 +37,12 @@ function* getBalanceAsync() {
     let balanceFT = [],balanceNFT = [],utxos,balanceRes;
     for (let i = 1; i<=retry.count; i++){
         try {
-            utxos = yield fastx.getAllUTXO(fastx.defaultAccount);
-            console.log('utxos:',utxos.data);
+            // utxos = yield fastx.getAllUTXO(fastx.defaultAccount);
+            // console.log('utxos:',utxos.data);
             balanceRes = yield fastx.getBalance(fastx.defaultAccount);
-            console.log('balanceRes:',balanceRes.data);
-            balanceFT = balanceRes.data.result.FT;
-            balanceNFT = balanceRes.data.result.NFT
+            console.log('balanceRes:',balanceRes);
+            balanceFT = balanceRes.FT;
+            balanceNFT = balanceRes.NFT
             break; 
         }catch(err){
             if(i <= retry.count) {
@@ -143,7 +143,7 @@ const depositNFT = async (asset_contract, tokenid) => {
 }
 
 const logBalance = async (address) => {
-	let res = (await fastx.getBalance(address)).data.result;
+	let res = (await fastx.getBalance(address));
     console.log("\naddress: "+ (address || fastx.defaultAccount) );
     console.log("balance: ", res);
 }
@@ -204,7 +204,11 @@ function* watchSellContractAssetAsync(data) {
 }
 
 function* watchDepositAsync(action) {
-    yield fastx.deposit("0x0", action.depositPrice, 0, { from: fastx.defaultAccount});
+    try{
+        yield fastx.deposit("0x0", action.depositPrice, 0, { from: fastx.defaultAccount});
+    }catch (err){
+        console.log("deposit error:",err)
+    }
 }
 
 export const watchGetBalanceAsync = function* () {
