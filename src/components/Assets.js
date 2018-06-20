@@ -13,7 +13,7 @@ const client = new window.plasmaClient.client(chainOptions);
 
 export default class Assets extends Component {
   componentWillMount() {
-
+this.props.assetsSearch('')
   }
 
   render() {
@@ -82,16 +82,19 @@ export default class Assets extends Component {
      <div>
 	    <Container style={{ marginTop: '7em' }}>
 	      {loaderHtml}
-	      <Grid >
-	        <Grid.Row>
-	          <Grid.Column width={12}>
-	            <FilterSearch input={{ icon: 'search', iconPosition: 'left' }} placeholder='Search all crypto assets' fluid className='search-fluid' />
-	          </Grid.Column>
-	          <Grid.Column width={4}>
-	            <Dropdown selection options={assentsOptions} defaultValue={assentsOptions[0].value} onChange={setAssetsFilter} />
-	          </Grid.Column>
-	        </Grid.Row>
-	      </Grid>
+	      <Header size='large'>Current Listings</Header>
+	      {
+	      // <Grid >
+	      //   <Grid.Row>
+	      //     <Grid.Column width={12}>
+	      //       <FilterSearch input={{ icon: 'search', iconPosition: 'left' }} placeholder='Search all crypto assets' fluid className='search-fluid' />
+	      //     </Grid.Column>
+	      //     <Grid.Column width={4}>
+	      //       <Dropdown selection options={assentsOptions} defaultValue={assentsOptions[0].value} onChange={setAssetsFilter} />
+	      //     </Grid.Column>
+	      //   </Grid.Row>
+	      // </Grid>
+	      }
 	      <Grid>
 	        {listItems}
 	      </Grid>
