@@ -9,7 +9,10 @@ import './Search/Search.css';
 import './Card.css';
 import { chainOptions } from '../config';
 
-const client = new window.plasmaClient.client(chainOptions);
+// let fastx;
+// if(window.plasmaClient){
+//     fastx = new window.plasmaClient.client(chainOptions);
+// }
 
 export default class Assets extends Component {
   componentWillMount() {
@@ -28,9 +31,9 @@ this.props.assetsSearch('')
 		let preHtml, nowHtml, dateHtml;
 	
 		if(auction){
-			// current_price = client.web3.utils.fromWei(auction.current_price, 'ether');
+			// current_price = fastx.web3.utils.fromWei(auction.current_price, 'ether');
 			// current_price = parseFloat(current_price).toFixed(1);
-			// starting_price = client.web3.utils.fromWei(auction.starting_price, 'ether');
+			// starting_price = fastx.web3.utils.fromWei(auction.starting_price, 'ether');
 			// starting_price = parseFloat(starting_price).toFixed(1);
 			current_price = auction.current_price;
 			starting_price = auction.starting_price;

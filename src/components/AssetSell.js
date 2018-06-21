@@ -3,10 +3,7 @@ import { connect } from 'react-redux';
 import moment from 'moment';
 import { Card, Container, Divider, Dropdown,Dimmer, Form, Grid, Header, Input, Image, List,Loader, Menu, Modal, Segment, Icon, Button, Feed} from 'semantic-ui-react';
 import '../components/Dropdown.css';
-import { chainOptions } from '../config';
 import './modalModify.css';
-
-const client = new window.plasmaClient.client(chainOptions);
 
 export default class AssetDetail extends Component {
 	componentWillMount() {

@@ -5,7 +5,10 @@ import { Card, Container, Divider, Dropdown, Dimmer, Grid, Header, Image, List, 
 import '../components/Dropdown.css';
 import { chainOptions } from '../config';
 
-const client = new window.plasmaClient.client(chainOptions);
+// let fastx;
+// if(window.plasmaClient){
+//     fastx = new window.plasmaClient.client(chainOptions);
+// }
 
 export default class AssetDetail extends Component {
 	componentWillMount() {
@@ -18,7 +21,7 @@ export default class AssetDetail extends Component {
 		let sellerHtml, dateHtml;
 		
 		if(auction){
-			//current_price = client.web3.utils.fromWei(ps.amount1+'', 'ether');
+			//current_price = fastx.web3.utils.fromWei(ps.amount1+'', 'ether');
 			//current_price = parseFloat(current_price).toFixed(4)
 			current_price = fillTx.amount1;
 			if(auction.seller){

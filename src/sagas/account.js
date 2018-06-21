@@ -5,7 +5,10 @@ import erc721_abi from "../contract_data/ERC721Token.abi.json";
 import moment from 'moment';
 import axios from 'axios';
 
-const fastx = new window.plasmaClient.client(chainOptions);
+let fastx;
+if(window.plasmaClient){
+    fastx = new window.plasmaClient.client(chainOptions);
+}
 
 const getAssent = async (NFT) => {
     let assets = [];

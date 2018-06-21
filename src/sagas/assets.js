@@ -3,7 +3,10 @@ import { delay } from 'redux-saga';
 import axios from 'axios';
 import { chainOptions } from '../config';
 
-const fastx = new window.plasmaClient.client(chainOptions);
+let fastx;
+if(window.plasmaClient){
+    fastx = new window.plasmaClient.client(chainOptions);
+}
 
 const allPsTransactions = async () => {
     let allPsRes;
