@@ -16,7 +16,6 @@
     "react-router-redux": "^5.0.0-alpha.9",
     "react-scripts": "1.1.4",
     "react-web3": "https://github.com/FastXProtocol/react-web3",
-    "react-web3-network-status": "^1.0.0",
     "redux": "^4.0.0",
     "redux-saga": "^0.16.0",
     "semantic-ui-css": "^2.3.1",
