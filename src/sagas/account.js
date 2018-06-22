@@ -234,3 +234,7 @@ export const watchDeposit = function* () {
     yield takeEvery('DEPOSIT', watchDepositAsync)
 }
 
+export const watchAccountChange = function* () {
+    yield takeEvery('web3/CHANGE_ACCOUNT', getBalanceAsync)
+}
+

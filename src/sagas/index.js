@@ -12,6 +12,7 @@ export default function* rootSaga() {
   	fork(require('./account').watchGetAccount),
   	fork(require('./account').watchSellAsset),
     fork(require('./account').watchDeposit),
-    fork(require('./account').watchSellContractAsset)
+    fork(require('./account').watchSellContractAsset),
+    fork(require('./account').watchAccountChange)
   ])
 }
