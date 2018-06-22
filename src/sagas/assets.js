@@ -152,26 +152,11 @@ function* publishStatusAsync(action) {
     })
 }
 
-export const watchGetAssetsAsync = function* () {
+export default function * assetSaga () {
     yield takeEvery('GET_ASSETS', getAssetsAsync)
-}
-
-export const watchGetAssetsDetailAsync = function* () {
     yield takeEvery('GET_ASSET_DETAIL', getAssetsDetailAsync)
-}
-
-export const watchSetAssetsFilterAsync = function* () {
     yield takeEvery('SET_ASSETS_FILTER', getAssetsAsync)
-}
-
-export const watchSearchAssetsTitleAsync = function* () {
     yield takeEvery('ASSETS_SEARCH', getAssetsAsync)
-}
-
-export const watchassetBuyAsync = function* () {
     yield takeEvery('ASSETS_BUY', assetBuyAsync)
-}
-
-export const watchPublishStatusAsync = function* () {
     yield takeEvery('GET_PUBLISH_STATUS', publishStatusAsync)
 }

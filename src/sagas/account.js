@@ -214,27 +214,11 @@ function* watchDepositAsync(action) {
     }
 }
 
-export const watchGetBalanceAsync = function* () {
+export default function * accountSaga () {
     yield takeEvery('GET_BALANCE', getBalanceAsync)
-}
-
-export const watchGetAccount = function* () {
     yield takeEvery('GET_ACCOUNT', getAccountAsync)
-}
-
-export const watchSellAsset = function* () {
     yield takeEvery('SELL_ASSET', watchSellAssetAsync)
-}
-
-export const watchSellContractAsset = function* () {
     yield takeEvery('SELL_CONTRACT_ASSET', watchSellContractAssetAsync)
-}
-
-export const watchDeposit = function* () {
     yield takeEvery('DEPOSIT', watchDepositAsync)
-}
-
-export const watchAccountChange = function* () {
     yield takeEvery('web3/CHANGE_ACCOUNT', getBalanceAsync)
 }
-
