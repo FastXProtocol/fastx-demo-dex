@@ -1,5 +1,7 @@
 import React, { Component } from 'react';
 import { Switch, Route, Redirect, withRouter } from 'react-router-dom'
+import { connect } from 'react-redux';
+import { bindActionCreators } from 'redux';
 
 import SiteHeader from './components/SiteHeader';
 import SiteFooter from './components/SiteFooter';
@@ -8,10 +10,13 @@ import AssetList from './containers/AssetList';
 import AssetDetail from './containers/AssetDetail';
 import AssetSell from './containers/AssetSell';
 import Account from './containers/Account';
-import Web3 from 'web3';
+
+import * as appActions from './actions/app';
 import { Web3Provider } from 'react-web3';
 import { chainOptions } from './config';
+import Web3 from 'web3';
 import FlashMessage from './components/FlashMessage';
+
 
 // If the browser has injected Web3.JS
 if (window.web3 && window.web3.currentProvider) {
@@ -22,7 +27,11 @@ if (window.web3 && window.web3.currentProvider) {
   }, 0) 
 }
 
-export default class App extends Component {
+class App extends Component {
+  componentWillMount(){
+    this.props.setFastx(new window.plasmaClient.client(chainOptions));
+  }
+  
   render() {
     return (
       <div>
@@ -44,3 +53,17 @@ export default class App extends Component {
   }
 }
 
+function mapStateToProps(state){
+    return {}
+}
+
+function mapDispatchToProps(dispatch) {
+    return {
+        ...bindActionCreators(appActions, dispatch)
+    }
+}
+
+export default connect(
+    mapStateToProps,
+    mapDispatchToProps
+)(App)

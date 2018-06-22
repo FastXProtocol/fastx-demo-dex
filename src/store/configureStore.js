@@ -23,7 +23,7 @@ function configureStoreDev(initialState) {
       )
     );
   
-    sagaMiddleware.run(rootSaga);
+    sagaMiddleware.run(rootSaga, store);
     
     return store;
   }

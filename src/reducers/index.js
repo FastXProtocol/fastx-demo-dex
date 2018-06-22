@@ -6,5 +6,6 @@ export default combineReducers({
     // search: require('./search').default,
     assets: require('./assets').default,
     account: require('./account').default,
-    modal: require('./modal').default
+    modal: require('./modal').default,
+    app: require('./app').default
 });

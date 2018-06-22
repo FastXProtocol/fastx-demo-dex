@@ -1,12 +1,9 @@
 import { put, takeEvery, all ,take} from 'redux-saga/effects';
 import { delay } from 'redux-saga';
 import axios from 'axios';
-import { chainOptions } from '../config';
+import { chainOptions, retry} from '../config';
 
-let fastx;
-if(window.plasmaClient){
-    fastx = new window.plasmaClient.client(chainOptions);
-}
+let store,fastx;
 
 const allPsTransactions = async () => {
     let allPsRes;
@@ -21,6 +18,7 @@ const allPsTransactions = async () => {
 }
 
 function* getAssetsAsync(params) {
+    yield getFastx();
     let categories = {};
 
     let categoriesUrls = [];
@@ -67,6 +65,7 @@ function* getAssetsAsync(params) {
 }
 
 function* getAssetsDetailAsync(action) {
+    yield getFastx();
     yield put({
       type: 'SET_ASSETS_LOADING',
       isLoading: true
@@ -136,11 +135,12 @@ const bidAd = async (category,tokenId,fillTx) => {
 }
 
 function* assetBuyAsync(action) {
-    console.log(action)
+    yield getFastx();
     yield bidAd(action.category, action.id, action.fillTx)
 } 
 
 function* publishStatusAsync(action) {
+    yield getFastx();
     let allPs = yield allPsTransactions();
     let hasPublished = false;
     for(let value of allPs){
@@ -152,11 +152,21 @@ function* publishStatusAsync(action) {
     })
 }
 
-export default function * assetSaga () {
+async function getFastx(func) {
+    while(!fastx) {
+        fastx = store.getState().app.fastx;
+        await delay(200);
+    }
+
+    return true;
+}
+
+export default function * assetSaga (arg) {
+    store = arg;
     yield takeEvery('GET_ASSETS', getAssetsAsync)
     yield takeEvery('GET_ASSET_DETAIL', getAssetsDetailAsync)
     yield takeEvery('SET_ASSETS_FILTER', getAssetsAsync)
     yield takeEvery('ASSETS_SEARCH', getAssetsAsync)
     yield takeEvery('ASSETS_BUY', assetBuyAsync)
-    yield takeEvery('GET_PUBLISH_STATUS', publishStatusAsync)
+    yield takeEvery('GET_PUBLISH_STATUS',publishStatusAsync)
 }

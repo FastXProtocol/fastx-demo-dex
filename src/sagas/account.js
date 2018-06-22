@@ -5,10 +5,7 @@ import erc721_abi from "../contract_data/ERC721Token.abi.json";
 import moment from 'moment';
 import axios from 'axios';
 
-let fastx;
-if(window.plasmaClient){
-    fastx = new window.plasmaClient.client(chainOptions);
-}
+let store, fastx;
 
 const getAssent = async (NFT) => {
     let assets = [];
@@ -29,7 +26,76 @@ const getAssent = async (NFT) => {
     return assets;
 }
 
-function* getBalanceAsync() {   
+const normalizeAddress = (address) => {
+	if (!address) {
+        throw new Error();
+    }
+    if ('0x' == address.substr(0,2)) {
+        address = address.substr(2);
+    }
+    if (address == 0) address = '0'.repeat(40);
+    return new Buffer(address, 'hex');
+}
+
+const depositNFT = async (asset_contract, tokenid) => {
+    console.log('asset_contract:',asset_contract)
+    const ownerAddress = fastx.defaultAccount;
+    let nft_contract = new fastx.web3.eth.Contract( erc721_abi, asset_contract);
+
+    console.log('Approving token # '+tokenid+' to '+chainOptions.rootChainAddress);
+    await fastx.approve(asset_contract, 0, tokenid, {from: ownerAddress})
+        .on('transactionHash', console.log);
+    console.log( 'Approved address: ', await nft_contract.methods.getApproved(tokenid).call() );
+
+    await fastx.deposit(asset_contract, 0, tokenid, {from: ownerAddress});
+    return {
+        category: asset_contract, 
+        tokenId: tokenid
+    };
+}
+
+const logBalance = async (address) => {
+	let res = (await fastx.getBalance(address));
+    console.log("\naddress: "+ (address || fastx.defaultAccount) );
+    console.log("balance: ", res);
+}
+
+const postNftAd = async (contract, tokenid, end, price, options={}) => {
+	let from = options.from || fastx.defaultAccount;
+    let categoryContract;
+    console.log(contract)
+    try{
+        categoryContract = normalizeAddress(contract).toString('hex');
+    }catch (e){
+        console.log(e)
+    }
+    console.log('from: '+from + ', contract: '+categoryContract+', tokenid: '+tokenid);
+
+    let utxo = await fastx.searchUTXO({
+        category: categoryContract, 
+        tokenId: tokenid,
+    }, { from: from });
+    console.log('\nUTXO',utxo);
+    const [_blknum, _txindex, _oindex, _contract, _balance, _tokenid] = utxo;
+
+    return fastx.sendPsTransaction(
+        _blknum, _txindex, _oindex, 
+        from, '0'.repeat(40), price, 0, // sell for the price in eth
+        _contract, 0, _tokenid, // sell the token
+        0, end, null, from
+    );
+}
+
+const postAd = async (data) => {
+	const nft_ad = await depositNFT(data.params.categroy, data.params.sellId);
+	await logBalance();
+	const end = moment(data.params.end).add(1, 'days').unix();
+	const price = parseFloat(data.params.sellPrice);
+	await postNftAd(nft_ad.category, nft_ad.tokenId, end, price);
+}
+
+function* getBalanceAsync() {
+    yield getFastx();
     yield put({
       type: 'SET_ASSETS_LOADING',
       isLoading: true
@@ -86,6 +152,7 @@ function* getBalanceAsync() {
 }
 
 function* getAccountAsync() {
+    yield getFastx();
     let accounts = [];
     for (let i = 1; i<=retry.count; i++){
         try {
@@ -100,105 +167,23 @@ function* getAccountAsync() {
             }
         }
     }
-	
+    
     fastx.defaultAccount = accounts[0];
     console.log('getAccountAddress:',fastx.defaultAccount);
     yield put({
-	  type: 'ACCOUNT_RECEIVED',
-	  ownerAddress: accounts[0]
-	})
-}
-
-const normalizeAddress = (address) => {
-	if (!address) {
-        throw new Error();
-    }
-    if ('0x' == address.substr(0,2)) {
-        address = address.substr(2);
-    }
-    if (address == 0) address = '0'.repeat(40);
-    return new Buffer(address, 'hex');
-}
-
-const depositNFT = async (asset_contract, tokenid) => {
-    console.log('asset_contract:',asset_contract)
-    const ownerAddress = fastx.defaultAccount;
-    let nft_contract = new fastx.web3.eth.Contract( erc721_abi, asset_contract);
-
-    // create a new token for testing
-    // const totalSupply = await nft_contract.methods.totalSupply().call();
-    // tokenid = parseInt(totalSupply) + 10;
-    // console.log('Creating new token: '+tokenid);
-    // await nft_contract.methods.mint(ownerAddress, tokenid)
-    //     .send({from: ownerAddress, gas: 3873385})
-    //     .on('transactionHash', console.log);
-
-    console.log('Approving token # '+tokenid+' to '+chainOptions.rootChainAddress);
-    await fastx.approve(asset_contract, 0, tokenid, {from: ownerAddress})
-        .on('transactionHash', console.log);
-    console.log( 'Approved address: ', await nft_contract.methods.getApproved(tokenid).call() );
-
-    await fastx.deposit(asset_contract, 0, tokenid, {from: ownerAddress});
-    return {
-        category: asset_contract, 
-        tokenId: tokenid
-    };
-}
-
-const logBalance = async (address) => {
-	let res = (await fastx.getBalance(address));
-    console.log("\naddress: "+ (address || fastx.defaultAccount) );
-    console.log("balance: ", res);
-}
-
-const postNftAd = async (contract, tokenid, end, price, options={}) => {
-	let from = options.from || fastx.defaultAccount;
-    let categoryContract;
-    console.log(contract)
-    try{
-        categoryContract = normalizeAddress(contract).toString('hex');
-    }catch (e){
-        console.log(e)
-    }
-    console.log('from: '+from + ', contract: '+categoryContract+', tokenid: '+tokenid);
-
-    let utxo = await fastx.searchUTXO({
-        category: categoryContract, 
-        tokenId: tokenid,
-    }, { from: from });
-    console.log('\nUTXO',utxo);
-    const [_blknum, _txindex, _oindex, _contract, _balance, _tokenid] = utxo;
-
-    return fastx.sendPsTransaction(
-        _blknum, _txindex, _oindex, 
-        from, '0'.repeat(40), price, 0, // sell for the price in eth
-        _contract, 0, _tokenid, // sell the token
-        0, end, null, from
-    );
-}
-
-const postAd = async (data) => {
-	const nft_ad = await depositNFT(data.params.categroy, data.params.sellId);
-	await logBalance();
-	const end = moment(data.params.end).add(1, 'days').unix();
-	const price = parseFloat(data.params.sellPrice);
-	await postNftAd(nft_ad.category, nft_ad.tokenId, end, price);
+      type: 'ACCOUNT_RECEIVED',
+      ownerAddress: accounts[0]
+    })
 }
 
 function* watchSellAssetAsync(data) {
-	// data = {
-	// 	params: {
-	// 		categroy: "0x952CE607bD9ab82e920510b2375cbaD234d28c8F",
-	// 		end: '2018-06-13',
-	// 		sellPrice: '1',
-	// 		sellId: '283'
-	// 	}
-	// }
+    yield getFastx();
 	console.log("sellAssetParams:",data.params)
 	postAd(data);
 }
 
 function* watchSellContractAssetAsync(data) {
+    yield getFastx();
     const end = moment(data.params.end).add(1, 'days').unix();
     const price = parseFloat(data.params.sellPrice);
     console.log("sellContractAssetParams",data.params)
@@ -207,6 +192,7 @@ function* watchSellContractAssetAsync(data) {
 }
 
 function* watchDepositAsync(action) {
+    yield getFastx();
     try{
         yield fastx.deposit("0x0", action.depositPrice, 0, { from: fastx.defaultAccount});
     }catch (err){
@@ -214,11 +200,22 @@ function* watchDepositAsync(action) {
     }
 }
 
-export default function * accountSaga () {
-    yield takeEvery('GET_BALANCE', getBalanceAsync)
-    yield takeEvery('GET_ACCOUNT', getAccountAsync)
-    yield takeEvery('SELL_ASSET', watchSellAssetAsync)
-    yield takeEvery('SELL_CONTRACT_ASSET', watchSellContractAssetAsync)
-    yield takeEvery('DEPOSIT', watchDepositAsync)
-    yield takeEvery('web3/CHANGE_ACCOUNT', getBalanceAsync)
+async function getFastx(func) {
+    while(!fastx) {
+        fastx = store.getState().app.fastx;
+        await delay(200);
+    }
+
+    return true;
+}
+
+export default function * accountSaga (arg) {
+    store = arg;
+        
+    yield takeEvery('GET_BALANCE', getFastx, getBalanceAsync)
+    yield takeEvery('GET_ACCOUNT', getFastx, getAccountAsync)
+    yield takeEvery('SELL_ASSET', getFastx, watchSellAssetAsync)
+    yield takeEvery('SELL_CONTRACT_ASSET',getFastx, watchSellContractAssetAsync)
+    yield takeEvery('DEPOSIT',getFastx, watchDepositAsync)
+    yield takeEvery('web3/CHANGE_ACCOUNT',getFastx, getBalanceAsync)
 }
