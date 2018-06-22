@@ -77,7 +77,6 @@ export default class AssetDetail extends Component {
 									</Dropdown.Menu>
 								</Dropdown>
 					        </h2>
-					        <p style={{ color: 'grey' }}>View on { asset.asset_contract ? asset.asset_contract.name : ''}</p>
 					        { sellerHtml }
 							<p style={{ color: 'grey' }}>{ asset.description }</p>
 					      </Grid.Column>
@@ -94,10 +93,6 @@ export default class AssetDetail extends Component {
 							    		BUY THIS ITEM
 							    		<Icon name='chevron right' />
 							    	</Button>
-							    </Card.Content>
-							    <Card.Content extra>
-							      <span style={{ color: 'black', marginRight: '5px'}}>Earn ㆔ 0</span>
-							      by referring this asset
 							    </Card.Content>
 							</Card>
 					      </Grid.Column>

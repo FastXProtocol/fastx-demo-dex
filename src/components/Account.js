@@ -65,55 +65,55 @@ export default class Account extends Component {
                 {cards}
                 </Grid>
             </Tab.Pane> },
-            { menuItem: 'My Ads', render: () => <Tab.Pane attached={false}>Tab 2 Content</Tab.Pane> },
-            { menuItem: 'Bids', render: () => <Tab.Pane attached={false}>
-                <Grid>
-                    <Grid.Column width={12}>
-                        <Grid.Row>
-                            <Grid>
-                                <Grid.Column width={8}>
-                                    <Dropdown selection options={bidsOptions} defaultValue={bidsOptions[0].value}/>
-                                </Grid.Column>
-                                <Grid.Column width={8}>
-                                    <p style={{ fontSize:'16px', color:'grey', lineHeight:'32px'}}>Here are your recent bids</p>
-                                </Grid.Column>
-                            </Grid>
-                        </Grid.Row>
-                        <Grid.Row>
-                            <div style={{padding: '16px', textAlign:'center',boxShadow: '1px 1px 10px grey',marginTop: '1em'}}>
-                                <p style={{ fontSize:'16px', color:'grey', lineHeight:'32px'}}>No bids yet.</p>
-                                <Button color='teal' size='big'>Find assets you can bid on</Button>
-                            </div>
-                        </Grid.Row>
-                    </Grid.Column>
-                    <Grid.Column width={4}>
-                        <p>W-ETH Station</p>
-                        <Card>
-                            <Card.Content extra >
-                                <Feed>
-                                    <Feed.Event>
-                                      <Feed.Label image='/assets/images/avatar/small/elliot.jpg' />
-                                      <Feed.Content>
-                                        <Feed.Date content='ETH' />
-                                        <Feed.Summary>
-                                          {this.props.balance}
-                                        </Feed.Summary>
-                                      </Feed.Content>
-                                    </Feed.Event>
-                                </Feed>
-                            </Card.Content>
-                            <Card.Content extra className="card-input" >
-                                <Input placeholder='Convert to W-ETH' type="number" />
-                            </Card.Content>
-                            <Card.Content extra textAlign="center">
-                                <a style={{ color: 'dodgerblue' }}>Upgrade <Icon name='chevron right' /></a>
-                            </Card.Content>
-                        </Card>
-                    </Grid.Column>
+            // { menuItem: 'My Ads', render: () => <Tab.Pane attached={false}>Tab 2 Content</Tab.Pane> },
+            // { menuItem: 'Bids', render: () => <Tab.Pane attached={false}>
+            //     <Grid>
+            //         <Grid.Column width={12}>
+            //             <Grid.Row>
+            //                 <Grid>
+            //                     <Grid.Column width={8}>
+            //                         <Dropdown selection options={bidsOptions} defaultValue={bidsOptions[0].value}/>
+            //                     </Grid.Column>
+            //                     <Grid.Column width={8}>
+            //                         <p style={{ fontSize:'16px', color:'grey', lineHeight:'32px'}}>Here are your recent bids</p>
+            //                     </Grid.Column>
+            //                 </Grid>
+            //             </Grid.Row>
+            //             <Grid.Row>
+            //                 <div style={{padding: '16px', textAlign:'center',boxShadow: '1px 1px 10px grey',marginTop: '1em'}}>
+            //                     <p style={{ fontSize:'16px', color:'grey', lineHeight:'32px'}}>No bids yet.</p>
+            //                     <Button color='teal' size='big'>Find assets you can bid on</Button>
+            //                 </div>
+            //             </Grid.Row>
+            //         </Grid.Column>
+            //         <Grid.Column width={4}>
+            //             <p>W-ETH Station</p>
+            //             <Card>
+            //                 <Card.Content extra >
+            //                     <Feed>
+            //                         <Feed.Event>
+            //                           <Feed.Label image='/assets/images/avatar/small/elliot.jpg' />
+            //                           <Feed.Content>
+            //                             <Feed.Date content='ETH' />
+            //                             <Feed.Summary>
+            //                               {this.props.balance}
+            //                             </Feed.Summary>
+            //                           </Feed.Content>
+            //                         </Feed.Event>
+            //                     </Feed>
+            //                 </Card.Content>
+            //                 <Card.Content extra className="card-input" >
+            //                     <Input placeholder='Convert to W-ETH' type="number" />
+            //                 </Card.Content>
+            //                 <Card.Content extra textAlign="center">
+            //                     <a style={{ color: 'dodgerblue' }}>Upgrade <Icon name='chevron right' /></a>
+            //                 </Card.Content>
+            //             </Card>
+            //         </Grid.Column>
                    
                     
-                </Grid>
-            </Tab.Pane> },
+            //     </Grid>
+            // </Tab.Pane> },
             { menuItem: 'Sell', render: () => <Tab.Pane attached={false}>
                 <Form>
                     <Form.Field inline>
@@ -151,7 +151,7 @@ export default class Account extends Component {
                 <Form>
                     <Form.Field inline>
                       <label className='align_right_label'>Price*</label>
-                      <Input label='ETH' type='number' placeholder='' onChange={this.props.setDepositPrice} />
+                      <Input label='Wei' type='number' placeholder='' onChange={this.props.setDepositPrice} />
                     </Form.Field>
                     <Button type='submit' color='teal' style={{marginLeft:'110px'}} onClick={() => this.props.deposit(this.props.depositPrice)}>Submit</Button>
                 </Form>
