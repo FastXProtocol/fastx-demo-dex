@@ -1,13 +1,11 @@
 import _ from 'lodash';
 import React, { Component } from 'react';
-import faker from 'faker';
-import { Card, Container, Divider, Dropdown, Dimmer, Grid, Header, Image, List, Loader, Menu, Segment, Icon } from 'semantic-ui-react';
+import { Card, Container, Dimmer, Grid, Header, Image, Loader, Icon } from 'semantic-ui-react';
 import moment from 'moment';
 import FilterSearch from '../containers/SearchStandard';
 import { assentsOptions } from './Common';
 import './Search/Search.css';
 import './Card.css';
-import { chainOptions } from '../config';
 
 // let fastx;
 // if(window.plasmaClient){
@@ -83,9 +81,9 @@ this.props.assetsSearch('')
 
     return (
      <div>
-	    <Container style={{ marginTop: '7em' }}>
-	      {loaderHtml}
-	      <Header size='large'>Current Listings</Header>
+	    <Container style={{ marginTop: '1em' }}>
+				{loaderHtml}
+	      <Header as='h1'>Current Listings</Header>
 	      {
 	      // <Grid >
 	      //   <Grid.Row>

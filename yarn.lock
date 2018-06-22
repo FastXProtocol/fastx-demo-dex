@@ -6122,16 +6122,6 @@ react-scripts@1.1.4:
   optionalDependencies:
     fsevents "^1.1.3"
 
-react-web3-network-status@^1.0.0:
-  version "1.0.0"
-  resolved "https://registry.yarnpkg.com/react-web3-network-status/-/react-web3-network-status-1.0.0.tgz#d6cd9ac1a002be786089f761ebb0f157f56c4b78"
-  dependencies:
-    bluebird "^3.5.0"
-    prop-types "^15.5.10"
-    react-redux "^5.0.6"
-    redux "^3.7.2"
-    redux-saga "^0.15.6"
-
 "react-web3@https://github.com/FastXProtocol/react-web3":
   version "0.4.5"
   resolved "https://github.com/FastXProtocol/react-web3#18144af59b770e6b05de9f5e49a0e29df81e905e"

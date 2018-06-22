@@ -58,7 +58,7 @@ export default class AssetDetail extends Component {
 		}
 
         return (
-            <Container style={{ marginTop: '7em' }}>
+            <Container style={{ marginTop: '1em' }}>
             	{loaderHtml}
             	<Grid>
 				    <Grid.Column width={8}>

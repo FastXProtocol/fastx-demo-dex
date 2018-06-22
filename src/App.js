@@ -11,6 +11,7 @@ import Account from './containers/Account';
 import Web3 from 'web3';
 import { Web3Provider } from 'react-web3';
 import { chainOptions } from './config';
+import FlashMessage from './components/FlashMessage';
 
 // If the browser has injected Web3.JS
 if (window.web3 && window.web3.currentProvider) {
@@ -26,6 +27,7 @@ export default class App extends Component {
     return (
       <div>
         <SiteHeader />
+          <FlashMessage/>
           <Web3Provider>
             <Switch>
               <Route path='/account' component={Account} />

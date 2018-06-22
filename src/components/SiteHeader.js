@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { push } from 'react-router-redux';
 
-import { Card, Container, Divider, Dropdown, Grid, Image, List, Menu, Segment } from 'semantic-ui-react';
+import { Container, Image, Menu, Label } from 'semantic-ui-react';
 
 import * as accountActions from '../actions/account';
 
@@ -30,7 +30,7 @@ class SiteHeader extends Component {
                         src='/logo.png'
                         style={{ marginRight: '1.5em' }}
                     />
-                    FastX Dex Demo
+                    FastX Dex <Label color='orange' horizontal>Rinkeby</Label>
                     </Menu.Item>
                     <Menu.Item
                         name='marketplace'

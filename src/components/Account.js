@@ -158,7 +158,7 @@ export default class Account extends Component {
             </Tab.Pane> },
             ];
         return (
-            <Container style={{ marginTop: '7em' }}>
+            <Container style={{ marginTop: '1em' }}>
                 <Grid>
                     <Grid.Column width={12}>
                         <Item.Group>
