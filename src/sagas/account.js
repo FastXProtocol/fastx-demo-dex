@@ -212,10 +212,10 @@ async function getFastx(func) {
 export default function * accountSaga (arg) {
     store = arg;
         
-    yield takeEvery('GET_BALANCE', getFastx, getBalanceAsync)
-    yield takeEvery('GET_ACCOUNT', getFastx, getAccountAsync)
-    yield takeEvery('SELL_ASSET', getFastx, watchSellAssetAsync)
-    yield takeEvery('SELL_CONTRACT_ASSET',getFastx, watchSellContractAssetAsync)
-    yield takeEvery('DEPOSIT',getFastx, watchDepositAsync)
-    yield takeEvery('web3/CHANGE_ACCOUNT',getFastx, getBalanceAsync)
+    yield takeEvery('GET_BALANCE', getBalanceAsync)
+    yield takeEvery('GET_ACCOUNT', getAccountAsync)
+    yield takeEvery('SELL_ASSET',  watchSellAssetAsync)
+    yield takeEvery('SELL_CONTRACT_ASSET', watchSellContractAssetAsync)
+    yield takeEvery('DEPOSIT', watchDepositAsync)
+    yield takeEvery('web3/CHANGE_ACCOUNT',getBalanceAsync)
 }
