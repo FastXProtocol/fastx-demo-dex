@@ -17,13 +17,13 @@ import FlashMessage from './components/FlashMessage';
 
 
 // If the browser has injected Web3.JS
-if (window.web3 && window.web3.currentProvider) {
-  // Then replace the old injected version by the local Web3.JS version 1.0.0-beta.N
-  setTimeout(function(){
-    window.web3 = new Web3(window.web3.currentProvider);
-    console.log(window.web3.version)
-  }, 0) 
-}
+// if (window.web3 && window.web3.currentProvider) {
+//   // Then replace the old injected version by the local Web3.JS version 1.0.0-beta.N
+//   setTimeout(function(){
+//     window.web3 = new Web3(window.web3.currentProvider);
+//     console.log(window.web3.version)
+//   }, 0) 
+// }
 
 export default class App extends Component {
   

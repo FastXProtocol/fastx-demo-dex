@@ -25,8 +25,12 @@ function configureStoreDev(initialState) {
       )
     );
 
-    store.dispatch(appActions.setFastx(new window.plasmaClient.client(chainOptions)))
-  
+    try{
+      store.dispatch(appActions.setFastx(new window.plasmaClient.client(chainOptions)))
+    }catch(err){
+      console.log("setFastx:",err)
+    }
+    
     sagaMiddleware.run(rootSaga, store);
     
     return store;
