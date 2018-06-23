@@ -11,9 +11,7 @@ import AssetDetail from './containers/AssetDetail';
 import AssetSell from './containers/AssetSell';
 import Account from './containers/Account';
 
-import * as appActions from './actions/app';
 import { Web3Provider } from 'react-web3';
-import { chainOptions } from './config';
 import Web3 from 'web3';
 import FlashMessage from './components/FlashMessage';
 
@@ -27,10 +25,7 @@ if (window.web3 && window.web3.currentProvider) {
   }, 0) 
 }
 
-class App extends Component {
-  componentWillMount(){
-    this.props.setFastx(new window.plasmaClient.client(chainOptions));
-  }
+export default class App extends Component {
   
   render() {
     return (
@@ -53,17 +48,3 @@ class App extends Component {
   }
 }
 
-function mapStateToProps(state){
-    return {}
-}
-
-function mapDispatchToProps(dispatch) {
-    return {
-        ...bindActionCreators(appActions, dispatch)
-    }
-}
-
-export default connect(
-    mapStateToProps,
-    mapDispatchToProps
-)(App)

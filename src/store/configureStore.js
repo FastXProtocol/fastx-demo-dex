@@ -4,6 +4,8 @@ import { routerMiddleware } from 'react-router-redux';
 import rootReducer from '../reducers';
 import createSagaMiddleware from 'redux-saga'
 import rootSaga from '../sagas';
+import * as appActions from '../actions/app';
+import { chainOptions } from '../config';
 
 export const history = createHistory();
 
@@ -22,6 +24,8 @@ function configureStoreDev(initialState) {
       applyMiddleware(...middlewares)
       )
     );
+
+    store.dispatch(appActions.setFastx(new window.plasmaClient.client(chainOptions)))
   
     sagaMiddleware.run(rootSaga, store);
     

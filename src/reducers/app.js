@@ -4,7 +4,7 @@ const initialState = {
   fastx: null
 };
 
-export default function assets(state = initialState, action = {}) {
+export default function app(state = initialState, action = {}) {
   switch (action.type) {
     case SET_FASTX:
       return {
