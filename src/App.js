@@ -6,6 +6,7 @@ import { bindActionCreators } from 'redux';
 import SiteHeader from './components/SiteHeader';
 import SiteFooter from './components/SiteFooter';
 import SiteMenu from './components/SiteMenu';
+import Deposit from './containers/Deposit';
 import AssetList from './containers/AssetList';
 import AssetDetail from './containers/AssetDetail';
 import AssetSell from './containers/AssetSell';
@@ -38,6 +39,7 @@ export default class App extends Component {
               <Route exact path='/assets' component={AssetList} />
               <Route exact path='/assets/:category/:id' component={AssetDetail} />
               <Route exact path='/assets/:category/:id/sell' component={AssetSell} />
+              <Route exact path='/deposit' component={Deposit} />
               {/* <Route path='/b/:hash/:name/' component={withRouter(WithBoard(BoardPage))} /> */}
               <Redirect path="/" to={{pathname: '/assets'}} />
             </Switch>

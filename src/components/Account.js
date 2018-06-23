@@ -40,7 +40,7 @@ export default class Account extends Component {
         let cards = this.props.items.map((item, i) => {
             let url = '/assets/952ce607bd9ab82e920510b2375cbad234d28c8f/'+item.id+'/sell';
             return (
-                <Grid.Column key={i} mobile={16} tablet={8} computer={4} onClick={() => this.props.toAssetDetail(url)}>
+                <Grid.Column key={i} mobile={16} tablet={8} computer={4} onClick={() => this.props.goto(url)}>
                     <Card>
                       <Image src={item.image_url_cdn} />
                       <Card.Content>
@@ -153,7 +153,7 @@ export default class Account extends Component {
                       <label className='align_right_label'>Price*</label>
                       <Input label='Wei' type='number' placeholder='' onChange={this.props.setDepositPrice} />
                     </Form.Field>
-                    <Button type='submit' color='teal' style={{marginLeft:'110px'}} onClick={() => this.props.deposit(this.props.depositPrice)}>Submit</Button>
+                    <Button type='submit' color='teal' style={{marginLeft:'110px'}} onClick={() => this.props.toDeposit(this.props.depositPrice)}>Submit</Button>
                 </Form>
             </Tab.Pane> },
             ];

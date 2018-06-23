@@ -193,11 +193,22 @@ function* watchSellContractAssetAsync(data) {
 
 function* watchDepositAsync(action) {
     yield getFastx();
+
+    yield put({
+      type: 'DEPOSIT_STATUS',
+      waiting: false
+    })
+
     try{
         yield fastx.deposit("0x0", action.depositPrice, 0, { from: fastx.defaultAccount});
     }catch (err){
         console.log("deposit error:",err)
     }
+
+    yield put({
+      type: 'DEPOSIT_STATUS',
+      waiting: true
+    })
 }
 
 async function getFastx(func) {

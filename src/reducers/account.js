@@ -11,6 +11,7 @@ const SET_SELL_ID = 'SET_SELL_ID';
 const SET_SELL_PRICE = 'SET_SELL_PRICE';
 const SET_DEPOSIT_PRICE = 'SET_DEPOSIT_PRICE';
 const USER_ITEMS_RECEIVED = 'USER_ITEMS_RECEIVED';
+const DEPOSIT_STATUS = 'DEPOSIT_STATUS';
 
 const initialState = {
   balance: 0,
@@ -20,7 +21,8 @@ const initialState = {
   sellId: '',
   sellPrice: 0,
   depositPrice: 0,
-  items: []
+  items: [],
+  waiting: false
 };
 
 export default function assets(state = initialState, action = {}) {
@@ -77,6 +79,11 @@ export default function assets(state = initialState, action = {}) {
       return {
         ...state,
         items: action.items
+      }
+    case DEPOSIT_STATUS:
+      return {
+        ...state,
+        waiting: action.waiting
       }
     default:
       return state;

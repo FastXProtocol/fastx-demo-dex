@@ -26,7 +26,11 @@ function mapStateToProps(state){
 
 function mapDispatchToProps(dispatch) {
     return {
-        toAssetDetail: (url) => dispatch(push(url)),
+        goto: (url) => dispatch(push(url)),
+        toDeposit: (price) => {
+            dispatch(accountActions.deposit(price))
+            dispatch(push('/deposit'))
+        },
         ...bindActionCreators(accountActions, dispatch)
     }
 }
