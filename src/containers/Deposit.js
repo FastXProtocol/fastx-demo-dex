@@ -3,7 +3,7 @@ import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import { push } from 'react-router-redux';
-import Deposit from '../components/Deposit';
+import TransactionStep from '../components/TransactionStep';
 
 import * as accountActions from '../actions/account';
 
@@ -15,12 +15,11 @@ function mapStateToProps(state){
 
 function mapDispatchToProps(dispatch) {
     return {
-        goto: (url) => dispatch(push(url)),
-        ...bindActionCreators(accountActions, dispatch)
+        goto: () => dispatch(push('/account'))
     }
 }
 
 export default connect(
     mapStateToProps,
     mapDispatchToProps
-)(Deposit)
+)(TransactionStep)
