@@ -1,5 +1,5 @@
-import { put, takeEvery, all ,take} from 'redux-saga/effects';
-import { delay } from 'redux-saga';
+import { call,put, takeEvery, all ,take} from 'redux-saga/effects';
+import { delay, channel} from 'redux-saga';
 import { chainOptions, retry} from '../config';
 import erc721_abi from "../contract_data/ERC721Token.abi.json";
 import moment from 'moment';
@@ -191,6 +191,8 @@ function* watchSellContractAssetAsync(data) {
     console.log("postNftAdResult:",result);
 }
 
+const depositChannel = channel();
+
 function* watchDepositAsync(action) {
     yield getFastx();
 
@@ -200,15 +202,23 @@ function* watchDepositAsync(action) {
     })
 
     try{
-        yield fastx.deposit("0x0", action.depositPrice, 0, { from: fastx.defaultAccount});
+        fastx.deposit("0x0", action.depositPrice, 0, { from: fastx.defaultAccount}).on('transactionHash', function (hash){
+            //在回调中无法直接yield put更新，所以使用channel的方式处理
+            depositChannel.put({
+              type: 'DEPOSIT_STATUS',
+              waiting: true
+            })
+        });
     }catch (err){
         console.log("deposit error:",err)
     }
+}
 
-    yield put({
-      type: 'DEPOSIT_STATUS',
-      waiting: true
-    })
+function* watchDepositChannel() {
+  while (true) {
+    const action = yield take(depositChannel)
+    yield put(action)
+  }
 }
 
 async function getFastx(func) {
@@ -228,5 +238,6 @@ export default function * accountSaga (arg) {
     yield takeEvery('SELL_ASSET',  watchSellAssetAsync)
     yield takeEvery('SELL_CONTRACT_ASSET', watchSellContractAssetAsync)
     yield takeEvery('DEPOSIT', watchDepositAsync)
+    yield takeEvery('DEPOSIT', watchDepositChannel)
     yield takeEvery('web3/CHANGE_ACCOUNT',getBalanceAsync)
 }
