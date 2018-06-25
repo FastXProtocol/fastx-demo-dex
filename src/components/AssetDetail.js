@@ -5,15 +5,7 @@ import { Card, Container, Divider, Dropdown, Dimmer, Grid, Header, Image, List, 
 import '../components/Dropdown.css';
 import { chainOptions } from '../config';
 
-// let fastx;
-// if(window.plasmaClient){
-//     fastx = new window.plasmaClient.client(chainOptions);
-// }
-
 export default class AssetDetail extends Component {
-	componentWillMount() {
-		this.props.getAssetDetail(this.props.id);
-    }
 	
     render() {
     	const { asset, id, allPs, fillTx } = this.props;

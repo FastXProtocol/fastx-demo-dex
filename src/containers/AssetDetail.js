@@ -3,8 +3,22 @@ import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import { push } from 'react-router-redux';
 
-import AssetDetail from '../components/AssetDetail';
+import AssetDetailComponent from '../components/AssetDetail';
 import * as assetsActions from '../actions/assets';
+
+class AssetDetail extends Component {
+    componentWillMount() {
+      this.props.getAssetDetail(this.props.id);
+      this.props.getPublishStatus(this.props.category, this.props.id);
+    }
+  
+    render() {
+      return (
+        <AssetDetailComponent {...this.props}/>
+      )
+    };
+}
+
 
 const getFillTx = (category, id, allPs) => {
   let fillTx = {};
@@ -17,6 +31,20 @@ const getFillTx = (category, id, allPs) => {
   return fillTx;
 }
 
+const checkIsOwner = async (fastx, allPs) => {
+  let isOwner = false;
+  let accounts = [];
+  accounts = await fastx.web3.eth.getAccounts();
+  const ownerAddress = accounts[0];
+  for (let value of allPs){
+    if(("0x"+value.newowner1) == ownerAddress.toLowerCase()){
+      isOwner = true;
+      break;
+    }
+  }
+  return isOwner;
+}
+
 function mapStateToProps(state, props){
     return {
        id: props.match.params.id,
@@ -24,6 +52,8 @@ function mapStateToProps(state, props){
        asset: state.assets.asset,
        allPs: state.assets.allPs,
        fillTx: getFillTx(props.match.params.category, props.match.params.id, state.assets.allPs),
+       fastx: state.app.fastx,
+       isOwner: checkIsOwner(state.app.fastx, state.assets.allPs),
        isLoading: state.assets.isLoading
     }
 }
