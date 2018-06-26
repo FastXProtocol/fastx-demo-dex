@@ -32,16 +32,12 @@ const getFillTx = (category, id, allPs) => {
   return fillTx;
 }
 
-const checkIsOwner = async (fastx, allPs) => {
+const checkIsOwner = (fastx, category, id, allPs) => {
   let isOwner = false;
-  let accounts = [];
-  accounts = await fastx.web3.eth.getAccounts();
-  const ownerAddress = accounts[0];
-  for (let value of allPs){
-    if(("0x"+value.newowner1) == ownerAddress.toLowerCase()){
-      isOwner = true;
-      break;
-    }
+  const ownerAddress = fastx.web3.eth.defaultAccount;
+  const fillTx = getFillTx(category, id, allPs);
+  if(("0x"+fillTx.newowner1) == ownerAddress.toLowerCase()){
+    isOwner = true;
   }
   return isOwner;
 }
@@ -54,7 +50,7 @@ function mapStateToProps(state, props){
        allPs: state.assets.allPs,
        fillTx: getFillTx(props.match.params.category, props.match.params.id, state.assets.allPs),
        fastx: state.app.fastx,
-       isOwner: checkIsOwner(state.app.fastx, state.assets.allPs),
+       userIsOwner: checkIsOwner(state.app.fastx, props.match.params.category, props.match.params.id, state.assets.allPs),
        isLoading: state.assets.isLoading,
        hasPublished: state.assets.hasPublished,
        waiting: state.account.waiting,
