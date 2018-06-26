@@ -44,7 +44,7 @@ sellPrice: this.props.sellPrice}, this.props.hasPublished)}>Sell</Button>
     	}
 
         return (
-            <Container style={{ marginTop: '1em' }}>
+            <Container style={{ marginTop: '1em' }} textAlign='center'>
             	<Modal size='small' open={this.props.modal.open} onClose={this.props.close}>
 					<Modal.Header>提示</Modal.Header>
 					<Modal.Content>
@@ -57,8 +57,9 @@ sellPrice: this.props.sellPrice}, this.props.hasPublished)}>Sell</Button>
             	<Step.Group ordered>
             		<Step completed={!this.props.status} active={this.props.status}>
                         <Step.Content>
-                            <Step.Title>Confirm Order</Step.Title>
-                            <Step.Description>   
+                            <Step.Title>Form</Step.Title>
+                            <Step.Description> 
+                            	Fill end and price  
                             </Step.Description>
                         </Step.Content>
                     </Step>
