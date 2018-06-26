@@ -9,13 +9,13 @@ export default class AssetDetail extends Component {
 	
     render() {
     	const { asset, id, allPs, fillTx } = this.props;
-		let auction = asset.auction?asset.auction:null, current_price;
-		let sellerHtml, dateHtml;
+		let auction = asset.auction?asset.auction:null, current_price = 0;
+		let sellerHtml, dateHtml = 'Now';
 		
 		if(auction){
 			//current_price = fastx.web3.utils.fromWei(ps.amount1+'', 'ether');
 			//current_price = parseFloat(current_price).toFixed(4)
-			current_price = fillTx.amount1;
+			current_price = fillTx.amount1 || 0;
 			if(auction.seller){
 				sellerHtml = <Feed>
 						    <Feed.Event>
@@ -50,7 +50,7 @@ export default class AssetDetail extends Component {
 		}
 
 		let confirmBtnHtml;
-		if(this.props.userIsOwner){
+		if(this.props.isOwner){
 			confirmBtnHtml = <Button type='submit' color='teal' style={{marginLeft:'110px',marginTop: '2em'}} onClick={() => this.props.sellCheck(this.props.category,
 					  this.props.id, this.props.hasPublished)}>Sell</Button>
 		}else{

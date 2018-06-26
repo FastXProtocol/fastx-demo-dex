@@ -5,12 +5,15 @@ import { push } from 'react-router-redux';
 
 import AssetDetailComponent from '../components/AssetDetail';
 import * as assetsActions from '../actions/assets';
+import * as accountActions from '../actions/account';
 import * as modalActions from '../actions/modal';
 
 class AssetDetail extends Component {
     componentWillMount() {
       this.props.getAssetDetail(this.props.id);
       this.props.getPublishStatus(this.props.category, this.props.id);
+      this.props.getBalance();
+      this.props.checkIsOwner(this.props.category, this.props.id);
     }
   
     render() {
@@ -32,16 +35,6 @@ const getFillTx = (category, id, allPs) => {
   return fillTx;
 }
 
-const checkIsOwner = (fastx, category, id, allPs) => {
-  let isOwner = false;
-  const ownerAddress = fastx.web3.eth.defaultAccount;
-  const fillTx = getFillTx(category, id, allPs);
-  if(("0x"+fillTx.newowner1) == ownerAddress.toLowerCase()){
-    isOwner = true;
-  }
-  return isOwner;
-}
-
 function mapStateToProps(state, props){
     return {
        id: props.match.params.id,
@@ -50,10 +43,11 @@ function mapStateToProps(state, props){
        allPs: state.assets.allPs,
        fillTx: getFillTx(props.match.params.category, props.match.params.id, state.assets.allPs),
        fastx: state.app.fastx,
-       userIsOwner: checkIsOwner(state.app.fastx, props.match.params.category, props.match.params.id, state.assets.allPs),
+       isOwner: state.assets.isOwner,
        isLoading: state.assets.isLoading,
        hasPublished: state.assets.hasPublished,
        waiting: state.account.waiting,
+       userItems: state.account.items,
        modal: state.modal
     }
 }
@@ -72,6 +66,7 @@ function mapDispatchToProps(dispatch) {
             dispatch(push('/assets/'+category+'/'+id+'/sell'))
           }
         },
+        ...bindActionCreators(accountActions, dispatch),
         ...bindActionCreators(modalActions, dispatch),
         ...bindActionCreators(assetsActions, dispatch)
     }

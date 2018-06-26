@@ -56,5 +56,10 @@ export const setAssetStatus = () => {
   };
 }
 
-
-
+export const checkIsOwner = (category, id) => {
+  return {
+    type: "CHECK_IS_OWNER",
+    category,
+    id
+  };
+}

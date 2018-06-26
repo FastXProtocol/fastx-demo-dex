@@ -17,6 +17,31 @@ const allPsTransactions = async () => {
     }
 }
 
+function* getAccountAsync() {
+    yield getFastx();
+    let accounts = [];
+    for (let i = 1; i<=retry.count; i++){
+        try {
+            accounts = yield fastx.web3.eth.getAccounts();
+            break; 
+        }catch(err){
+            if(i <= retry.count) {
+                console.log("getAccountErr:",i,err)
+                yield delay(retry.time);
+            }else{
+                throw new Error('getAccount request failed');
+            }
+        }
+    }
+    
+    fastx.defaultAccount = accounts[0];
+    console.log('getAccountAddress:',fastx.defaultAccount);
+    yield put({
+      type: 'ACCOUNT_RECEIVED',
+      ownerAddress: accounts[0]
+    })
+}
+
 function* getAssetsAsync(params) {
     yield getFastx();
     let categories = {};
@@ -160,6 +185,26 @@ function* publishStatusAsync(action) {
     })
 }
 
+function* watchCheckOwnerAsync(action) {
+    yield getFastx();
+    yield getAccountAsync();
+    let isOwner = false;
+    let balanceFT = [],balanceNFT = [],utxos,balanceRes;
+    balanceRes = yield fastx.getBalance(fastx.defaultAccount);
+    console.log('balanceRes:',balanceRes);
+    balanceFT = balanceRes.FT;
+    balanceNFT = balanceRes.NFT
+    for(let value of balanceNFT){
+        if(value[0] == action.category && value[1] == action.id)
+            isOwner = true;
+    }
+
+    yield put({
+      type: 'SET_ASSETS_IS_OWNER',
+      isOwner: isOwner
+    })
+}
+
 async function getFastx(func) {
     while(!fastx) {
         fastx = store.getState().app.fastx;
@@ -177,4 +222,5 @@ export default function * assetSaga (arg) {
     yield takeEvery('ASSETS_SEARCH', getAssetsAsync)
     yield takeEvery('ASSETS_BUY', assetBuyAsync)
     yield takeEvery('GET_PUBLISH_STATUS',publishStatusAsync)
+    yield takeEvery('CHECK_IS_OWNER', watchCheckOwnerAsync)
 }
