@@ -136,7 +136,15 @@ const bidAd = async (category,tokenId,fillTx) => {
 
 function* assetBuyAsync(action) {
     yield getFastx();
+    yield put({
+      type: 'DEPOSIT_STATUS',
+      waiting: false
+    })
     yield bidAd(action.category, action.id, action.fillTx)
+    yield put({
+      type: 'DEPOSIT_STATUS',
+      waiting: true
+    })
 } 
 
 function* publishStatusAsync(action) {

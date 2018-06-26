@@ -5,6 +5,7 @@ import { push } from 'react-router-redux';
 
 import AssetDetailComponent from '../components/AssetDetail';
 import * as assetsActions from '../actions/assets';
+import * as modalActions from '../actions/modal';
 
 class AssetDetail extends Component {
     componentWillMount() {
@@ -54,12 +55,28 @@ function mapStateToProps(state, props){
        fillTx: getFillTx(props.match.params.category, props.match.params.id, state.assets.allPs),
        fastx: state.app.fastx,
        isOwner: checkIsOwner(state.app.fastx, state.assets.allPs),
-       isLoading: state.assets.isLoading
+       isLoading: state.assets.isLoading,
+       hasPublished: state.assets.hasPublished,
+       waiting: state.account.waiting,
+       modal: state.modal
     }
 }
 
 function mapDispatchToProps(dispatch) {
     return {
+        toTransactionStep: (category, id, fillTx) => {
+            dispatch(assetsActions.assetBuy(category, id, fillTx))
+            dispatch(push('/deposit'))
+        },
+        sellCheck: (category, id, hasPublished) => {
+          console.log('hasPublished:',hasPublished)
+          if(hasPublished){
+            dispatch(modalActions.open());
+          }else{
+            dispatch(push('/assets/'+category+'/'+id+'/sell'))
+          }
+        },
+        ...bindActionCreators(modalActions, dispatch),
         ...bindActionCreators(assetsActions, dispatch)
     }
 }

@@ -49,3 +49,12 @@ export const getPublishStatus = (category, id) => {
   };
 }
 
+export const setAssetStatus = () => {
+  return {
+    type: "ASSETS_STATUS",
+    status: ''
+  };
+}
+
+
+

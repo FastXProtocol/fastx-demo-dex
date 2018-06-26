@@ -30,12 +30,14 @@ function mapStateToProps(state, props){
        sellPrice: state.account.sellPrice,
        hasPublished: state.assets.hasPublished,
        isLoading: state.assets.isLoading,
+       status: state.assets.status,
        modal: state.modal
     }
 }
 
 function mapDispatchToProps(dispatch) {
     return {
+        goto: () => dispatch(push('/account')),
         confirm: (params) => {
           dispatch(accountActions.sellContractAsset(params))
           dispatch(modalActions.close())

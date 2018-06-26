@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import moment from 'moment';
-import { Card, Container, Divider, Dropdown, Dimmer, Grid, Header, Image, List, Loader, Menu, Segment, Icon, Button, Feed} from 'semantic-ui-react';
+import { Card, Container, Divider, Dropdown, Dimmer, Grid, Header, Image, List, Loader, Menu, Modal, Segment, Icon, Button, Feed} from 'semantic-ui-react';
 import '../components/Dropdown.css';
 import { chainOptions } from '../config';
 
@@ -42,16 +42,36 @@ export default class AssetDetail extends Component {
 			}
 		}
 
-		let loaderHtml = ""
+		let loaderHtml = "";
 		if(this.props.isLoading) {
 			loaderHtml = <Dimmer active >
 		        <Loader >Loading</Loader>
 		      </Dimmer>;
 		}
 
+		let confirmBtnHtml;
+		if(this.props.isOwner){
+			confirmBtnHtml = <Button type='submit' color='teal' style={{marginLeft:'110px',marginTop: '2em'}} onClick={() => this.props.sellCheck(this.props.category,
+					  this.props.id, this.props.hasPublished)}>Sell</Button>
+		}else{
+			confirmBtnHtml = <Button primary size='big' onClick={() => this.props.toTransactionStep(this.props.category, this.props.id, fillTx)}>
+	    		BUY THIS ITEM
+	    		<Icon name='chevron right' />
+	    	</Button>
+		}
+
         return (
             <Container style={{ marginTop: '1em' }}>
             	{loaderHtml}
+            	<Modal size='small' open={this.props.modal.open} onClose={this.props.close}>
+					<Modal.Header>提示</Modal.Header>
+					<Modal.Content>
+						<p>这件商品您已经过发布广告了</p>
+					</Modal.Content>
+					<Modal.Actions>
+						<Button positive onClick={this.props.close}>知道了</Button>
+					</Modal.Actions>
+				</Modal>
             	<Grid>
 				    <Grid.Column width={8}>
 				      <Image src={ asset.image_url_cdn } />
@@ -81,10 +101,7 @@ export default class AssetDetail extends Component {
 							    <Card.Content extra>
 							    	<p>Listed for</p>
 							    	<p style={{ color: 'black' , fontSize: '30px'}}>㆔ { current_price }</p>
-							    	<Button primary size='big' onClick={() => this.props.assetBuy(this.props.category, this.props.id, fillTx)}>
-							    		BUY THIS ITEM
-							    		<Icon name='chevron right' />
-							    	</Button>
+							    	{ confirmBtnHtml }
 							    </Card.Content>
 							</Card>
 					      </Grid.Column>

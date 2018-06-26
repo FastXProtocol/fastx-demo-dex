@@ -6,7 +6,7 @@ const ASSET_DETAIL_RECEIVED = 'ASSET_DETAIL_RECEIVED';
 const ALLPS_RECEIVED = 'ALLPS_RECEIVED';
 const SET_ASSETS_LOADING = 'SET_ASSETS_LOADING';
 const SET_PUBLISH_STATUS = 'SET_PUBLISH_STATUS';
-
+const ASSETS_STATUS = 'ASSETS_STATUS';
 const ASSET_CATEGORIES_REQUEST_FAILED = 'ASSET_CATEGORIES_REQUEST_FAILED';
 
 const initialState = {
@@ -17,6 +17,7 @@ const initialState = {
   asset: {},
   allPs: [],
   amount: 0,
+  status: '',
   hasPublished: false
 };
 
@@ -66,6 +67,11 @@ export default function assets(state = initialState, action = {}) {
             ...state,
             hasPublished: action.hasPublished
         };
+    case ASSETS_STATUS:
+        return {
+            ...state,
+            status: action.status
+        }; 
     default:
       return state;
   }

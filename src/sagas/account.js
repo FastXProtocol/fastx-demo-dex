@@ -184,11 +184,19 @@ function* watchSellAssetAsync(data) {
 
 function* watchSellContractAssetAsync(data) {
     yield getFastx();
+    yield put({
+      type: 'ASSETS_STATUS',
+      status: 'waiting'
+    })
     const end = moment(data.params.end).add(1, 'days').unix();
     const price = parseFloat(data.params.sellPrice);
     console.log("sellContractAssetParams",data.params)
     let result = yield postNftAd(data.params.categroy, data.params.sellId, end, price);
     console.log("postNftAdResult:",result);
+    yield put({
+      type: 'ASSETS_STATUS',
+      status: 'sent'
+    })
 }
 
 const depositChannel = channel();

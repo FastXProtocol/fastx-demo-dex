@@ -38,7 +38,7 @@ export default class Account extends Component {
 
     render() {
         let cards = this.props.items.map((item, i) => {
-            let url = '/assets/952ce607bd9ab82e920510b2375cbad234d28c8f/'+item.id+'/sell';
+            let url = '/assets/952ce607bd9ab82e920510b2375cbad234d28c8f/'+item.id;
             return (
                 <Grid.Column key={i} mobile={16} tablet={8} computer={4} onClick={() => this.props.goto(url)}>
                     <Card>
