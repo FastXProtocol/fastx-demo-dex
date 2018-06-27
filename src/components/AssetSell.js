@@ -55,7 +55,7 @@ sellPrice: this.props.sellPrice}, this.props.hasPublished)}>Sell</Button>
 					</Modal.Actions>
 				</Modal>
             	<Step.Group ordered>
-            		<Step completed={!this.props.status} active={this.props.status}>
+            		<Step completed={this.props.status == "waiting" || this.props.status == "sent"} active={!this.props.status}>
                         <Step.Content>
                             <Step.Title>Form</Step.Title>
                             <Step.Description> 
