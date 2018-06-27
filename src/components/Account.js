@@ -122,7 +122,7 @@ export default class Account extends Component {
                     </Form.Field>
                     <Form.Field inline>
                         <label className='align_right_label' />
-                        <p style={{color: 'grey'}}>Date when your listing will expire. Defaults to 30 days.</p>
+                        <p style={{color: 'grey'}}>Date when your listing will expire.</p>
                     </Form.Field>
                     <Form.Field inline>
                       <label className='align_right_label'>Categroy</label>

@@ -25,7 +25,7 @@ const initialState = {
   waiting: false
 };
 
-export default function assets(state = initialState, action = {}) {
+export default function account(state = initialState, action = {}) {
   switch (action.type) {
     case GET_BALANCE:
       return {
@@ -54,11 +54,6 @@ export default function assets(state = initialState, action = {}) {
       return {
         ...state,
         categroy: action.categroy
-      };
-    case SET_SELL_ID:
-      return {
-        ...state,
-        sellId: action.sellId
       };
     case SET_SELL_ID:
       return {
