@@ -25,6 +25,7 @@ import {
     Tab,
     Visibility
   } from 'semantic-ui-react';
+import Asset from '../components/Asset';
 import { bidsOptions } from '../components/Common';
 import '../components/Card.css';
 import * as accountActions from '../actions/account';
@@ -41,14 +42,7 @@ export default class Account extends Component {
             let url = '/assets/952ce607bd9ab82e920510b2375cbad234d28c8f/'+item.id;
             return (
                 <Grid.Column key={i} mobile={16} tablet={8} computer={4} onClick={() => this.props.goto(url)}>
-                    <Card>
-                      <Image src={item.image_url_cdn} />
-                      <Card.Content>
-                        <Card.Header>
-                          {item.name} · #{item.id}
-                        </Card.Header>
-                      </Card.Content>
-                    </Card>
+                    <Asset image={item.image_url_cdn} name={item.name} id={item.id} />
                 </Grid.Column>
             )
         })
