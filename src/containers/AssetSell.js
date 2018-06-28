@@ -45,7 +45,7 @@ function mapDispatchToProps(dispatch) {
         sellCheck: (params, hasPublished) => {
           console.log('hasPublished:',hasPublished)
           if(hasPublished){
-            dispatch(modalActions.open());
+            dispatch(modalActions.open('这件商品您已经过发布广告了'));
           }else{
             dispatch(accountActions.sellContractAsset(params));
           }

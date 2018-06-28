@@ -9,6 +9,7 @@ const SET_PUBLISH_STATUS = 'SET_PUBLISH_STATUS';
 const ASSETS_STATUS = 'ASSETS_STATUS';
 const ASSET_CATEGORIES_REQUEST_FAILED = 'ASSET_CATEGORIES_REQUEST_FAILED';
 const SET_ASSETS_IS_OWNER = 'SET_ASSETS_IS_OWNER';
+const BALNCE_ENOUGH = 'BALNCE_ENOUGH';
 
 const initialState = {
   isLoading: false,
@@ -20,7 +21,8 @@ const initialState = {
   amount: 0,
   status: '',
   hasPublished: false,
-  isOwner: false
+  isOwner: false,
+  blanceEnough: true
 };
 
 export default function assets(state = initialState, action = {}) {
@@ -78,6 +80,11 @@ export default function assets(state = initialState, action = {}) {
         return {
             ...state,
             isOwner: action.isOwner
+        };
+    case BALNCE_ENOUGH:
+        return {
+            ...state,
+            blanceEnough: action.blanceEnough
         };
     default:
       return state;

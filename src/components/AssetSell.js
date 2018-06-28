@@ -4,6 +4,7 @@ import moment from 'moment';
 import { Card, Container, Divider, Dropdown,Dimmer, 
 	Form, Grid, Header, Input, Image, List,Loader,
  Menu, Modal, Segment, Step, Icon, Button, Feed} from 'semantic-ui-react';
+import TipModal from '../components/Modal/tipModal';
 import '../components/Dropdown.css';
 import './modalModify.css';
 
@@ -45,15 +46,7 @@ sellPrice: this.props.sellPrice}, this.props.hasPublished)}>Sell</Button>
 
         return (
             <Container style={{ marginTop: '1em' }} textAlign='center'>
-            	<Modal size='small' open={this.props.modal.open} onClose={this.props.close}>
-					<Modal.Header>提示</Modal.Header>
-					<Modal.Content>
-						<p>这件商品您已经过发布广告了</p>
-					</Modal.Content>
-					<Modal.Actions>
-						<Button positive onClick={this.props.close}>知道了</Button>
-					</Modal.Actions>
-				</Modal>
+                <TipModal open={this.props.modal.open} close={this.props.close} desc={this.props.modal.desc} />
             	<Step.Group ordered>
             		<Step completed={this.props.status == "waiting" || this.props.status == "sent"} active={!this.props.status}>
                         <Step.Content>

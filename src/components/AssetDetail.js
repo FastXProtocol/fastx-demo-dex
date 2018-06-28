@@ -42,73 +42,56 @@ export default class AssetDetail extends Component {
 			}
 		}
 
-		let loaderHtml = "";
-		if(this.props.isLoading) {
-			loaderHtml = <Dimmer active >
-		        <Loader >Loading</Loader>
-		      </Dimmer>;
-		}
+		
 
 		let confirmBtnHtml;
 		if(this.props.isOwner){
 			confirmBtnHtml = <Button type='submit' color='teal' style={{marginLeft:'110px',marginTop: '2em'}} onClick={() => this.props.sellCheck(this.props.category,
 					  this.props.id, this.props.hasPublished)}>Sell</Button>
 		}else{
-			confirmBtnHtml = <Button primary size='big' onClick={() => this.props.toTransactionStep(this.props.category, this.props.id, fillTx)}>
+			confirmBtnHtml = <Button primary size='big' onClick={() => this.props.toTransactionStep(this.props.category, this.props.id, fillTx, this.props.blanceEnough)}>
 	    		BUY THIS ITEM
 	    		<Icon name='chevron right' />
 	    	</Button>
 		}
 
         return (
-            <Container style={{ marginTop: '1em' }}>
-            	{loaderHtml}
-            	<Modal size='small' open={this.props.modal.open} onClose={this.props.close}>
-					<Modal.Header>提示</Modal.Header>
-					<Modal.Content>
-						<p>这件商品您已经过发布广告了</p>
-					</Modal.Content>
-					<Modal.Actions>
-						<Button positive onClick={this.props.close}>知道了</Button>
-					</Modal.Actions>
-				</Modal>
-            	<Grid>
-				    <Grid.Column width={8}>
-				      <Image src={ asset.image_url_cdn } />
-				    </Grid.Column>
-				    <Grid.Column width={8}>
-					    <Grid.Row>
-					      <Grid.Column width={8}>
-					        <h2>
-					        	{ asset.name }
-					            <Dropdown text='SHARE' icon='share alternate' floating labeled button basic className='icon dropdown-right dropdown-basic'>
-									<Dropdown.Menu>
-										<Dropdown.Item icon='linkify' text='COPY URL' />
-										<Dropdown.Item icon='facebook f' text='share on facebook' />
-										<Dropdown.Item icon='twitter' text='share on twitter' />
-									</Dropdown.Menu>
-								</Dropdown>
-					        </h2>
-					        { sellerHtml }
-							<p style={{ color: 'grey' }}>{ asset.description }</p>
-					      </Grid.Column>
-					      <Grid.Column width={8}>
-					        <Card style={{ marginTop: '2em' }} fluid>
-							    <Card.Content extra>
-							    	<Icon name='clock outline' />
-							    	{ dateHtml }
-							    </Card.Content>
-							    <Card.Content extra>
-							    	<p>Listed for</p>
-							    	<p style={{ color: 'black' , fontSize: '30px'}}>㆔ { current_price }</p>
-							    	{ confirmBtnHtml }
-							    </Card.Content>
-							</Card>
-					      </Grid.Column>
-					    </Grid.Row>
-				    </Grid.Column>
-			  </Grid>
-		    </Container>
+        	<Grid>
+			    <Grid.Column width={8}>
+			      <Image src={ asset.image_url_cdn } />
+			    </Grid.Column>
+			    <Grid.Column width={8}>
+				    <Grid.Row>
+				      <Grid.Column width={8}>
+				        <h2>
+				        	{ asset.name }
+				            <Dropdown text='SHARE' icon='share alternate' floating labeled button basic className='icon dropdown-right dropdown-basic'>
+								<Dropdown.Menu>
+									<Dropdown.Item icon='linkify' text='COPY URL' />
+									<Dropdown.Item icon='facebook f' text='share on facebook' />
+									<Dropdown.Item icon='twitter' text='share on twitter' />
+								</Dropdown.Menu>
+							</Dropdown>
+				        </h2>
+				        { sellerHtml }
+						<p style={{ color: 'grey' }}>{ asset.description }</p>
+				      </Grid.Column>
+				      <Grid.Column width={8}>
+				        <Card style={{ marginTop: '2em' }} fluid>
+						    <Card.Content extra>
+						    	<Icon name='clock outline' />
+						    	{ dateHtml }
+						    </Card.Content>
+						    <Card.Content extra>
+						    	<p>Listed for</p>
+						    	<p style={{ color: 'black' , fontSize: '30px'}}>㆔ { current_price }</p>
+						    	{ confirmBtnHtml }
+						    </Card.Content>
+						</Card>
+				      </Grid.Column>
+				    </Grid.Row>
+			    </Grid.Column>
+		  </Grid>
         );
     };
 }

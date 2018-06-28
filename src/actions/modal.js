@@ -5,9 +5,10 @@ export const close = () => {
   };
 }
 
-export const open = () => {
+export const open = (desc) => {
   return {
     type: "OPEN",
-    open: true
+    open: true,
+    desc
   };
 }

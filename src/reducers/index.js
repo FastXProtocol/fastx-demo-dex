@@ -7,5 +7,6 @@ export default combineReducers({
     assets: require('./assets').default,
     account: require('./account').default,
     modal: require('./modal').default,
-    app: require('./app').default
+    app: require('./app').default,
+    error: require('./error').default
 });

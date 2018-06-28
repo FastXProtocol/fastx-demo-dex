@@ -2,7 +2,8 @@ const OPEN = 'OPEN';
 const CLOSE = 'CLOSE';
 
 const initialState = {
-  open: false
+  open: false,
+  desc: ''
 };
 
 export default function assets(state = initialState, action = {}) {
@@ -10,7 +11,8 @@ export default function assets(state = initialState, action = {}) {
     case OPEN:
       return {
         ...state,
-        open: action.open
+        open: action.open,
+        desc: action.desc
       };
     case CLOSE:
       return {

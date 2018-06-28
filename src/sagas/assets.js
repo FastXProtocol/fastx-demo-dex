@@ -132,25 +132,11 @@ function* getAssetsDetailAsync(action) {
 }
 
 const bidAd = async (category,tokenId,fillTx) => {
-    console.log(fillTx)
-    let accounts = await fastx.web3.eth.getAccounts();
-    fastx.defaultAccount = accounts[0];
     let receiverAddress = fastx.defaultAccount;
     console.log('receiverAddress',receiverAddress);
 
-    // await fastx.deposit("0x0", 1, 0, { from: receiverAddress});
-    // let utxos = await fastx.getAllUTXO(receiverAddress);
-    // console.log('utxos:',utxos.data)
-    // let utxo = await fastx.searchUTXO({
-    //         category: fillTx.contractaddress1, 
-    //         tokenId: fillTx.tokenid1, 
-    //         amount: fillTx.amount1
-    //     }, { from: receiverAddress });
-    // console.log('\nUTXO',utxo);
-
-
     let utxo = await fastx.getOrNewEthUtxo(fillTx.amount1, {from:fastx.defaultAccount})
-    console.log('utxo:',utxo)
+    console.log('utxo:',utxo);
 
     if (utxo.length > 0) {
         const [_blknum, _txindex, _oindex, _contract, _balance, _tokenid] = utxo;
@@ -165,7 +151,18 @@ function* assetBuyAsync(action) {
       type: 'DEPOSIT_STATUS',
       waiting: false
     })
-    yield bidAd(action.category, action.id, action.fillTx)
+
+    try{
+        yield bidAd(action.category, action.id, action.fillTx);
+    }catch(err){
+        console.log("bidAd:",err);
+        yield put({
+          type: 'BID_AD_ERROR',
+          error: err
+        })
+        return;
+    }
+    
     yield put({
       type: 'DEPOSIT_STATUS',
       waiting: true
@@ -205,6 +202,32 @@ function* watchCheckOwnerAsync(action) {
     })
 }
 
+function* watchCheckBlanceEnough(action) {
+    yield getFastx();
+    yield getAccountAsync();
+    let receiverAddress = fastx.defaultAccount;
+    yield put({
+      type: 'BALNCE_ENOUGH',
+      blanceEnough: true
+    })
+
+    try{
+        yield fastx.getOrNewEthUtxo(action.amount, {from:fastx.defaultAccount})
+    }catch(err) {
+        console.log("CheckBlanceEnough:",err);
+        yield put({
+          type: 'BID_AD_ERROR',
+          error: err
+        })
+        if(err == "Error: Not enough balance"){
+            yield put({
+              type: 'BALNCE_ENOUGH',
+              blanceEnough: false
+            })
+        }
+    }
+}
+
 async function getFastx(func) {
     while(!fastx) {
         fastx = store.getState().app.fastx;
@@ -223,4 +246,5 @@ export default function * assetSaga (arg) {
     yield takeEvery('ASSETS_BUY', assetBuyAsync)
     yield takeEvery('GET_PUBLISH_STATUS',publishStatusAsync)
     yield takeEvery('CHECK_IS_OWNER', watchCheckOwnerAsync)
+    yield takeEvery('CHECK_BLANCE_ENOUGH', watchCheckBlanceEnough)
 }

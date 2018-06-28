@@ -63,3 +63,12 @@ export const checkIsOwner = (category, id) => {
     id
   };
 }
+
+export const checkBlanceEnough = (amount) => {
+  return {
+    type: "CHECK_BLANCE_ENOUGH",
+    amount
+  };
+}
+
+

@@ -2,8 +2,10 @@ import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import { push } from 'react-router-redux';
+import { Card, Container, Divider, Dropdown, Dimmer, Grid, Header, Image, List, Loader, Menu, Modal, Segment, Icon, Button, Feed} from 'semantic-ui-react';
 
 import AssetDetailComponent from '../components/AssetDetail';
+import TipModal from '../components/Modal/tipModal';
 import * as assetsActions from '../actions/assets';
 import * as accountActions from '../actions/account';
 import * as modalActions from '../actions/modal';
@@ -14,15 +16,26 @@ class AssetDetail extends Component {
       this.props.getPublishStatus(this.props.category, this.props.id);
       this.props.getBalance();
       this.props.checkIsOwner(this.props.category, this.props.id);
+      this.props.checkBlanceEnough(this.props.fillTx.amount1 || 0);
     }
   
     render() {
+      let loaderHtml = "";
+      if(this.props.isLoading) {
+        loaderHtml = <Dimmer active >
+              <Loader >Loading</Loader>
+            </Dimmer>;
+      }
+
       return (
-        <AssetDetailComponent {...this.props}/>
+        <Container style={{ marginTop: '1em' }}>
+          {loaderHtml}
+          <TipModal open={this.props.modal.open} close={this.props.close} desc={this.props.modal.desc} />
+          <AssetDetailComponent {...this.props}/>
+        </Container>
       )
     };
 }
-
 
 const getFillTx = (category, id, allPs) => {
   let fillTx = {};
@@ -41,6 +54,7 @@ function mapStateToProps(state, props){
        category: props.match.params.category,
        asset: state.assets.asset,
        allPs: state.assets.allPs,
+       blanceEnough: state.assets.blanceEnough,
        fillTx: getFillTx(props.match.params.category, props.match.params.id, state.assets.allPs),
        fastx: state.app.fastx,
        isOwner: state.assets.isOwner,
@@ -48,20 +62,24 @@ function mapStateToProps(state, props){
        hasPublished: state.assets.hasPublished,
        waiting: state.account.waiting,
        userItems: state.account.items,
+
        modal: state.modal
     }
 }
 
 function mapDispatchToProps(dispatch) {
     return {
-        toTransactionStep: (category, id, fillTx) => {
-            dispatch(assetsActions.assetBuy(category, id, fillTx))
-            dispatch(push('/deposit'))
+        toTransactionStep: (category, id, fillTx, blanceEnough) => {
+          if(blanceEnough){
+            dispatch(assetsActions.assetBuy(category, id, fillTx));
+            dispatch(push('/deposit'));
+          }else{
+            dispatch(modalActions.open('您的余额不足，请去账户充值'));
+          }
         },
         sellCheck: (category, id, hasPublished) => {
-          console.log('hasPublished:',hasPublished)
           if(hasPublished){
-            dispatch(modalActions.open());
+            dispatch(modalActions.open('这件商品您已经过发布广告了'));
           }else{
             dispatch(push('/assets/'+category+'/'+id+'/sell'))
           }
