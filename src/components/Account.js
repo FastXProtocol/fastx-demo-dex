@@ -5,9 +5,9 @@ import { bindActionCreators } from 'redux';
 import {
     Button,
     Container,
+    Label,
     Card,
-    Divider,
-    Dropdown,
+    Rail,
     Feed,
     Form,
     Grid,
@@ -153,24 +153,26 @@ export default class Account extends Component {
             ];
         return (
             <Container style={{ marginTop: '1em' }}>
-                <Grid>
-                    <Grid.Column width={12}>
-                        <Item.Group>
-                            <Item >
-                              <Item.Image size='tiny' circular src='/assets/images/avatar/large/elliot.jpg' />
-                              <Item.Content verticalAlign='bottom'>
-                                <Item.Header style={{ color: 'grey', fontSize: '32px', fontWeight:'100'}} >Anonymous account</Item.Header>
-                                <Item.Meta>
-                                    <span style={{ marginRight: '10px'}}>{this.props.ownerAddress}</span>
-                                </Item.Meta>
-                              </Item.Content>
-                            </Item>
-                        </Item.Group>
+                <Grid centered>
+                    <Grid.Column verticalAlign='middle' width={4}>
+                        <Image centered size='small' circular src='/assets/images/avatar/large/elliot.jpg' />
+                        <Rail attached position='left'>
+                            <Button circular floated="right" style={{marginTop:'3em', width: 100, height: 100}}>FastX</Button>
+                        </Rail>
+                        <Rail attached position='right'>
+                            <Button circular floated="left" style={{marginTop:'3em', width: 100, height: 100}}>Ethereum</Button>
+                        </Rail>
                     </Grid.Column>
-                    <Grid.Column width={4} textAlign='center'>
+                    <Grid.Row centered columns={8}>
+                        <Grid.Column textAlign='center' width={6}>
+                            <Label as='a' size='big'>Anonymous account</Label>
+                            <Label as='a' basic>{this.props.ownerAddress}</Label>
+                        </Grid.Column>
+                    </Grid.Row>
+                    {/* <Grid.Column width={4} textAlign='center'>
                         <p style={{ color: 'dodgerblue', fontSize: '30px', margin: '0'}}>{this.props.balance} WEI</p>
                         <p style={{ color: 'grey', fontSize: '18px'}}>Balance</p>
-                    </Grid.Column>
+                    </Grid.Column> */}
                 </Grid>
                 
                 <Tab menu={{ secondary: true, pointing: true }} panes={panes} />
