@@ -40,7 +40,7 @@ export default class AssetDetail extends Component {
                 <Button type='submit' color='teal' style={{marginLeft:'110px',marginTop: '2em'}} onClick={() => this.props.sellCheck({  end: this.props.end,
 categroy: this.props.category,
 sellId: this.props.id,
-sellPrice: this.props.sellPrice}, this.props.hasPublished)}>Sell</Button>
+sellPrice: this.props.sellPrice}, this.props.hasPublished, this.props.locationParams)}>Sell</Button>
             </Form>
     	}
 

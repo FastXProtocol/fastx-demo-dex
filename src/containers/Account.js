@@ -20,16 +20,28 @@ function mapStateToProps(state){
         sellPrice: state.account.sellPrice,
         depositPrice: state.account.depositPrice,
         items: state.account.items,
-        isLoading: state.assets.isLoading
+        isLoading: state.assets.isLoading,
+        currency: state.account.currency,
+        unit: state.account.unit
     }
 }
 
 function mapDispatchToProps(dispatch) {
     return {
-        goto: (url) => dispatch(push(url)),
+        goto: (url,currency) => {
+            if(currency && currency!='FastX'){
+                dispatch(push(url+'?currency='+currency));
+            }else{
+                dispatch(push(url));
+            }    
+        },
         toDeposit: (price) => {
             dispatch(accountActions.deposit(price))
             dispatch(push('/deposit'))
+        },
+        switching: (currency, unit) => {
+            dispatch(accountActions.switchingUnit(currency, unit))
+            dispatch(accountActions.getBalance())
         },
         ...bindActionCreators(accountActions, dispatch)
     }

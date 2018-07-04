@@ -15,8 +15,8 @@ class AssetDetail extends Component {
       this.props.getAssetDetail(this.props.id);
       this.props.getPublishStatus(this.props.category, this.props.id);
       this.props.getBalance();
-      this.props.checkIsOwner(this.props.category, this.props.id);
-      this.props.checkBlanceEnough(this.props.fillTx.amount1 || 0);
+      this.props.checkIsOwner(this.props.category, this.props.id, this.props.locationParams);
+      //this.props.checkBlanceEnough(this.props.fillTx.amount1 || 0);
     }
   
     render() {
@@ -49,6 +49,7 @@ const getFillTx = (category, id, allPs) => {
 }
 
 function mapStateToProps(state, props){
+  console.log(props)
     return {
        id: props.match.params.id,
        category: props.match.params.category,
@@ -62,26 +63,33 @@ function mapStateToProps(state, props){
        hasPublished: state.assets.hasPublished,
        waiting: state.account.waiting,
        userItems: state.account.items,
-
-       modal: state.modal
+       modal: state.modal,
+       locationParams: props.location.search.split('?')[1]
     }
 }
 
 function mapDispatchToProps(dispatch) {
     return {
         toTransactionStep: (category, id, fillTx, blanceEnough) => {
-          if(blanceEnough){
-            dispatch(assetsActions.assetBuy(category, id, fillTx));
-            dispatch(push('/deposit'));
-          }else{
-            dispatch(modalActions.open('您的余额不足，请去账户充值'));
-          }
+          dispatch(assetsActions.assetBuy(category, id, fillTx));
+          dispatch(push('/deposit'));
+          // if(blanceEnough){
+          //   dispatch(assetsActions.assetBuy(category, id, fillTx));
+          //   dispatch(push('/deposit'));
+          // }else{
+          //   dispatch(modalActions.open('您的余额不足，请去账户充值'));
+          // }
         },
-        sellCheck: (category, id, hasPublished) => {
+        sellCheck: (category, id, hasPublished, locationParams) => {
           if(hasPublished){
             dispatch(modalActions.open('这件商品您已经过发布广告了'));
           }else{
-            dispatch(push('/assets/'+category+'/'+id+'/sell'))
+            if(locationParams){
+              dispatch(push('/assets/'+category+'/'+id+'/sell?'+locationParams));
+            }else{
+              dispatch(push('/assets/'+category+'/'+id+'/sell'));
+            }
+            
           }
         },
         ...bindActionCreators(accountActions, dispatch),

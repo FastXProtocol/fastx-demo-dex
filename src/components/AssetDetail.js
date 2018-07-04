@@ -47,7 +47,7 @@ export default class AssetDetail extends Component {
 		let confirmBtnHtml;
 		if(this.props.isOwner){
 			confirmBtnHtml = <Button type='submit' color='teal' style={{marginLeft:'110px',marginTop: '2em'}} onClick={() => this.props.sellCheck(this.props.category,
-					  this.props.id, this.props.hasPublished)}>Sell</Button>
+					  this.props.id, this.props.hasPublished, this.props.locationParams)}>Sell</Button>
 		}else{
 			confirmBtnHtml = <Button primary size='big' onClick={() => this.props.toTransactionStep(this.props.category, this.props.id, fillTx, this.props.blanceEnough)}>
 	    		BUY THIS ITEM

@@ -182,19 +182,58 @@ function* publishStatusAsync(action) {
     })
 }
 
-function* watchCheckOwnerAsync(action) {
-    yield getFastx();
-    yield getAccountAsync();
-    let isOwner = false;
+async function checkFastxOwner(action) {
     let balanceFT = [],balanceNFT = [],utxos,balanceRes;
-    balanceRes = yield fastx.getBalance(fastx.defaultAccount);
+    balanceRes = await fastx.getBalance(fastx.defaultAccount);
     console.log('balanceRes:',balanceRes);
     balanceFT = balanceRes.FT;
     balanceNFT = balanceRes.NFT
     for(let value of balanceNFT){
-        if(value[0] == action.category && value[1] == action.id)
-            isOwner = true;
+        if(value[0] == action.category && value[1] == action.id){
+            return true;
+        }
     }
+
+    return false
+}
+
+async function checkEthOwner (action) {
+    const contract = fastx.getErc721TokenInterface('0x952CE607bD9ab82e920510b2375cbaD234d28c8F');
+    let tokenIndex = await contract.methods.balanceOf(fastx.defaultAccount).call();
+    tokenIndex = parseInt(tokenIndex);
+    while(tokenIndex > 0){
+        tokenIndex--;
+        let token = await contract.methods.tokenOfOwnerByIndex(fastx.defaultAccount, tokenIndex).call();
+        if(action.id == token)return true;
+    }
+
+    return false
+}
+
+function* watchCheckOwnerAsync(action) {
+    yield getFastx();
+    yield getAccountAsync();
+    let isOwner = false;
+    // let currency = store.getState().account.currency;
+
+    // let allPs = yield allPsTransactions();
+    // let inFastX = false;
+    // for(let ps of allPs){
+    //     if(action.id == ps.tokenid2)inFastX = true;
+    // }
+    if(action.locationParams){
+        isOwner = yield checkEthOwner(action);
+    }else{    
+        isOwner = yield checkFastxOwner(action);
+    }
+    // switch(currency){
+    //     case 'Ethereum':
+    //         isOwner = yield checkEthOwner(action);
+    //         break;
+    //     case 'FastX':
+    //     default:
+    //         isOwner = yield checkFastxOwner(action);
+    // }   
 
     yield put({
       type: 'SET_ASSETS_IS_OWNER',

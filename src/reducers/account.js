@@ -12,6 +12,7 @@ const SET_SELL_PRICE = 'SET_SELL_PRICE';
 const SET_DEPOSIT_PRICE = 'SET_DEPOSIT_PRICE';
 const USER_ITEMS_RECEIVED = 'USER_ITEMS_RECEIVED';
 const DEPOSIT_STATUS = 'DEPOSIT_STATUS';
+const SWITCH_UNIT = 'SWITCH_UNIT';
 
 const initialState = {
   balance: 0,
@@ -22,7 +23,9 @@ const initialState = {
   sellPrice: 0,
   depositPrice: 0,
   items: [],
-  waiting: false
+  waiting: false,
+  currency: 'FastX',
+  unit: 'WEI'
 };
 
 export default function account(state = initialState, action = {}) {
@@ -79,6 +82,12 @@ export default function account(state = initialState, action = {}) {
       return {
         ...state,
         waiting: action.waiting
+      }
+    case SWITCH_UNIT:
+      return {
+        ...state,
+        unit: action.unit,
+        currency: action.currency
       }
     default:
       return state;

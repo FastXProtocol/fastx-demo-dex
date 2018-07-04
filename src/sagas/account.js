@@ -1,7 +1,6 @@
 import { call,put, takeEvery, all ,take} from 'redux-saga/effects';
 import { delay, channel} from 'redux-saga';
 import { chainOptions, retry} from '../config';
-import erc721_abi from "../contract_data/ERC721Token.abi.json";
 import moment from 'moment';
 import axios from 'axios';
 
@@ -40,7 +39,7 @@ const normalizeAddress = (address) => {
 const depositNFT = async (asset_contract, tokenid) => {
     console.log('asset_contract:',asset_contract)
     const ownerAddress = fastx.defaultAccount;
-    let nft_contract = new fastx.web3.eth.Contract( erc721_abi, asset_contract);
+    let nft_contract = fastx.getErc721TokenInterface(asset_contract);
 
     console.log('Approving token # '+tokenid+' to '+chainOptions.rootChainAddress);
     await fastx.approve(asset_contract, 0, tokenid, {from: ownerAddress})
@@ -91,24 +90,15 @@ const postAd = async (data) => {
 	await logBalance();
 	const end = moment(data.params.end).add(1, 'days').unix();
 	const price = parseFloat(data.params.sellPrice);
-	await postNftAd(nft_ad.category, nft_ad.tokenId, end, price);
+	let transaction = await postNftAd(nft_ad.category, nft_ad.tokenId, end, price);
+    return transaction;
 }
 
-function* getBalanceAsync() {
-    yield getFastx();
-    yield put({
-      type: 'SET_ASSETS_LOADING',
-      isLoading: true
-    })
-
-    yield getAccountAsync();
-    
-    let balanceFT = [],balanceNFT = [],utxos,balanceRes;
+const getFastxBalance = async() => {
+    let balanceFT = [],balanceNFT = [],balanceRes;
     for (let i = 1; i<=retry.count; i++){
         try {
-            // utxos = yield fastx.getAllUTXO(fastx.defaultAccount);
-            // console.log('utxos:',utxos.data);
-            balanceRes = yield fastx.getBalance(fastx.defaultAccount);
+            balanceRes = await fastx.getBalance(fastx.defaultAccount);
             console.log('balanceRes:',balanceRes);
             balanceFT = balanceRes.FT;
             balanceNFT = balanceRes.NFT
@@ -116,7 +106,7 @@ function* getBalanceAsync() {
         }catch(err){
             if(i <= retry.count) {
                 console.log("getBalanceErr:",i,err)
-                yield delay(retry.time);
+                await delay(retry.time);
             }else{
                 throw new Error('getBalanceErr request failed');
             }
@@ -130,19 +120,71 @@ function* getBalanceAsync() {
             break;
         }
     }
-    console.log('balance:',balance);
-    // let wei = yield fastx.web3.eth.getBalance(fastx.defaultAccount);
-    // let ether = yield fastx.web3.utils.fromWei(wei, 'ether');
+
+    let assets = await getAssent(balanceNFT);
+
+    return {balance,assets}
+}
+
+const getETHBalance = async() => {
+    let balance = 0;
+    let assets = [];
+    
+    try{
+        let wei = await fastx.web3.eth.getBalance(fastx.defaultAccount);
+        balance = await fastx.web3.utils.fromWei(wei, 'ether');
+        balance = parseFloat(parseFloat(balance).toFixed(4))
+
+        const contract = fastx.getErc721TokenInterface('0x952CE607bD9ab82e920510b2375cbaD234d28c8F');
+        let tokenIndex = await contract.methods.balanceOf(fastx.defaultAccount).call();
+        tokenIndex = parseInt(tokenIndex);
+        while(tokenIndex > 0){
+            tokenIndex--;
+            let token = await contract.methods.tokenOfOwnerByIndex(fastx.defaultAccount, tokenIndex).call();
+            let kittyRes = await axios({
+                method: 'get',
+                url: 'https://api.cryptokitties.co/kitties/'+token
+            })
+            let kitty = kittyRes.data;
+            if(!kitty.auction)kitty.auction = {};
+            assets.push(kitty);
+        }
+    }catch(err){
+        console.log(err);
+    }
+    
+    return {balance,assets}
+}
+
+function* getBalanceAsync() {
+    yield getFastx();
+    let currency = store.getState().account.currency;
+    let balance;
+    yield put({
+      type: 'SET_ASSETS_LOADING',
+      isLoading: true
+    })
+
+    yield getAccountAsync();
+
+    switch(currency){
+        case 'Ethereum':
+            balance = yield getETHBalance();
+            break;
+        case 'FastX':
+        default:
+            balance = yield getFastxBalance();
+    }
 
     yield put({
       type: 'BALANCE_RECEIVED',
-      balance: parseFloat(balance)
+      balance: parseFloat(balance.balance)
     })
 
-    let assets = yield getAssent(balanceNFT);
+    
     yield put({
       type: 'USER_ITEMS_RECEIVED',
-      items: assets
+      items: balance.assets
     })
 
     yield put({
@@ -178,26 +220,49 @@ function* getAccountAsync() {
 
 function* watchSellAssetAsync(data) {
     yield getFastx();
-	console.log("sellAssetParams:",data.params)
-	postAd(data);
-}
-
-function* watchSellContractAssetAsync(data) {
-    yield getFastx();
     yield put({
       type: 'ASSETS_STATUS',
       status: 'waiting'
     })
-    const end = moment(data.params.end).add(1, 'days').unix();
-    const price = parseFloat(data.params.sellPrice);
-    console.log("sellContractAssetParams",data.params)
-    let result = yield postNftAd(data.params.categroy, data.params.sellId, end, price);
-    console.log("postNftAdResult:",result);
-    yield put({
-      type: 'ASSETS_STATUS',
-      status: 'sent'
-    })
+    if(data.params.locationParams){
+        yield postAd(data);
+        yield put({
+          type: 'ASSETS_STATUS',
+          status: 'sent'
+        })
+    }else{
+        const end = moment(data.params.end).add(1, 'days').unix();
+        const price = parseFloat(data.params.sellPrice);
+        console.log("sellContractAssetParams",data.params)
+        try{
+            let result = yield postNftAd(data.params.categroy, data.params.sellId, end, price);
+            console.log("postNftAdResult:",result);
+        }catch(err){
+            console.log(err);
+        }
+        yield put({
+          type: 'ASSETS_STATUS',
+          status: 'sent'
+        })
+    }
 }
+
+// function* watchSellContractAssetAsync(data) {
+//     yield getFastx();
+//     yield put({
+//       type: 'ASSETS_STATUS',
+//       status: 'waiting'
+//     })
+//     const end = moment(data.params.end).add(1, 'days').unix();
+//     const price = parseFloat(data.params.sellPrice);
+//     console.log("sellContractAssetParams",data.params)
+//     let result = yield postNftAd(data.params.categroy, data.params.sellId, end, price);
+//     console.log("postNftAdResult:",result);
+//     yield put({
+//       type: 'ASSETS_STATUS',
+//       status: 'sent'
+//     })
+// }
 
 const depositChannel = channel();
 
@@ -244,7 +309,7 @@ export default function * accountSaga (arg) {
     yield takeEvery('GET_BALANCE', getBalanceAsync)
     yield takeEvery('GET_ACCOUNT', getAccountAsync)
     yield takeEvery('SELL_ASSET',  watchSellAssetAsync)
-    yield takeEvery('SELL_CONTRACT_ASSET', watchSellContractAssetAsync)
+    // yield takeEvery('SELL_CONTRACT_ASSET', watchSellContractAssetAsync)
     yield takeEvery('DEPOSIT', watchDepositAsync)
     yield takeEvery('DEPOSIT', watchDepositChannel)
     yield takeEvery('web3/CHANGE_ACCOUNT',getBalanceAsync)

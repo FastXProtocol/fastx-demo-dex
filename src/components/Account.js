@@ -41,7 +41,7 @@ export default class Account extends Component {
         let cards = this.props.items.map((item, i) => {
             let url = '/assets/952ce607bd9ab82e920510b2375cbad234d28c8f/'+item.id;
             return (
-                <Grid.Column key={i} mobile={16} tablet={8} computer={4} onClick={() => this.props.goto(url)}>
+                <Grid.Column key={i} mobile={16} tablet={8} computer={4} onClick={() => this.props.goto(url, this.props.currency)}>
                     <Asset image={item.image_url_cdn} name={item.name} id={item.id} />
                 </Grid.Column>
             )
@@ -157,24 +157,25 @@ export default class Account extends Component {
                     <Grid.Column verticalAlign='middle' width={4}>
                         <Image centered size='small' circular src='/assets/images/avatar/large/elliot.jpg' />
                         <Rail attached position='left'>
-                            <Button circular floated="right" style={{marginTop:'3em', width: 100, height: 100}}>FastX</Button>
+                            <Button circular floated="right" style={{marginTop:'3em', width: 100, height: 100}} onClick={() => this.props.switching('FastX', 'WEI')}>FastX</Button>
                         </Rail>
                         <Rail attached position='right'>
-                            <Button circular floated="left" style={{marginTop:'3em', width: 100, height: 100}}>Ethereum</Button>
+                            <Button circular floated="left" style={{marginTop:'3em', width: 100, height: 100}} onClick={() => this.props.switching('Ethereum', 'ETH')}>Ethereum</Button>
                         </Rail>
                     </Grid.Column>
                     <Grid.Row centered columns={8}>
                         <Grid.Column textAlign='center' width={6}>
                             <Label as='a' size='big'>Anonymous account</Label>
-                            <Label as='a' basic>{this.props.ownerAddress}</Label>
+                            <Label as='a' basic style={{ marginTop: '1em' }}>{this.props.ownerAddress}</Label>
                         </Grid.Column>
                     </Grid.Row>
-                    {/* <Grid.Column width={4} textAlign='center'>
-                        <p style={{ color: 'dodgerblue', fontSize: '30px', margin: '0'}}>{this.props.balance} WEI</p>
-                        <p style={{ color: 'grey', fontSize: '18px'}}>Balance</p>
-                    </Grid.Column> */}
                 </Grid>
-                
+                <Grid>
+                    <Grid.Column textAlign='center'>
+                        <p style={{ fontSize: '18px', margin: '0'}}>{this.props.balance} {this.props.unit}</p>
+                        <p style={{ color: 'grey', fontSize: '18px'}}>{this.props.currency}</p>
+                    </Grid.Column> 
+                </Grid>
                 <Tab menu={{ secondary: true, pointing: true }} panes={panes} />
             </Container>
         );

@@ -65,3 +65,11 @@ export const deposit = (depositPrice) => {
     depositPrice
   };
 }
+
+export const switchingUnit = (currency, unit) => {
+  return {
+    type: "SWITCH_UNIT",
+    currency,
+    unit
+  };
+}
