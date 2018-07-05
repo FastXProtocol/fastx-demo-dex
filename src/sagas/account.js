@@ -95,22 +95,13 @@ const postAd = async (data) => {
 }
 
 const getFastxBalance = async() => {
-    let balanceFT = [],balanceNFT = [],balanceRes;
-    for (let i = 1; i<=retry.count; i++){
-        try {
-            balanceRes = await fastx.getBalance(fastx.defaultAccount);
-            console.log('balanceRes:',balanceRes);
-            balanceFT = balanceRes.FT;
-            balanceNFT = balanceRes.NFT
-            break; 
-        }catch(err){
-            if(i <= retry.count) {
-                console.log("getBalanceErr:",i,err)
-                await delay(retry.time);
-            }else{
-                throw new Error('getBalanceErr request failed');
-            }
-        }
+    let balanceFT = [],balanceRes;
+    try {
+        balanceRes = await fastx.getBalance(fastx.defaultAccount);
+        console.log('balanceRes:',balanceRes);
+        balanceFT = balanceRes.FT;
+    }catch(err){
+        console.log("getBalanceErr:",err)
     }
 
     let balance = 0;
@@ -121,20 +112,41 @@ const getFastxBalance = async() => {
         }
     }
 
+    return balance
+}
+
+const getFastxAssets = async() => {
+    let balanceNFT = [],balanceRes;
+    try {
+        balanceRes = await fastx.getBalance(fastx.defaultAccount);
+        balanceNFT = balanceRes.NFT
+    }catch(err){
+        console.log("getBalanceErr:",err)
+    }
+
     let assets = await getAssent(balanceNFT);
 
-    return {balance,assets}
+    return assets
 }
 
 const getETHBalance = async() => {
     let balance = 0;
-    let assets = [];
     
     try{
         let wei = await fastx.web3.eth.getBalance(fastx.defaultAccount);
         balance = await fastx.web3.utils.fromWei(wei, 'ether');
         balance = parseFloat(parseFloat(balance).toFixed(4))
+    }catch(err){
+        console.log(err);
+    }
+    
+    return balance
+}
 
+const getETHAssets = async() => {
+    let assets = [];
+    
+    try{
         const contract = fastx.getErc721TokenInterface('0x952CE607bD9ab82e920510b2375cbaD234d28c8F');
         let tokenIndex = await contract.methods.balanceOf(fastx.defaultAccount).call();
         tokenIndex = parseInt(tokenIndex);
@@ -153,18 +165,13 @@ const getETHBalance = async() => {
         console.log(err);
     }
     
-    return {balance,assets}
+    return assets
 }
 
 function* getBalanceAsync() {
     yield getFastx();
     let currency = store.getState().account.currency;
     let balance;
-    yield put({
-      type: 'SET_ASSETS_LOADING',
-      isLoading: true
-    })
-
     yield getAccountAsync();
 
     switch(currency){
@@ -178,13 +185,33 @@ function* getBalanceAsync() {
 
     yield put({
       type: 'BALANCE_RECEIVED',
-      balance: parseFloat(balance.balance)
+      balance: parseFloat(balance)
+    })
+}
+
+function* getAssetsAsync() {
+    yield getFastx();
+    let currency = store.getState().account.currency;
+    let assets;
+    yield put({
+      type: 'SET_ASSETS_LOADING',
+      isLoading: true
     })
 
+    yield getAccountAsync();
+
+    switch(currency){
+        case 'Ethereum':
+            assets = yield getETHAssets();
+            break;
+        case 'FastX':
+        default:
+            assets = yield getFastxAssets();
+    }
     
     yield put({
       type: 'USER_ITEMS_RECEIVED',
-      items: balance.assets
+      items: assets
     })
 
     yield put({
@@ -305,12 +332,12 @@ async function getFastx(func) {
 
 export default function * accountSaga (arg) {
     store = arg;
-        
-    yield takeEvery('GET_BALANCE', getBalanceAsync)
     yield takeEvery('GET_ACCOUNT', getAccountAsync)
     yield takeEvery('SELL_ASSET',  watchSellAssetAsync)
-    // yield takeEvery('SELL_CONTRACT_ASSET', watchSellContractAssetAsync)
     yield takeEvery('DEPOSIT', watchDepositAsync)
     yield takeEvery('DEPOSIT', watchDepositChannel)
+    yield takeEvery('GET_BALANCE', getBalanceAsync)
+    yield takeEvery('GET_BALANCE', getAssetsAsync)
     yield takeEvery('web3/CHANGE_ACCOUNT',getBalanceAsync)
+    yield takeEvery('web3/CHANGE_ACCOUNT',getAssetsAsync)
 }

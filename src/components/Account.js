@@ -157,10 +157,10 @@ export default class Account extends Component {
                     <Grid.Column verticalAlign='middle' width={4}>
                         <Image centered size='small' circular src='/assets/images/avatar/large/elliot.jpg' />
                         <Rail attached position='left'>
-                            <Button circular floated="right" style={{marginTop:'3em', width: 100, height: 100}} onClick={() => this.props.switching('FastX', 'WEI')}>FastX</Button>
+                            <Button circular floated="right" disabled={this.props.isLoading} color={this.props.currency=='FastX'?'teal':'grey'} style={{marginTop:'3em', width: 100, height: 100}} onClick={() => this.props.switching('FastX', 'WEI')}>FastX</Button>
                         </Rail>
                         <Rail attached position='right'>
-                            <Button circular floated="left" style={{marginTop:'3em', width: 100, height: 100}} onClick={() => this.props.switching('Ethereum', 'ETH')}>Ethereum</Button>
+                            <Button circular floated="left" disabled={this.props.isLoading} color={this.props.currency=='Ethereum'?'teal':'grey'} style={{marginTop:'3em', width: 100, height: 100}} onClick={() => this.props.switching('Ethereum', 'ETH')}>Ethereum</Button>
                         </Rail>
                     </Grid.Column>
                     <Grid.Row centered columns={8}>
