@@ -39,10 +39,12 @@ export default class Account extends Component {
 
     render() {
         let cards = this.props.items.map((item, i) => {
-            let url = '/assets/952ce607bd9ab82e920510b2375cbad234d28c8f/'+item.id;
+            let url = '/assets/'+item.categroy+'/'+item.id;
             return (
-                <Grid.Column key={i} mobile={16} tablet={8} computer={4} onClick={() => this.props.goto(url, this.props.currency)}>
-                    <Asset image={item.image_url_cdn} name={item.name} id={item.id} />
+                <Grid.Column key={i} mobile={16} tablet={8} computer={4} >
+                    <Asset image={item.image_url_cdn} name={item.name} id={item.id} onClick={() => this.props.goto(url, this.props.currency)}
+                        takeOut={() => this.props.takeOut(item.categroy, item.id, this.props.currency)}
+                        showBtn={this.props.currency=='Ethereum'?false:true}/>
                 </Grid.Column>
             )
         })
@@ -104,8 +106,8 @@ export default class Account extends Component {
             //                 </Card.Content>
             //             </Card>
             //         </Grid.Column>
-                   
-                    
+
+
             //     </Grid>
             // </Tab.Pane> },
             { menuItem: 'Sell', render: () => <Tab.Pane attached={false}>
@@ -174,7 +176,7 @@ export default class Account extends Component {
                     <Grid.Column textAlign='center'>
                         <p style={{ fontSize: '18px', margin: '0'}}>{this.props.balance} {this.props.unit}</p>
                         <p style={{ color: 'grey', fontSize: '18px'}}>{this.props.currency}</p>
-                    </Grid.Column> 
+                    </Grid.Column>
                 </Grid>
                 <Tab menu={{ secondary: true, pointing: true }} panes={panes} />
             </Container>

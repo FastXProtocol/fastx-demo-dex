@@ -16,6 +16,7 @@ const getAssent = async (NFT) => {
             })
             let kitty = kittyRes.data;
             if(!kitty.auction)kitty.auction = {};
+            kitty.categroy = value[0];
             assets.push(kitty);
         }
     } catch(err) {
@@ -48,7 +49,7 @@ const depositNFT = async (asset_contract, tokenid) => {
 
     await fastx.deposit(asset_contract, 0, tokenid, {from: ownerAddress});
     return {
-        category: asset_contract, 
+        category: asset_contract,
         tokenId: tokenid
     };
 }
@@ -71,14 +72,14 @@ const postNftAd = async (contract, tokenid, end, price, options={}) => {
     console.log('from: '+from + ', contract: '+categoryContract+', tokenid: '+tokenid);
 
     let utxo = await fastx.searchUTXO({
-        category: categoryContract, 
+        category: categoryContract,
         tokenId: tokenid,
     }, { from: from });
     console.log('\nUTXO',utxo);
     const [_blknum, _txindex, _oindex, _contract, _balance, _tokenid] = utxo;
 
     return fastx.sendPsTransaction(
-        _blknum, _txindex, _oindex, 
+        _blknum, _txindex, _oindex,
         from, '0'.repeat(40), price, 0, // sell for the price in eth
         _contract, 0, _tokenid, // sell the token
         0, end, null, from
@@ -131,7 +132,7 @@ const getFastxAssets = async() => {
 
 const getETHBalance = async() => {
     let balance = 0;
-    
+
     try{
         let wei = await fastx.web3.eth.getBalance(fastx.defaultAccount);
         balance = await fastx.web3.utils.fromWei(wei, 'ether');
@@ -139,13 +140,13 @@ const getETHBalance = async() => {
     }catch(err){
         console.log(err);
     }
-    
+
     return balance
 }
 
 const getETHAssets = async() => {
     let assets = [];
-    
+
     try{
         const contract = fastx.getErc721TokenInterface('0x952CE607bD9ab82e920510b2375cbaD234d28c8F');
         let tokenIndex = await contract.methods.balanceOf(fastx.defaultAccount).call();
@@ -164,7 +165,7 @@ const getETHAssets = async() => {
     }catch(err){
         console.log(err);
     }
-    
+
     return assets
 }
 
@@ -208,7 +209,7 @@ function* getAssetsAsync() {
         default:
             assets = yield getFastxAssets();
     }
-    
+
     yield put({
       type: 'USER_ITEMS_RECEIVED',
       items: assets
@@ -217,7 +218,7 @@ function* getAssetsAsync() {
     yield put({
       type: 'SET_ASSETS_LOADING',
       isLoading: false
-    }) 
+    })
 }
 
 function* getAccountAsync() {
@@ -226,7 +227,7 @@ function* getAccountAsync() {
     for (let i = 1; i<=retry.count; i++){
         try {
             accounts = yield fastx.web3.eth.getAccounts();
-            break; 
+            break;
         }catch(err){
             if(i <= retry.count) {
                 console.log("getAccountErr:",i,err)
@@ -236,7 +237,7 @@ function* getAccountAsync() {
             }
         }
     }
-    
+
     fastx.defaultAccount = accounts[0];
     console.log('getAccountAddress:',fastx.defaultAccount);
     yield put({

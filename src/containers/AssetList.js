@@ -17,14 +17,14 @@ class Assets extends Component {
 
     let assets = this.props.results;
     let listItems = assets.map((item, i) => {
-        let url = '/assets/952ce607bd9ab82e920510b2375cbad234d28c8f/'+item.id;
+        let url = '/assets/'+item.categroy+'/'+item.id;
         let auction = item.auction?item.auction:null;
         let current_price = 0;
         let starting_price = 0;
         let end;
         if(auction){
           current_price = auction.current_price;
-      
+
           if(auction.discount != 0){
             starting_price = auction.starting_price;
           }
@@ -40,7 +40,7 @@ class Assets extends Component {
           </Grid.Column>
         );
     });
-    
+
     let loaderHtml = ""
     if(this.props.isLoading) {
         loaderHtml = <Dimmer active ><Loader >Loading</Loader></Dimmer>;

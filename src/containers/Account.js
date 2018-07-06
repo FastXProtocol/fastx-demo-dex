@@ -7,6 +7,7 @@ import { bidsOptions } from '../components/Common';
 import Account from '../components/Account';
 import '../components/Card.css';
 import * as accountActions from '../actions/account';
+import * as assetsActions from '../actions/assets';
 import '../components/Label.css';
 import { assentsOptions } from '../components/Common';
 
@@ -33,7 +34,12 @@ function mapDispatchToProps(dispatch) {
                 dispatch(push(url+'?currency='+currency));
             }else{
                 dispatch(push(url));
-            }    
+            }
+        },
+        takeOut: (category, id, currency) => {
+            if(currency=='FastX'){
+                dispatch(assetsActions.takeOut(category, id))
+            }
         },
         toDeposit: (price) => {
             dispatch(accountActions.deposit(price))

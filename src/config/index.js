@@ -1,8 +1,8 @@
 export const chainOptions = {
     debug: true,
     gethRpc: "//localhost:8545",
-    fastXRpc: "//fastx-rinkeby.msan.cn/jsonrpc",
-    rootChainAddress: "0xC47e711ac6A3D16Db0826c404d8C5d8bDC01d7b1",
+    fastXRpc: "//localhost:8546/jsonrpc",
+    rootChainAddress: "0xa3b2a1804203b75b494028966c0f62e677447a39",
 }
 
 export const retry = {

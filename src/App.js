@@ -23,17 +23,17 @@ import FlashMessage from './components/FlashMessage';
 //   setTimeout(function(){
 //     window.web3 = new Web3(window.web3.currentProvider);
 //     console.log(window.web3.version)
-//   }, 0) 
+//   }, 0)
 // }
 
 export default class App extends Component {
-  
+
   render() {
     return (
       <div>
         <SiteHeader />
           <FlashMessage/>
-          <Web3Provider>
+
             <Switch>
               <Route path='/account' component={Account} />
               <Route exact path='/assets' component={AssetList} />
@@ -43,10 +43,9 @@ export default class App extends Component {
               {/* <Route path='/b/:hash/:name/' component={withRouter(WithBoard(BoardPage))} /> */}
               <Redirect path="/" to={{pathname: '/assets'}} />
             </Switch>
-          </Web3Provider>
+          
         <SiteFooter />
       </div>
     );
   }
 }
-

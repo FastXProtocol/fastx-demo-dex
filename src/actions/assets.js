@@ -72,4 +72,10 @@ export const checkBlanceEnough = (amount) => {
   };
 }
 
-
+export const takeOut = (category, id) => {
+    return {
+        type: "TAKE_OUT",
+        category,
+        id
+    };
+}

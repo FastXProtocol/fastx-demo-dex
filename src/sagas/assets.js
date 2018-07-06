@@ -23,7 +23,7 @@ function* getAccountAsync() {
     for (let i = 1; i<=retry.count; i++){
         try {
             accounts = yield fastx.web3.eth.getAccounts();
-            break; 
+            break;
         }catch(err){
             if(i <= retry.count) {
                 console.log("getAccountErr:",i,err)
@@ -33,7 +33,7 @@ function* getAccountAsync() {
             }
         }
     }
-    
+
     fastx.defaultAccount = accounts[0];
     console.log('getAccountAddress:',fastx.defaultAccount);
     yield put({
@@ -44,9 +44,7 @@ function* getAccountAsync() {
 
 function* getAssetsAsync(params) {
     yield getFastx();
-    let categories = {};
 
-    let categoriesUrls = [];
     let assets = [];
     yield put({
       type: 'SET_ASSETS_LOADING',
@@ -75,6 +73,7 @@ function* getAssetsAsync(params) {
         kitty.auction.ending_at = value.expiretimestamp;
         kitty.auction.current_price = value.amount1.toString();
         kitty.auction.starting_price = '0';
+        kitty.categroy = value.contractaddress2;
         assets.push(kitty);
     }
 
@@ -162,12 +161,12 @@ function* assetBuyAsync(action) {
         })
         return;
     }
-    
+
     yield put({
       type: 'DEPOSIT_STATUS',
       waiting: true
     })
-} 
+}
 
 function* publishStatusAsync(action) {
     yield getFastx();
@@ -223,7 +222,7 @@ function* watchCheckOwnerAsync(action) {
     // }
     if(action.locationParams){
         isOwner = yield checkEthOwner(action);
-    }else{    
+    }else{
         isOwner = yield checkFastxOwner(action);
     }
     // switch(currency){
@@ -233,7 +232,7 @@ function* watchCheckOwnerAsync(action) {
     //     case 'FastX':
     //     default:
     //         isOwner = yield checkFastxOwner(action);
-    // }   
+    // }
 
     yield put({
       type: 'SET_ASSETS_IS_OWNER',
@@ -267,6 +266,18 @@ function* watchCheckBlanceEnough(action) {
     }
 }
 
+function* watchTakeOutAsync(action) {
+    yield getFastx();
+    try{
+        let utxo = yield fastx.searchUTXO({'category':action.category,'tokenId':action.id})
+        console.log(utxo)
+        const [blknum, txindex, oindex, contractAddress, amount, tokenid] = utxo;
+        yield fastx.startExit(blknum, txindex, oindex, contractAddress, amount, tokenid, {from:fastx.defaultAccount});
+    }catch(err){
+        console.log(err);
+    }
+}
+
 async function getFastx(func) {
     while(!fastx) {
         fastx = store.getState().app.fastx;
@@ -286,4 +297,5 @@ export default function * assetSaga (arg) {
     yield takeEvery('GET_PUBLISH_STATUS',publishStatusAsync)
     yield takeEvery('CHECK_IS_OWNER', watchCheckOwnerAsync)
     yield takeEvery('CHECK_BLANCE_ENOUGH', watchCheckBlanceEnough)
+    yield takeEvery('TAKE_OUT', watchTakeOutAsync)
 }
