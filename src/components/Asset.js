@@ -30,8 +30,10 @@ export default class Asset extends Component {
 		}
 	}
 
-    if(this.props.showBtn){
+    if(this.props.showBtn == 'FastX'){
         btnHtml = <Button size='small' floated='right' style={{marginTop:'1em'}} color='teal' onClick={this.props.takeOut}>取出</Button>
+    }else if(this.props.showBtn == 'Ethereum'){
+        btnHtml = <Button size='small' floated='right' style={{marginTop:'1em'}} color='green' onClick={this.props.takeOut}>存入</Button>
     }
 
     return (

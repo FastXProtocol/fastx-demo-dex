@@ -40,11 +40,13 @@ export default class Account extends Component {
     render() {
         let cards = this.props.items.map((item, i) => {
             let url = '/assets/'+item.categroy+'/'+item.id;
+            console.log('123456')
+            console.log(item)
             return (
                 <Grid.Column key={i} mobile={16} tablet={8} computer={4} >
                     <Asset image={item.image_url_cdn} name={item.name} id={item.id} onClick={() => this.props.goto(url, this.props.currency)}
                         takeOut={() => this.props.takeOut(item.categroy, item.id, this.props.currency)}
-                        showBtn={this.props.currency=='Ethereum'?false:true}/>
+                        showBtn={this.props.currency}/>
                 </Grid.Column>
             )
         })

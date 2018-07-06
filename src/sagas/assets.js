@@ -1,7 +1,7 @@
 import { put, takeEvery, all ,take} from 'redux-saga/effects';
 import { delay } from 'redux-saga';
 import axios from 'axios';
-import { chainOptions, retry} from '../config';
+import { chainOptions, retry, chainCategory} from '../config';
 
 let store,fastx;
 
@@ -197,7 +197,7 @@ async function checkFastxOwner(action) {
 }
 
 async function checkEthOwner (action) {
-    const contract = fastx.getErc721TokenInterface('0x952CE607bD9ab82e920510b2375cbaD234d28c8F');
+    const contract = fastx.getErc721TokenInterface(chainCategory);
     let tokenIndex = await contract.methods.balanceOf(fastx.defaultAccount).call();
     tokenIndex = parseInt(tokenIndex);
     while(tokenIndex > 0){
@@ -266,13 +266,34 @@ function* watchCheckBlanceEnough(action) {
     }
 }
 
+const depositNFT = async (asset_contract, tokenid) => {
+    console.log('asset_contract:',asset_contract)
+    const ownerAddress = fastx.defaultAccount;
+    let nft_contract = fastx.getErc721TokenInterface(asset_contract);
+
+    console.log('Approving token # '+tokenid+' to '+chainOptions.rootChainAddress);
+    await fastx.approve(asset_contract, 0, tokenid, {from: ownerAddress})
+        .on('transactionHash', console.log);
+    console.log( 'Approved address: ', await nft_contract.methods.getApproved(tokenid).call() );
+
+    await fastx.deposit(asset_contract, 0, tokenid, {from: ownerAddress});
+    return {
+        category: asset_contract,
+        tokenId: tokenid
+    };
+}
+
 function* watchTakeOutAsync(action) {
     yield getFastx();
     try{
-        let utxo = yield fastx.searchUTXO({'category':action.category,'tokenId':action.id})
-        console.log(utxo)
-        const [blknum, txindex, oindex, contractAddress, amount, tokenid] = utxo;
-        yield fastx.startExit(blknum, txindex, oindex, contractAddress, amount, tokenid, {from:fastx.defaultAccount});
+        if(action.currency == 'FastX'){
+            let utxo = yield fastx.searchUTXO({'category':action.category,'tokenId':action.id})
+            console.log(utxo)
+            const [blknum, txindex, oindex, contractAddress, amount, tokenid] = utxo;
+            yield fastx.startExit(blknum, txindex, oindex, contractAddress, amount, tokenid, {from:fastx.defaultAccount});
+        }else if(action.currency == 'Ethereum'){
+            const nft_ad = yield depositNFT(action.category, action.id);
+        }
     }catch(err){
         console.log(err);
     }

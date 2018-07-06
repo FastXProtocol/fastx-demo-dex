@@ -37,9 +37,7 @@ function mapDispatchToProps(dispatch) {
             }
         },
         takeOut: (category, id, currency) => {
-            if(currency=='FastX'){
-                dispatch(assetsActions.takeOut(category, id))
-            }
+            dispatch(assetsActions.takeOut(category, id, currency))
         },
         toDeposit: (price) => {
             dispatch(accountActions.deposit(price))

@@ -72,10 +72,11 @@ export const checkBlanceEnough = (amount) => {
   };
 }
 
-export const takeOut = (category, id) => {
+export const takeOut = (category, id, currency) => {
     return {
         type: "TAKE_OUT",
         category,
-        id
+        id,
+        currency
     };
 }

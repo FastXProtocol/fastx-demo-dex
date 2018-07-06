@@ -1,6 +1,6 @@
 import { call,put, takeEvery, all ,take} from 'redux-saga/effects';
 import { delay, channel} from 'redux-saga';
-import { chainOptions, retry} from '../config';
+import { chainOptions, retry, chainCategory} from '../config';
 import moment from 'moment';
 import axios from 'axios';
 
@@ -148,7 +148,7 @@ const getETHAssets = async() => {
     let assets = [];
 
     try{
-        const contract = fastx.getErc721TokenInterface('0x952CE607bD9ab82e920510b2375cbaD234d28c8F');
+        const contract = fastx.getErc721TokenInterface(chainCategory);
         let tokenIndex = await contract.methods.balanceOf(fastx.defaultAccount).call();
         tokenIndex = parseInt(tokenIndex);
         while(tokenIndex > 0){
@@ -160,6 +160,7 @@ const getETHAssets = async() => {
             })
             let kitty = kittyRes.data;
             if(!kitty.auction)kitty.auction = {};
+            kitty.categroy = chainCategory;
             assets.push(kitty);
         }
     }catch(err){
