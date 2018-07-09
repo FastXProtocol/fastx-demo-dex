@@ -106,9 +106,11 @@ const getFastxBalance = async() => {
     }
 
     let balance = 0;
+    const eth = '0'.repeat(40);
     for(let value of balanceFT){
-        if(value[0] == "0000000000000000000000000000000000000000"){
-            balance = value[1];
+        const [_currency, _amount] = value;
+        if(_currency == eth){
+            balance = _amount;
             break;
         }
     }
