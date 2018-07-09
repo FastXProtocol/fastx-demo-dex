@@ -33,7 +33,7 @@ export default class App extends Component {
       <div>
         <SiteHeader />
           <FlashMessage/>
-
+          <Web3Provider>
             <Switch>
               <Route path='/account' component={Account} />
               <Route exact path='/assets' component={AssetList} />
@@ -43,7 +43,7 @@ export default class App extends Component {
               {/* <Route path='/b/:hash/:name/' component={withRouter(WithBoard(BoardPage))} /> */}
               <Redirect path="/" to={{pathname: '/assets'}} />
             </Switch>
-          
+          </Web3Provider>
         <SiteFooter />
       </div>
     );
