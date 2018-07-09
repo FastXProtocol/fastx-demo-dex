@@ -2,8 +2,11 @@ import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import { push } from 'react-router-redux';
-import { Card, Container, Divider, Dropdown, Dimmer, Grid, Header, Image, List, Loader, Menu, Modal, Segment, Icon, Button, Feed} from 'semantic-ui-react';
-
+import {
+    Container,
+    Dimmer,
+    Loader
+} from 'semantic-ui-react';
 import AssetDetailComponent from '../components/AssetDetail';
 import TipModal from '../components/Modal/tipModal';
 import * as assetsActions from '../actions/assets';
@@ -18,7 +21,7 @@ class AssetDetail extends Component {
       this.props.checkIsOwner(this.props.category, this.props.id, this.props.locationParams);
       //this.props.checkBlanceEnough(this.props.fillTx.amount1 || 0);
     }
-  
+
     render() {
       let loaderHtml = "";
       if(this.props.isLoading) {
@@ -40,7 +43,7 @@ class AssetDetail extends Component {
 const getFillTx = (category, id, allPs) => {
   let fillTx = {};
   for(let value of allPs){
-    if(value.contractaddress2 == category && value.tokenid2 == id){
+    if(value.contractaddress2 === category && parseInt(value.tokenid2, 10) === parseInt(id, 10)){
       fillTx = value;
       break;
     }
@@ -49,7 +52,6 @@ const getFillTx = (category, id, allPs) => {
 }
 
 function mapStateToProps(state, props){
-  console.log(props)
     return {
        id: props.match.params.id,
        category: props.match.params.category,
@@ -89,7 +91,7 @@ function mapDispatchToProps(dispatch) {
             }else{
               dispatch(push('/assets/'+category+'/'+id+'/sell'));
             }
-            
+
           }
         },
         ...bindActionCreators(accountActions, dispatch),

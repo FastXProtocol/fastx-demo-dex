@@ -1,4 +1,3 @@
-import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import { push } from 'react-router-redux';
@@ -11,7 +10,7 @@ import * as modalActions from '../actions/modal';
 const getFillTx = (category, id, allPs) => {
   let fillTx = {};
   for(let value of allPs){
-    if(value.contractaddress2 == category && value.tokenid2 == id){
+    if(value.contractaddress2 === category && parseInt(value.tokenid2, 10) === parseInt(id, 10)){
       fillTx = value;
       break;
     }
@@ -54,7 +53,7 @@ function mapDispatchToProps(dispatch) {
             //   dispatch(accountActions.sellAsset(params));
             // }else{
             //   dispatch(accountActions.sellContractAsset(params));
-            // } 
+            // }
           }
         },
         ...bindActionCreators(modalActions, dispatch),

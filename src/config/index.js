@@ -5,7 +5,7 @@ export let chainOptions = {
 export let chainCategory = ""
 
 console.log(process.env.ENV);
-if (process.env.ENV.toLowerCase() == "local") {
+if (process.env.ENV.toLowerCase() === "local") {
     chainOptions = {
         ...chainOptions,
         gethRpc: "//localhost:8545",

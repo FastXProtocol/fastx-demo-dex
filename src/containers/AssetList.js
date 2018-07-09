@@ -2,8 +2,13 @@ import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import { push } from 'react-router-redux';
-import { Card, Container, Dimmer, Grid, Header, Image, Loader, Icon } from 'semantic-ui-react';
-
+import {
+    Container,
+    Dimmer,
+    Grid,
+    Header,
+    Loader
+} from 'semantic-ui-react';
 import Asset from '../components/Asset';
 import * as assetsActions from '../actions/assets';
 
@@ -13,8 +18,6 @@ class Assets extends Component {
   }
 
   render() {
-    const { error, search, assetsSearch, getAssets, assetsReceived, setAssetsFilter, getAssetDetail, ...rest} = this.props
-
     let assets = this.props.results;
     let listItems = assets.map((item, i) => {
         let url = '/assets/'+item.category+'/'+item.id;
@@ -25,7 +28,7 @@ class Assets extends Component {
         if(auction){
           current_price = auction.current_price;
 
-          if(auction.discount != 0){
+          if(auction.discount !== 0){
             starting_price = auction.starting_price;
           }
 

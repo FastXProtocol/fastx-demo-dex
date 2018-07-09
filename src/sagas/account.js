@@ -1,4 +1,4 @@
-import { call,put, takeEvery, all ,take} from 'redux-saga/effects';
+import { put, takeEvery, take} from 'redux-saga/effects';
 import { delay, channel} from 'redux-saga';
 import { chainOptions, retry, chainCategory} from '../config';
 import moment from 'moment';
@@ -150,7 +150,7 @@ const getETHAssets = async() => {
     try{
         const contract = fastx.getErc721TokenInterface(chainCategory);
         let tokenIndex = await contract.methods.balanceOf(fastx.defaultAccount).call();
-        tokenIndex = parseInt(tokenIndex);
+        tokenIndex = parseInt(tokenIndex, 10);
         while(tokenIndex > 0){
             tokenIndex--;
             let token = await contract.methods.tokenOfOwnerByIndex(fastx.defaultAccount, tokenIndex).call();
@@ -275,23 +275,6 @@ function* watchSellAssetAsync(data) {
         })
     }
 }
-
-// function* watchSellContractAssetAsync(data) {
-//     yield getFastx();
-//     yield put({
-//       type: 'ASSETS_STATUS',
-//       status: 'waiting'
-//     })
-//     const end = moment(data.params.end).add(1, 'days').unix();
-//     const price = parseFloat(data.params.sellPrice);
-//     console.log("sellContractAssetParams",data.params)
-//     let result = yield postNftAd(data.params.category, data.params.sellId, end, price);
-//     console.log("postNftAdResult:",result);
-//     yield put({
-//       type: 'ASSETS_STATUS',
-//       status: 'sent'
-//     })
-// }
 
 const depositChannel = channel();
 

@@ -1,4 +1,4 @@
-import { put, takeEvery, all, fork } from 'redux-saga/effects';
+import { all, fork } from 'redux-saga/effects';
 import accountSaga from './account';
 import assetSaga from './assets';
 

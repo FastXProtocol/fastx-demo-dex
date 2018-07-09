@@ -1,15 +1,11 @@
-import _ from 'lodash';
-import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import { push } from 'react-router-redux';
-import { bidsOptions } from '../components/Common';
 import Account from '../components/Account';
 import '../components/Card.css';
 import * as accountActions from '../actions/account';
 import * as assetsActions from '../actions/assets';
 import '../components/Label.css';
-import { assentsOptions } from '../components/Common';
 
 function mapStateToProps(state){
     return {
@@ -30,7 +26,7 @@ function mapStateToProps(state){
 function mapDispatchToProps(dispatch) {
     return {
         goto: (url,currency) => {
-            if(currency && currency!='FastX'){
+            if(currency && currency!=='FastX'){
                 dispatch(push(url+'?currency='+currency));
             }else{
                 dispatch(push(url));

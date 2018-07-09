@@ -1,4 +1,4 @@
-import { put, takeEvery, all ,take} from 'redux-saga/effects';
+import { put, takeEvery} from 'redux-saga/effects';
 import { delay } from 'redux-saga';
 import axios from 'axios';
 import { chainOptions, retry, chainCategory} from '../config';
@@ -305,7 +305,7 @@ function* watchTakeOutAsync(action) {
       type: 'SET_ASSETS_LOADING',
       isLoading: true
     })
-    
+
     let assets = store.getState().account.items;
     let index = -1;
     for(let i in assets){

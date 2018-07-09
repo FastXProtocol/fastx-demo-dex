@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { Button, Card, Container, Dimmer, Grid, Header, Image, Loader, Icon } from 'semantic-ui-react';
+import { Button, Card, Image, Icon } from 'semantic-ui-react';
 import moment from 'moment';
 import './Card.css';
 
@@ -30,9 +30,9 @@ export default class Asset extends Component {
 		}
 	}
 
-    if(this.props.showBtn == 'FastX'){
+    if(this.props.showBtn === 'FastX'){
         btnHtml = <Button size='small' floated='right' style={{marginTop:'1em'}} color='teal' onClick={this.props.takeOut}>取出</Button>
-    }else if(this.props.showBtn == 'Ethereum'){
+    }else if(this.props.showBtn === 'Ethereum'){
         btnHtml = <Button size='small' floated='right' style={{marginTop:'1em'}} color='teal' onClick={this.props.takeOut}>存入</Button>
     }
 

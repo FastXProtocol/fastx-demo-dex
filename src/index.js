@@ -3,7 +3,6 @@ import { render } from 'react-dom';
 import configureStore, { history } from './store/configureStore'
 import 'semantic-ui-css/semantic.min.css';
 import App from './App';
-import AssetList from './containers/AssetList';
 
 import registerServiceWorker from './registerServiceWorker';
 import { Provider } from 'react-redux'
@@ -11,12 +10,12 @@ import { ConnectedRouter } from 'react-router-redux'
 
 const store = configureStore();
 
-render(    
+render(
     <Provider store={store}>
         <ConnectedRouter history={history}>
             <App />
         </ConnectedRouter>
-    </Provider>, 
+    </Provider>,
     document.getElementById('root')
 );
 

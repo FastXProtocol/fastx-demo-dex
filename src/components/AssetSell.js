@@ -1,9 +1,12 @@
 import React, { Component } from 'react';
-import { connect } from 'react-redux';
-import moment from 'moment';
-import { Card, Container, Divider, Dropdown,Dimmer, 
-	Form, Grid, Header, Input, Image, List,Loader,
- Menu, Modal, Segment, Step, Icon, Button, Feed} from 'semantic-ui-react';
+import {
+	Button,
+	Container,
+	Form,
+	Input,
+	Image,
+    Step
+} from 'semantic-ui-react';
 import TipModal from '../components/Modal/tipModal';
 import '../components/Dropdown.css';
 import './modalModify.css';
@@ -14,16 +17,15 @@ export default class AssetDetail extends Component {
 		this.props.getAssetDetail(this.props.id);
 		this.props.getPublishStatus(this.props.category, this.props.id);
     }
-	
+
     render() {
-    	const { asset, id, allPs, fillTx } = this.props;
     	let html;
-    	if(this.props.status == "sent"){
+    	if(this.props.status === "sent"){
     		html =  <div>
-	    		
+
 				<Button primary size='big' onClick={() => this.props.goto()}>返回 Account</Button>
 	    	</div>
-    	}else if(this.props.status == "waiting"){
+    	}else if(this.props.status === "waiting"){
 	    	html =  <div>
 				<Image src='/assets/images/help/metamask.png' size='medium' inline={true}/>
 	    	</div>
@@ -48,15 +50,15 @@ sellPrice: this.props.sellPrice}, this.props.hasPublished, this.props.locationPa
             <Container style={{ marginTop: '1em' }} textAlign='center'>
                 <TipModal open={this.props.modal.open} close={this.props.close} desc={this.props.modal.desc} />
             	<Step.Group ordered>
-            		<Step completed={this.props.status == "waiting" || this.props.status == "sent"} active={!this.props.status}>
+            		<Step completed={this.props.status === "waiting" || this.props.status === "sent"} active={!this.props.status}>
                         <Step.Content>
                             <Step.Title>Form</Step.Title>
-                            <Step.Description> 
-                            	Fill end and price  
+                            <Step.Description>
+                            	Fill end and price
                             </Step.Description>
                         </Step.Content>
                     </Step>
-                    <Step completed={this.props.status == "sent"} active={this.props.status == "waiting"}>
+                    <Step completed={this.props.status === "sent"} active={this.props.status === "waiting"}>
                         <Step.Content>
                             <Step.Title>Confirm</Step.Title>
                             <Step.Description>
@@ -64,7 +66,7 @@ sellPrice: this.props.sellPrice}, this.props.hasPublished, this.props.locationPa
                             </Step.Description>
                         </Step.Content>
                     </Step>
-                    <Step active={this.props.status == "sent"}>
+                    <Step active={this.props.status === "sent"}>
                         <Step.Content>
                             <Step.Title>Waiting</Step.Title>
                             <Step.Description>
