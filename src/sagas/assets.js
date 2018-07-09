@@ -73,7 +73,7 @@ function* getAssetsAsync(params) {
         kitty.auction.ending_at = value.expiretimestamp;
         kitty.auction.current_price = value.amount1.toString();
         kitty.auction.starting_price = '0';
-        kitty.categroy = value.contractaddress2;
+        kitty.category = value.contractaddress2;
         assets.push(kitty);
     }
 
@@ -294,9 +294,40 @@ function* watchTakeOutAsync(action) {
         }else if(action.currency == 'Ethereum'){
             const nft_ad = yield depositNFT(action.category, action.id);
         }
+
+
     }catch(err){
         console.log(err);
     }
+
+    //刷新用户商品列表
+    yield put({
+      type: 'SET_ASSETS_LOADING',
+      isLoading: true
+    })
+    
+    let assets = store.getState().account.items;
+    let index = -1;
+    for(let i in assets){
+        console.log(i)
+        if(assets[i].id == action.id && assets[i].category == action.category){
+            index = i;
+            break;
+        }
+    }
+
+    if(index != -1){
+        assets.splice(parseInt(index), 1);
+        yield put({
+          type: 'USER_ITEMS_RECEIVED',
+          items: assets
+        })
+    }
+
+    yield put({
+      type: 'SET_ASSETS_LOADING',
+      isLoading: false
+    })
 }
 
 async function getFastx(func) {
