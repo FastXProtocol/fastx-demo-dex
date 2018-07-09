@@ -40,7 +40,7 @@ export const bidsOptions = [
   } 
 ]
 
-export const categroyOptions = [
+export const categoryOptions = [
   {
     text: 'Ethmoji',
     value: '0x40eb59a8cc2d865baf536dd9d0ec3108934afced'

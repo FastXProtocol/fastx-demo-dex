@@ -17,7 +17,7 @@ class Assets extends Component {
 
     let assets = this.props.results;
     let listItems = assets.map((item, i) => {
-        let url = '/assets/'+item.categroy+'/'+item.id;
+        let url = '/assets/'+item.category+'/'+item.id;
         let auction = item.auction?item.auction:null;
         let current_price = 0;
         let starting_price = 0;

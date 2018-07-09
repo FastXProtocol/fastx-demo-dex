@@ -38,7 +38,7 @@ export default class AssetDetail extends Component {
                   <Input label='Wei' type='number' placeholder='' onChange={this.props.setSellPrice} />
                 </Form.Field>
                 <Button type='submit' color='teal' style={{marginLeft:'110px',marginTop: '2em'}} onClick={() => this.props.sellCheck({  end: this.props.end,
-categroy: this.props.category,
+category: this.props.category,
 sellId: this.props.id,
 sellPrice: this.props.sellPrice}, this.props.hasPublished, this.props.locationParams)}>Sell</Button>
             </Form>

@@ -16,7 +16,7 @@ function mapStateToProps(state){
         balance: state.account.balance,
         ownerAddress: state.account.ownerAddress,
         end: state.account.end,
-        categroy: state.account.categroy,
+        category: state.account.category,
         sellId: state.account.sellId,
         sellPrice: state.account.sellPrice,
         depositPrice: state.account.depositPrice,

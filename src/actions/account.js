@@ -31,10 +31,10 @@ export const setSellEnd = (e, target) => {
   };
 }
 
-export const setSellCategroy = (e, target) => {
+export const setSellcategory = (e, target) => {
   return {
-    type: "SET_SELL_CATEGROY",
-    categroy: target && target.value
+    type: "SET_SELL_category",
+    category: target && target.value
   };
 }
 

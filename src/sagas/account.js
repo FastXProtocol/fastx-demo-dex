@@ -16,7 +16,7 @@ const getAssent = async (NFT) => {
             })
             let kitty = kittyRes.data;
             if(!kitty.auction)kitty.auction = {};
-            kitty.categroy = value[0];
+            kitty.category = value[0];
             assets.push(kitty);
         }
     } catch(err) {
@@ -87,7 +87,7 @@ const postNftAd = async (contract, tokenid, end, price, options={}) => {
 }
 
 const postAd = async (data) => {
-	const nft_ad = await depositNFT(data.params.categroy, data.params.sellId);
+	const nft_ad = await depositNFT(data.params.category, data.params.sellId);
 	await logBalance();
 	const end = moment(data.params.end).add(1, 'days').unix();
 	const price = parseFloat(data.params.sellPrice);
@@ -160,7 +160,7 @@ const getETHAssets = async() => {
             })
             let kitty = kittyRes.data;
             if(!kitty.auction)kitty.auction = {};
-            kitty.categroy = chainCategory;
+            kitty.category = chainCategory;
             assets.push(kitty);
         }
     }catch(err){
@@ -264,7 +264,7 @@ function* watchSellAssetAsync(data) {
         const price = parseFloat(data.params.sellPrice);
         console.log("sellContractAssetParams",data.params)
         try{
-            let result = yield postNftAd(data.params.categroy, data.params.sellId, end, price);
+            let result = yield postNftAd(data.params.category, data.params.sellId, end, price);
             console.log("postNftAdResult:",result);
         }catch(err){
             console.log(err);
@@ -285,7 +285,7 @@ function* watchSellAssetAsync(data) {
 //     const end = moment(data.params.end).add(1, 'days').unix();
 //     const price = parseFloat(data.params.sellPrice);
 //     console.log("sellContractAssetParams",data.params)
-//     let result = yield postNftAd(data.params.categroy, data.params.sellId, end, price);
+//     let result = yield postNftAd(data.params.category, data.params.sellId, end, price);
 //     console.log("postNftAdResult:",result);
 //     yield put({
 //       type: 'ASSETS_STATUS',

@@ -6,7 +6,7 @@ const GET_ACCOUNT = 'GET_ACCOUNT';
 const ACCOUNT_RECEIVED = 'ACCOUNT_RECEIVED';
 const SELL_ASSET = 'SELL_ASSET';
 const SET_SELL_END = 'SET_SELL_END';
-const SET_SELL_CATEGROY = 'SET_SELL_CATEGROY';
+const SET_SELL_category = 'SET_SELL_category';
 const SET_SELL_ID = 'SET_SELL_ID';
 const SET_SELL_PRICE = 'SET_SELL_PRICE';
 const SET_DEPOSIT_PRICE = 'SET_DEPOSIT_PRICE';
@@ -18,7 +18,7 @@ const initialState = {
   balance: 0,
   ownerAddress: '',
   end: moment().add(1,'days').format("YYYY-MM-DD"),
-  categroy: '',
+  category: '',
   sellId: '',
   sellPrice: 0,
   depositPrice: 0,
@@ -53,10 +53,10 @@ export default function account(state = initialState, action = {}) {
         ...state,
         end: action.end
       };
-    case SET_SELL_CATEGROY:
+    case SET_SELL_category:
       return {
         ...state,
-        categroy: action.categroy
+        category: action.category
       };
     case SET_SELL_ID:
       return {

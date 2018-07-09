@@ -30,7 +30,7 @@ import { bidsOptions } from '../components/Common';
 import '../components/Card.css';
 import * as accountActions from '../actions/account';
 import '../components/Label.css';
-import { categroyOptions } from '../components/Common';
+import { categoryOptions } from '../components/Common';
 
 export default class Account extends Component {
     componentDidMount() {
@@ -39,13 +39,13 @@ export default class Account extends Component {
 
     render() {
         let cards = this.props.items.map((item, i) => {
-            let url = '/assets/'+item.categroy+'/'+item.id;
+            let url = '/assets/'+item.category+'/'+item.id;
             console.log('123456')
             console.log(item)
             return (
                 <Grid.Column key={i} mobile={16} tablet={8} computer={4} >
                     <Asset image={item.image_url_cdn} name={item.name} id={item.id} onClick={() => this.props.goto(url, this.props.currency)}
-                        takeOut={() => this.props.takeOut(item.categroy, item.id, this.props.currency)}
+                        takeOut={() => this.props.takeOut(item.category, item.id, this.props.currency)}
                         showBtn={this.props.currency}/>
                 </Grid.Column>
             )
@@ -123,8 +123,8 @@ export default class Account extends Component {
                         <p style={{color: 'grey'}}>Date when your listing will expire.</p>
                     </Form.Field>
                     <Form.Field inline>
-                      <label className='align_right_label'>Categroy</label>
-                      <Input type='text' placeholder='' onChange={this.props.setSellCategroy} />
+                      <label className='align_right_label'>category</label>
+                      <Input type='text' placeholder='' onChange={this.props.setSellcategory} />
                     </Form.Field>
                     <Form.Field inline>
                       <label className='align_right_label'>ID*</label>
@@ -139,7 +139,7 @@ export default class Account extends Component {
                       <Input label='ETH' type='number' placeholder='' onChange={this.props.setSellPrice} />
                     </Form.Field>
                     <Button type='submit' color='teal' style={{marginLeft:'110px'}} onClick={() => this.props.sellAsset({  end: this.props.end,
-  categroy: this.props.categroy,
+  category: this.props.category,
   sellId: this.props.sellId,
   sellPrice: this.props.sellPrice})}>Submit</Button>
                 </Form>
