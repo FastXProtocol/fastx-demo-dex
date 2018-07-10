@@ -1,19 +1,10 @@
 import React, { Component } from 'react';
 import {
-    Button,
     Container,
     Divider,
-    Grid,
-    Header,
-    Icon,
     Image,
     List,
-    Menu,
-    Responsive,
     Segment,
-    Sidebar,
-    Tab,
-    Visibility,
   } from 'semantic-ui-react';
 
 export default class SiteFooter extends Component {

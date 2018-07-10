@@ -31,10 +31,10 @@ export const setSellEnd = (e, target) => {
   };
 }
 
-export const setSellCategroy = (e, target) => {
+export const setSellcategory = (e, target) => {
   return {
-    type: "SET_SELL_CATEGROY",
-    categroy: target && target.value
+    type: "SET_SELL_category",
+    category: target && target.value
   };
 }
 
@@ -63,5 +63,13 @@ export const deposit = (depositPrice) => {
   return {
     type: "DEPOSIT",
     depositPrice
+  };
+}
+
+export const switchingUnit = (currency, unit) => {
+  return {
+    type: "SWITCH_UNIT",
+    currency,
+    unit
   };
 }

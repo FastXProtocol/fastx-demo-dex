@@ -1,26 +1,30 @@
 import React, { Component } from 'react';
-import { connect } from 'react-redux';
 import moment from 'moment';
-import { Card, Container, Divider, Dropdown, Dimmer, Grid, Header, Image, List, Loader, Menu, Modal, Segment, Icon, Button, Feed} from 'semantic-ui-react';
+import {
+	Button,
+	Card,
+	Dropdown,
+	Feed,
+	Grid,
+	Image,
+	Icon
+} from 'semantic-ui-react';
 import '../components/Dropdown.css';
-import { chainOptions } from '../config';
 
 export default class AssetDetail extends Component {
-	
+
     render() {
-    	const { asset, id, allPs, fillTx } = this.props;
+    	const { asset, fillTx } = this.props;
 		let auction = asset.auction?asset.auction:null, current_price = 0;
 		let sellerHtml, dateHtml = 'Now';
-		
+
 		if(auction){
-			//current_price = fastx.web3.utils.fromWei(ps.amount1+'', 'ether');
-			//current_price = parseFloat(current_price).toFixed(4)
 			current_price = fillTx.amount1 || 0;
 			if(auction.seller){
 				sellerHtml = <Feed>
 						    <Feed.Event>
 						      <Feed.Label>
-						        <img src={ asset.auction.seller.profile_img_url } />
+						        <Image src={ asset.auction.seller.profile_img_url } />
 						      </Feed.Label>
 						      <Feed.Content>
 						        <span style={{ color: 'grey' }}>Owned by</span> <a>{ asset.auction.seller.user ? asset.auction.seller.user.username : '' }</a>
@@ -38,16 +42,16 @@ export default class AssetDetail extends Component {
 				}else if(diffDate<1){
 					diffDate = moment(fillTx.expiretimestamp*1000).diff(moment(), 'hours');
 					dateHtml = 'Ends in '+diffDate+' hours';
-				}	
+				}
 			}
 		}
 
-		
+
 
 		let confirmBtnHtml;
 		if(this.props.isOwner){
 			confirmBtnHtml = <Button type='submit' color='teal' style={{marginLeft:'110px',marginTop: '2em'}} onClick={() => this.props.sellCheck(this.props.category,
-					  this.props.id, this.props.hasPublished)}>Sell</Button>
+					  this.props.id, this.props.hasPublished, this.props.locationParams)}>Sell</Button>
 		}else{
 			confirmBtnHtml = <Button primary size='big' onClick={() => this.props.toTransactionStep(this.props.category, this.props.id, fillTx, this.props.blanceEnough)}>
 	    		BUY THIS ITEM

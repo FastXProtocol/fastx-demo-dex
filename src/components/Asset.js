@@ -1,12 +1,12 @@
 import React, { Component } from 'react';
-import { Card, Container, Dimmer, Grid, Header, Image, Loader, Icon } from 'semantic-ui-react';
+import { Button, Card, Image, Icon } from 'semantic-ui-react';
 import moment from 'moment';
 import './Card.css';
 
 export default class Asset extends Component {
 
   render() {
-	let preHtml, nowHtml, dateHtml;
+	let preHtml, nowHtml, dateHtml, btnHtml;
 	let diffDate;
 	let end = this.props.end;
 
@@ -30,9 +30,15 @@ export default class Asset extends Component {
 		}
 	}
 
+    if(this.props.showBtn === 'FastX'){
+        btnHtml = <Button size='small' floated='right' style={{marginTop:'1em'}} color='teal' onClick={this.props.takeOut}>取出</Button>
+    }else if(this.props.showBtn === 'Ethereum'){
+        btnHtml = <Button size='small' floated='right' style={{marginTop:'1em'}} color='teal' onClick={this.props.takeOut}>存入</Button>
+    }
+
     return (
-		<Card>
-			<Image src={this.props.image} />
+		<Card >
+			<Image src={this.props.image} onClick={this.props.onClick} />
 			{ dateHtml }
 			<Card.Content>
 				<Card.Header>
@@ -41,6 +47,7 @@ export default class Asset extends Component {
 				<Card.Meta>
 					<span>{ preHtml }</span>
 					<span>{ nowHtml }</span>
+                    { btnHtml }
 				</Card.Meta>
 			</Card.Content>
 		</Card>

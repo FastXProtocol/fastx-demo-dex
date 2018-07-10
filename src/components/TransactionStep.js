@@ -1,24 +1,28 @@
 import React, { Component } from 'react';
-import { Button, Card, Container, Divider, Dropdown,Dimmer, Form, Feed, Grid, Header, Input, Icon,
- Image, List, Loader, Menu, Modal, Segment, Step} from 'semantic-ui-react';
+import {
+    Button,
+    Container,
+    Image, 
+    Step
+} from 'semantic-ui-react';
 
 export default class TransactionStep extends Component {
     render() {
     	let html;
     	if(this.props.waiting){
     		html =  <div>
-	    		
+
 				<Button primary size='big' onClick={() => this.props.goto()}>返回 Account</Button>
 	    	</div>
     	}else{
 	    	html =  <div>
-	    		
+
 				<Image src='/assets/images/help/metamask.png' size='medium' inline={true}/>
 	    	</div>
     	}
-    	
+
         return (
-            <Container style={{ marginTop: '1em' }} textAlign='center'>	
+            <Container style={{ marginTop: '1em' }} textAlign='center'>
                 <Step.Group ordered>
                     <Step completed={this.props.waiting} active={!this.props.waiting}>
                         <Step.Content>

@@ -1,4 +1,3 @@
-import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import { push } from 'react-router-redux';
@@ -11,7 +10,7 @@ import * as modalActions from '../actions/modal';
 const getFillTx = (category, id, allPs) => {
   let fillTx = {};
   for(let value of allPs){
-    if(value.contractaddress2 == category && value.tokenid2 == id){
+    if(value.contractaddress2 === category && parseInt(value.tokenid2, 10) === parseInt(id, 10)){
       fillTx = value;
       break;
     }
@@ -31,7 +30,8 @@ function mapStateToProps(state, props){
        hasPublished: state.assets.hasPublished,
        isLoading: state.assets.isLoading,
        status: state.assets.status,
-       modal: state.modal
+       modal: state.modal,
+       locationParams: props.location.search.split('?')[1]
     }
 }
 
@@ -42,12 +42,18 @@ function mapDispatchToProps(dispatch) {
           dispatch(accountActions.sellContractAsset(params))
           dispatch(modalActions.close())
         },
-        sellCheck: (params, hasPublished) => {
+        sellCheck: (params, hasPublished, locationParams) => {
           console.log('hasPublished:',hasPublished)
           if(hasPublished){
             dispatch(modalActions.open('这件商品您已经过发布广告了'));
           }else{
-            dispatch(accountActions.sellContractAsset(params));
+            params['locationParams'] = locationParams;
+            dispatch(accountActions.sellAsset(params));
+            // if(currency == 'Ethereum'){
+            //   dispatch(accountActions.sellAsset(params));
+            // }else{
+            //   dispatch(accountActions.sellContractAsset(params));
+            // }
           }
         },
         ...bindActionCreators(modalActions, dispatch),

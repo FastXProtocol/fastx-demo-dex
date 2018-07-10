@@ -2,8 +2,11 @@ import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import { push } from 'react-router-redux';
-import { Card, Container, Divider, Dropdown, Dimmer, Grid, Header, Image, List, Loader, Menu, Modal, Segment, Icon, Button, Feed} from 'semantic-ui-react';
-
+import {
+    Container,
+    Dimmer,
+    Loader
+} from 'semantic-ui-react';
 import AssetDetailComponent from '../components/AssetDetail';
 import TipModal from '../components/Modal/tipModal';
 import * as assetsActions from '../actions/assets';
@@ -15,10 +18,10 @@ class AssetDetail extends Component {
       this.props.getAssetDetail(this.props.id);
       this.props.getPublishStatus(this.props.category, this.props.id);
       this.props.getBalance();
-      this.props.checkIsOwner(this.props.category, this.props.id);
-      this.props.checkBlanceEnough(this.props.fillTx.amount1 || 0);
+      this.props.checkIsOwner(this.props.category, this.props.id, this.props.locationParams);
+      //this.props.checkBlanceEnough(this.props.fillTx.amount1 || 0);
     }
-  
+
     render() {
       let loaderHtml = "";
       if(this.props.isLoading) {
@@ -40,7 +43,7 @@ class AssetDetail extends Component {
 const getFillTx = (category, id, allPs) => {
   let fillTx = {};
   for(let value of allPs){
-    if(value.contractaddress2 == category && value.tokenid2 == id){
+    if(value.contractaddress2 === category && parseInt(value.tokenid2, 10) === parseInt(id, 10)){
       fillTx = value;
       break;
     }
@@ -62,26 +65,33 @@ function mapStateToProps(state, props){
        hasPublished: state.assets.hasPublished,
        waiting: state.account.waiting,
        userItems: state.account.items,
-
-       modal: state.modal
+       modal: state.modal,
+       locationParams: props.location.search.split('?')[1]
     }
 }
 
 function mapDispatchToProps(dispatch) {
     return {
         toTransactionStep: (category, id, fillTx, blanceEnough) => {
-          if(blanceEnough){
-            dispatch(assetsActions.assetBuy(category, id, fillTx));
-            dispatch(push('/deposit'));
-          }else{
-            dispatch(modalActions.open('您的余额不足，请去账户充值'));
-          }
+          dispatch(assetsActions.assetBuy(category, id, fillTx));
+          dispatch(push('/deposit'));
+          // if(blanceEnough){
+          //   dispatch(assetsActions.assetBuy(category, id, fillTx));
+          //   dispatch(push('/deposit'));
+          // }else{
+          //   dispatch(modalActions.open('您的余额不足，请去账户充值'));
+          // }
         },
-        sellCheck: (category, id, hasPublished) => {
+        sellCheck: (category, id, hasPublished, locationParams) => {
           if(hasPublished){
             dispatch(modalActions.open('这件商品您已经过发布广告了'));
           }else{
-            dispatch(push('/assets/'+category+'/'+id+'/sell'))
+            if(locationParams){
+              dispatch(push('/assets/'+category+'/'+id+'/sell?'+locationParams));
+            }else{
+              dispatch(push('/assets/'+category+'/'+id+'/sell'));
+            }
+
           }
         },
         ...bindActionCreators(accountActions, dispatch),

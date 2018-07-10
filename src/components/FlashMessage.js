@@ -1,20 +1,9 @@
 import React, { Component } from 'react';
 import {
-    Message,
     Container,
-    Divider,
-    Grid,
-    Header,
     Icon,
-    Image,
-    List,
-    Menu,
-    Responsive,
-    Segment,
-    Sidebar,
-    Tab,
-    Visibility,
-  } from 'semantic-ui-react';
+    Message
+} from 'semantic-ui-react';
 
 export default class FlashMessage extends Component {
     state = { visible: true }
@@ -37,4 +26,3 @@ export default class FlashMessage extends Component {
         return (<Container style={{ marginTop: '5em' }}>&nbsp;</Container>);
     };
 }
-

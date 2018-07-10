@@ -4,25 +4,27 @@ const GET_BALANCE = 'GET_BALANCE';
 const BALANCE_RECEIVED = 'BALANCE_RECEIVED';
 const GET_ACCOUNT = 'GET_ACCOUNT';
 const ACCOUNT_RECEIVED = 'ACCOUNT_RECEIVED';
-const SELL_ASSET = 'SELL_ASSET';
 const SET_SELL_END = 'SET_SELL_END';
-const SET_SELL_CATEGROY = 'SET_SELL_CATEGROY';
+const SET_SELL_category = 'SET_SELL_category';
 const SET_SELL_ID = 'SET_SELL_ID';
 const SET_SELL_PRICE = 'SET_SELL_PRICE';
 const SET_DEPOSIT_PRICE = 'SET_DEPOSIT_PRICE';
 const USER_ITEMS_RECEIVED = 'USER_ITEMS_RECEIVED';
 const DEPOSIT_STATUS = 'DEPOSIT_STATUS';
+const SWITCH_UNIT = 'SWITCH_UNIT';
 
 const initialState = {
   balance: 0,
   ownerAddress: '',
   end: moment().add(1,'days').format("YYYY-MM-DD"),
-  categroy: '',
+  category: '',
   sellId: '',
   sellPrice: 0,
   depositPrice: 0,
   items: [],
-  waiting: false
+  waiting: false,
+  currency: 'FastX',
+  unit: 'WEI'
 };
 
 export default function account(state = initialState, action = {}) {
@@ -50,10 +52,10 @@ export default function account(state = initialState, action = {}) {
         ...state,
         end: action.end
       };
-    case SET_SELL_CATEGROY:
+    case SET_SELL_category:
       return {
         ...state,
-        categroy: action.categroy
+        category: action.category
       };
     case SET_SELL_ID:
       return {
@@ -79,6 +81,12 @@ export default function account(state = initialState, action = {}) {
       return {
         ...state,
         waiting: action.waiting
+      }
+    case SWITCH_UNIT:
+      return {
+        ...state,
+        unit: action.unit,
+        currency: action.currency
       }
     default:
       return state;

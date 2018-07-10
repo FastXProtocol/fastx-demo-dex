@@ -1,7 +1,7 @@
-import { put, takeEvery, all ,take} from 'redux-saga/effects';
+import { put, takeEvery} from 'redux-saga/effects';
 import { delay } from 'redux-saga';
 import axios from 'axios';
-import { chainOptions, retry} from '../config';
+import { chainOptions, retry, chainCategory} from '../config';
 
 let store,fastx;
 
@@ -23,7 +23,7 @@ function* getAccountAsync() {
     for (let i = 1; i<=retry.count; i++){
         try {
             accounts = yield fastx.web3.eth.getAccounts();
-            break; 
+            break;
         }catch(err){
             if(i <= retry.count) {
                 console.log("getAccountErr:",i,err)
@@ -33,7 +33,7 @@ function* getAccountAsync() {
             }
         }
     }
-    
+
     fastx.defaultAccount = accounts[0];
     console.log('getAccountAddress:',fastx.defaultAccount);
     yield put({
@@ -44,9 +44,7 @@ function* getAccountAsync() {
 
 function* getAssetsAsync(params) {
     yield getFastx();
-    let categories = {};
 
-    let categoriesUrls = [];
     let assets = [];
     yield put({
       type: 'SET_ASSETS_LOADING',
@@ -75,6 +73,7 @@ function* getAssetsAsync(params) {
         kitty.auction.ending_at = value.expiretimestamp;
         kitty.auction.current_price = value.amount1.toString();
         kitty.auction.starting_price = '0';
+        kitty.category = value.contractaddress2;
         assets.push(kitty);
     }
 
@@ -162,12 +161,12 @@ function* assetBuyAsync(action) {
         })
         return;
     }
-    
+
     yield put({
       type: 'DEPOSIT_STATUS',
       waiting: true
     })
-} 
+}
 
 function* publishStatusAsync(action) {
     yield getFastx();
@@ -182,19 +181,58 @@ function* publishStatusAsync(action) {
     })
 }
 
-function* watchCheckOwnerAsync(action) {
-    yield getFastx();
-    yield getAccountAsync();
-    let isOwner = false;
+async function checkFastxOwner(action) {
     let balanceFT = [],balanceNFT = [],utxos,balanceRes;
-    balanceRes = yield fastx.getBalance(fastx.defaultAccount);
+    balanceRes = await fastx.getBalance(fastx.defaultAccount);
     console.log('balanceRes:',balanceRes);
     balanceFT = balanceRes.FT;
     balanceNFT = balanceRes.NFT
     for(let value of balanceNFT){
-        if(value[0] == action.category && value[1] == action.id)
-            isOwner = true;
+        if(value[0] == action.category && value[1] == action.id){
+            return true;
+        }
     }
+
+    return false
+}
+
+async function checkEthOwner (action) {
+    const contract = fastx.getErc721TokenInterface(chainCategory);
+    let tokenIndex = await contract.methods.balanceOf(fastx.defaultAccount).call();
+    tokenIndex = parseInt(tokenIndex);
+    while(tokenIndex > 0){
+        tokenIndex--;
+        let token = await contract.methods.tokenOfOwnerByIndex(fastx.defaultAccount, tokenIndex).call();
+        if(action.id == token)return true;
+    }
+
+    return false
+}
+
+function* watchCheckOwnerAsync(action) {
+    yield getFastx();
+    yield getAccountAsync();
+    let isOwner = false;
+    // let currency = store.getState().account.currency;
+
+    // let allPs = yield allPsTransactions();
+    // let inFastX = false;
+    // for(let ps of allPs){
+    //     if(action.id == ps.tokenid2)inFastX = true;
+    // }
+    if(action.locationParams){
+        isOwner = yield checkEthOwner(action);
+    }else{
+        isOwner = yield checkFastxOwner(action);
+    }
+    // switch(currency){
+    //     case 'Ethereum':
+    //         isOwner = yield checkEthOwner(action);
+    //         break;
+    //     case 'FastX':
+    //     default:
+    //         isOwner = yield checkFastxOwner(action);
+    // }
 
     yield put({
       type: 'SET_ASSETS_IS_OWNER',
@@ -228,6 +266,70 @@ function* watchCheckBlanceEnough(action) {
     }
 }
 
+const depositNFT = async (asset_contract, tokenid) => {
+    console.log('asset_contract:',asset_contract)
+    const ownerAddress = fastx.defaultAccount;
+    let nft_contract = fastx.getErc721TokenInterface(asset_contract);
+
+    console.log('Approving token # '+tokenid+' to '+chainOptions.rootChainAddress);
+    await fastx.approve(asset_contract, 0, tokenid, {from: ownerAddress})
+        .on('transactionHash', console.log);
+    console.log( 'Approved address: ', await nft_contract.methods.getApproved(tokenid).call() );
+
+    await fastx.deposit(asset_contract, 0, tokenid, {from: ownerAddress});
+    return {
+        category: asset_contract,
+        tokenId: tokenid
+    };
+}
+
+function* watchTakeOutAsync(action) {
+    yield getFastx();
+    try{
+        if(action.currency == 'FastX'){
+            let utxo = yield fastx.searchUTXO({'category':action.category,'tokenId':action.id})
+            console.log(utxo)
+            const [blknum, txindex, oindex, contractAddress, amount, tokenid] = utxo;
+            yield fastx.startExit(blknum, txindex, oindex, contractAddress, amount, tokenid, {from:fastx.defaultAccount});
+        }else if(action.currency == 'Ethereum'){
+            const nft_ad = yield depositNFT(action.category, action.id);
+        }
+
+
+    }catch(err){
+        console.log(err);
+    }
+
+    //刷新用户商品列表
+    yield put({
+      type: 'SET_ASSETS_LOADING',
+      isLoading: true
+    })
+
+    let assets = store.getState().account.items;
+    let index = -1;
+    for(let i in assets){
+        console.log(i)
+        if(assets[i].id == action.id && assets[i].category == action.category){
+            index = i;
+            break;
+        }
+    }
+
+    if(index != -1){
+        assets.splice(parseInt(index), 1);
+        yield put({
+          type: 'USER_ITEMS_RECEIVED',
+          items: assets
+        })
+    }
+
+    yield put({
+      type: 'SET_ASSETS_LOADING',
+      isLoading: false
+    })
+}
+
 async function getFastx(func) {
     while(!fastx) {
         fastx = store.getState().app.fastx;
@@ -247,4 +349,5 @@ export default function * assetSaga (arg) {
     yield takeEvery('GET_PUBLISH_STATUS',publishStatusAsync)
     yield takeEvery('CHECK_IS_OWNER', watchCheckOwnerAsync)
     yield takeEvery('CHECK_BLANCE_ENOUGH', watchCheckBlanceEnough)
+    yield takeEvery('TAKE_OUT', watchTakeOutAsync)
 }
