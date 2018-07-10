@@ -130,7 +130,7 @@ export default class Account extends Component {
                 <Form>
                     <Form.Field inline>
                       <label className='align_right_label'>Price*</label>
-                      <Input label='Wei' type='number' placeholder='' onChange={this.props.setDepositPrice} />
+                      <Input label='ETH' type='number' placeholder='' onChange={this.props.setDepositPrice} />
                     </Form.Field>
                     <Button type='submit' color='teal' style={{marginLeft:'110px'}} onClick={() => this.props.toDeposit(this.props.depositPrice)}>Submit</Button>
                 </Form>
@@ -142,7 +142,7 @@ export default class Account extends Component {
                     <Grid.Column verticalAlign='middle' width={4}>
                         <Image centered size='small' circular src='/assets/images/avatar/large/elliot.jpg' />
                         <Rail attached position='left'>
-                            <Button circular floated="right" disabled={this.props.isLoading} color={this.props.currency==='FastX'?'teal':'grey'} style={{marginTop:'3em', width: 100, height: 100}} onClick={() => this.props.switching('FastX', 'WEI')}>FastX</Button>
+                            <Button circular floated="right" disabled={this.props.isLoading} color={this.props.currency==='FastX'?'teal':'grey'} style={{marginTop:'3em', width: 100, height: 100}} onClick={() => this.props.switching('FastX', 'ETH')}>FastX</Button>
                         </Rail>
                         <Rail attached position='right'>
                             <Button circular floated="left" disabled={this.props.isLoading} color={this.props.currency==='Ethereum'?'teal':'grey'} style={{marginTop:'3em', width: 100, height: 100}} onClick={() => this.props.switching('Ethereum', 'ETH')}>Ethereum</Button>

@@ -90,7 +90,7 @@ const postAd = async (data) => {
 	const nft_ad = await depositNFT(data.params.category, data.params.sellId);
 	await logBalance();
 	const end = moment(data.params.end).add(1, 'days').unix();
-	const price = parseFloat(data.params.sellPrice);
+	const price = parseFloat(await fastx.web3.utils.toWei((data.params.sellPrice+''), 'ether'));
 	let transaction = await postNftAd(nft_ad.category, nft_ad.tokenId, end, price);
     return transaction;
 }
@@ -264,7 +264,7 @@ function* watchSellAssetAsync(data) {
         })
     }else{
         const end = moment(data.params.end).add(1, 'days').unix();
-        const price = parseFloat(data.params.sellPrice);
+        const price = parseFloat(yield fastx.web3.utils.toWei((data.params.sellPrice+''), 'ether'));
         console.log("sellContractAssetParams",data.params)
         try{
             let result = yield postNftAd(data.params.category, data.params.sellId, end, price);
@@ -289,8 +289,10 @@ function* watchDepositAsync(action) {
       waiting: false
     })
 
+    let price = yield fastx.web3.utils.toWei((action.depositPrice+''), 'ether');
+
     try{
-        fastx.deposit("0x0", action.depositPrice, 0, { from: fastx.defaultAccount}).on('transactionHash', function (hash){
+        fastx.deposit("0x0", price, 0, { from: fastx.defaultAccount}).on('transactionHash', function (hash){
             //在回调中无法直接yield put更新，所以使用channel的方式处理
             depositChannel.put({
               type: 'DEPOSIT_STATUS',
