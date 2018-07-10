@@ -2,37 +2,54 @@ import React, { Component } from 'react';
 import {
     Button,
     Container,
-    Image, 
+    Image,
     Step
 } from 'semantic-ui-react';
-
+//Confirm
+// Approve the contract to access your asset
 export default class TransactionStep extends Component {
     render() {
+        let curItem = this.props.steps[this.props.curStep-1];
     	let html;
-    	if(this.props.waiting){
-    		html =  <div>
+        let stepsHtml = this.props.steps.map( (item, i) => {
+            return (
+                <Step completed={ this.props.curStep > (i+1)} active={this.props.curStep == (i+1)} key={i}>
+                    <Step.Content>
+                        <Step.Title>{ item.title } </Step.Title>
+                        <Step.Description>
+                            { item.desc }
 
-				<Button primary size='big' onClick={() => this.props.goto()}>返回 Account</Button>
-	    	</div>
-    	}else{
-	    	html =  <div>
+                        </Step.Description>
+                    </Step.Content>
+                </Step>
+            )
+        })
 
+        if(curItem){
+            html =  <div>
 				<Image src='/assets/images/help/metamask.png' size='medium' inline={true}/>
 	    	</div>
+    	}else{
+            html =  <div>
+				<Button primary size='big' onClick={() => this.props.goto()}>返回 Account</Button>
+	    	</div>
     	}
+
+    	// if(this.props.waiting){
+    	// 	html =  <div>
+		// 		<Button primary size='big' onClick={() => this.props.goto()}>返回 Account</Button>
+	    // 	</div>
+    	// }else{
+	    // 	html =  <div>
+		// 		<Image src='/assets/images/help/metamask.png' size='medium' inline={true}/>
+	    // 	</div>
+    	// }
 
         return (
             <Container style={{ marginTop: '1em' }} textAlign='center'>
                 <Step.Group ordered>
-                    <Step completed={this.props.waiting} active={!this.props.waiting}>
-                        <Step.Content>
-                            <Step.Title>Confirm</Step.Title>
-                            <Step.Description>
-                                Approve the contract to access your asset
-                            </Step.Description>
-                        </Step.Content>
-                    </Step>
-                    <Step active={this.props.waiting}>
+                    { stepsHtml }
+                    <Step active={this.props.curStep > this.props.steps.length}>
                         <Step.Content>
                             <Step.Title>Waiting</Step.Title>
                             <Step.Description>

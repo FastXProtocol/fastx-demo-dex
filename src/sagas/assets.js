@@ -1,5 +1,5 @@
-import { put, takeEvery} from 'redux-saga/effects';
-import { delay } from 'redux-saga';
+import { put, takeEvery, take} from 'redux-saga/effects';
+import { delay, channel } from 'redux-saga';
 import axios from 'axios';
 import { chainOptions, retry, chainCategory} from '../config';
 
@@ -149,24 +149,36 @@ function* getAssetsDetailAsync(action) {
 const bidAd = async (category,tokenId,fillTx) => {
     let receiverAddress = fastx.defaultAccount;
     console.log('receiverAddress',receiverAddress);
-
+    transactionChannel.put({
+        type: 'SET_CUR_STEP',
+        curStep: 1
+    })
     let utxo = await fastx.getOrNewEthUtxo(fillTx.amount1, {from:fastx.defaultAccount})
+    transactionChannel.put({
+        type: 'SET_CUR_STEP',
+        curStep: 2
+    })
     console.log('utxo:',utxo);
 
     if (utxo.length > 0) {
         const [_blknum, _txindex, _oindex, _contract, _balance, _tokenid] = utxo;
-        let res = await fastx.sendPsTransactionFill(fillTx, _blknum, _txindex, _oindex, receiverAddress, receiverAddress);
+        let res = await fastx.sendPsTransactionFill(fillTx, _blknum, _txindex, _oindex, receiverAddress, receiverAddress)
+        transactionChannel.put({
+            type: 'SET_CUR_STEP',
+            curStep: 3
+        })
         console.log(res);
+    }else {
+        console.log('utxo not found')
     }
 }
 
 function* assetBuyAsync(action) {
     yield getFastx();
     yield put({
-      type: 'DEPOSIT_STATUS',
-      waiting: false
+      type: 'SET_STEPS',
+      steps: [{'title':'Signature','desc':'Get Eth Utxo Signature'}, {'title':'Signature','desc':'Send Transaction Signature'}]
     })
-
     try{
         yield bidAd(action.category, action.id, action.fillTx);
     }catch(err){
@@ -177,11 +189,6 @@ function* assetBuyAsync(action) {
         })
         return;
     }
-
-    yield put({
-      type: 'DEPOSIT_STATUS',
-      waiting: true
-    })
 }
 
 function* publishStatusAsync(action) {
@@ -269,6 +276,14 @@ function* watchCheckBlanceEnough(action) {
 }
 
 const depositNFT = async (asset_contract, tokenid) => {
+    transactionChannel.put({
+      type: 'SET_STEPS',
+      steps: [{'title':'Confirm','desc':'Approve the contract to access your asset'},{'title':'Confirm','desc':'deposit the contract to access your asset'}]
+    })
+    transactionChannel.put({
+        type: 'SET_CUR_STEP',
+        curStep: 1
+    })
     console.log('asset_contract:',asset_contract)
     const ownerAddress = fastx.defaultAccount;
     let nft_contract = fastx.getErc721TokenInterface(asset_contract);
@@ -277,8 +292,15 @@ const depositNFT = async (asset_contract, tokenid) => {
     await fastx.approve(asset_contract, 0, tokenid, {from: ownerAddress})
         .on('transactionHash', console.log);
     console.log( 'Approved address: ', await nft_contract.methods.getApproved(tokenid).call() );
-
+    transactionChannel.put({
+        type: 'SET_CUR_STEP',
+        curStep: 2
+    })
     await fastx.deposit(asset_contract, 0, tokenid, {from: ownerAddress});
+    transactionChannel.put({
+        type: 'SET_CUR_STEP',
+        curStep: 3
+    })
     return {
         category: asset_contract,
         tokenId: tokenid
@@ -288,22 +310,27 @@ const depositNFT = async (asset_contract, tokenid) => {
 function* watchTakeOutAsync(action) {
     yield getFastx();
     try{
-        yield put({
-          type: 'DEPOSIT_STATUS',
-          waiting: false
-        })
         if(action.currency == 'FastX'){
+            yield put({
+              type: 'SET_STEPS',
+              steps: [{'title':'Confirm','desc':'Approve the contract to access your asset'}]
+            })
+            transactionChannel.put({
+                type: 'SET_CUR_STEP',
+                curStep: 1
+            })
             let utxo = yield fastx.searchUTXO({'category':action.category,'tokenId':action.id})
             console.log(utxo)
             const [blknum, txindex, oindex, contractAddress, amount, tokenid] = utxo;
             yield fastx.startExit(blknum, txindex, oindex, contractAddress, amount, tokenid, {from:fastx.defaultAccount});
+            transactionChannel.put({
+                type: 'SET_CUR_STEP',
+                curStep: 2
+            })
         }else if(action.currency == 'Ethereum'){
             yield depositNFT(action.category, action.id);
         }
-        yield put({
-          type: 'DEPOSIT_STATUS',
-          waiting: true
-        })
+
     }catch(err){
         console.log(err);
     }
@@ -318,6 +345,15 @@ async function getFastx(func) {
     return true;
 }
 
+const transactionChannel = channel();
+
+function* watchTransactionChannel() {
+  while (true) {
+    const action = yield take(transactionChannel)
+    yield put(action)
+  }
+}
+
 export default function * assetSaga (arg) {
     store = arg;
     yield takeEvery('GET_ASSETS', getAssetsAsync)
@@ -325,8 +361,10 @@ export default function * assetSaga (arg) {
     yield takeEvery('SET_ASSETS_FILTER', getAssetsAsync)
     yield takeEvery('ASSETS_SEARCH', getAssetsAsync)
     yield takeEvery('ASSETS_BUY', assetBuyAsync)
+    yield takeEvery('ASSETS_BUY', watchTransactionChannel)
     yield takeEvery('GET_PUBLISH_STATUS',publishStatusAsync)
     yield takeEvery('CHECK_IS_OWNER', watchCheckOwnerAsync)
     yield takeEvery('CHECK_BLANCE_ENOUGH', watchCheckBlanceEnough)
     yield takeEvery('TAKE_OUT', watchTakeOutAsync)
+    yield takeEvery('TAKE_OUT', watchTransactionChannel)
 }

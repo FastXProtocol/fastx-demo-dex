@@ -283,10 +283,13 @@ const depositChannel = channel();
 
 function* watchDepositAsync(action) {
     yield getFastx();
-
     yield put({
-      type: 'DEPOSIT_STATUS',
-      waiting: false
+      type: 'SET_STEPS',
+      steps: [{'title':'Confirm','desc':'deposit the contract to access your asset'}]
+    })
+    yield put({
+        type: 'SET_CUR_STEP',
+        curStep: 1
     })
 
     let price = yield fastx.web3.utils.toWei((action.depositPrice+''), 'ether');
@@ -295,8 +298,8 @@ function* watchDepositAsync(action) {
         fastx.deposit("0x0", price, 0, { from: fastx.defaultAccount}).on('transactionHash', function (hash){
             //在回调中无法直接yield put更新，所以使用channel的方式处理
             depositChannel.put({
-              type: 'DEPOSIT_STATUS',
-              waiting: true
+              type: 'SET_CUR_STEP',
+              curStep: 2
             })
         });
     }catch (err){

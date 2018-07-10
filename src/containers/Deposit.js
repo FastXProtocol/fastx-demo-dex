@@ -4,7 +4,9 @@ import TransactionStep from '../components/TransactionStep';
 
 function mapStateToProps(state){
     return {
-        waiting: state.account.waiting
+        // waiting: state.account.waiting,
+        steps: state.transaction.steps,
+        curStep: state.transaction.curStep
     }
 }
 
