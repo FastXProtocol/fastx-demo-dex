@@ -41,7 +41,7 @@ export default class Account extends Component {
             { menuItem: 'My Items', render: () => <Tab.Pane attached={false}>
                 <Grid>
                 {loaderHtml}
-                {cards}
+                {this.props.isLoading?'':cards}
                 </Grid>
             </Tab.Pane> },
             // { menuItem: 'My Ads', render: () => <Tab.Pane attached={false}>Tab 2 Content</Tab.Pane> },
