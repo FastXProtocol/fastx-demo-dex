@@ -24,10 +24,10 @@ export const sellContractAsset = (params) => {
   };
 }
 
-export const setSellEnd = (e, target) => {
+export const setSellEnd = (end) => {
   return {
     type: "SET_SELL_END",
-    end: target && target.value
+    end
   };
 }
 

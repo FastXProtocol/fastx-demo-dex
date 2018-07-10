@@ -1,7 +1,7 @@
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import { push } from 'react-router-redux';
-
+import moment from 'moment';
 import AssetSell from '../components/AssetSell';
 import * as assetsActions from '../actions/assets';
 import * as accountActions from '../actions/account';
@@ -18,6 +18,10 @@ const getFillTx = (category, id, allPs) => {
   return fillTx;
 }
 
+const getDays = (date) => {
+    return moment(date).diff(moment(), 'days') + 1;
+}
+
 function mapStateToProps(state, props){
     return {
        id: props.match.params.id,
@@ -26,6 +30,7 @@ function mapStateToProps(state, props){
        allPs: state.assets.allPs,
        fillTx: getFillTx(props.match.params.category, props.match.params.id, state.assets.allPs),
        end: state.account.end,
+       days: getDays(state.account.end),
        sellPrice: state.account.sellPrice,
        hasPublished: state.assets.hasPublished,
        isLoading: state.assets.isLoading,
@@ -41,6 +46,11 @@ function mapDispatchToProps(dispatch) {
         confirm: (params) => {
           dispatch(accountActions.sellContractAsset(params))
           dispatch(modalActions.close())
+        },
+        getEndByDays: (e, target) => {
+            let days = 0;
+            if(target && target.value)days = parseInt(target.value);
+            dispatch(accountActions.setSellEnd(moment().add(days, 'days')));
         },
         sellCheck: (params, hasPublished, locationParams) => {
           console.log('hasPublished:',hasPublished)

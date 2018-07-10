@@ -97,7 +97,7 @@ export default class Account extends Component {
                 <Form>
                     <Form.Field inline>
                       <label className='align_right_label'>Date Ends</label>
-                      <Input type='date' placeholder='' onChange={this.props.setSellEnd} value={this.props.end}/>
+                      <Input type='number' placeholder='Unit day' onChange={ (e, target) => this.props.getEndByDays(e, target) } value={this.props.days}/>
                     </Form.Field>
                     <Form.Field inline>
                         <label className='align_right_label' />
