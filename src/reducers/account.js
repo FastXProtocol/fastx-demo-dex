@@ -24,7 +24,7 @@ const initialState = {
   items: [],
   waiting: false,
   currency: 'FastX',
-  unit: 'WEI'
+  unit: 'ETH'
 };
 
 export default function account(state = initialState, action = {}) {

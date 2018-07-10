@@ -115,6 +115,7 @@ const getFastxBalance = async() => {
         }
     }
 
+    balance = await fastx.web3.utils.fromWei((balance+''), 'ether');
     return balance
 }
 

@@ -71,7 +71,8 @@ function* getAssetsAsync(params) {
         if(!kitty.auction)kitty.auction = {};
         kitty.auction.discount = 0;
         kitty.auction.ending_at = value.expiretimestamp;
-        kitty.auction.current_price = value.amount1.toString();
+        let price = yield fastx.web3.utils.fromWei(value.amount1.toString(), 'ether');
+        kitty.auction.current_price = parseFloat(price);
         kitty.auction.starting_price = '0';
         kitty.category = value.contractaddress2;
         assets.push(kitty);
@@ -112,8 +113,23 @@ function* getAssetsDetailAsync(action) {
     kitty.auction.ending_at = 1528905600;
     kitty.auction.current_price = '0';
     kitty.auction.starting_price = '0';
+    kitty.expiretimestamp = 0;
+    kitty.current_price = 0;
 
     let allPs = yield allPsTransactions();
+    let fillTx;
+    for(let value of allPs){
+      if(value.contractaddress2 === action.category && parseInt(value.tokenid2, 10) === parseInt(action.id, 10)){
+        fillTx = value;
+        break;
+      }
+    }
+
+    if(fillTx){
+        kitty.expiretimestamp = fillTx.expiretimestamp;
+        kitty.current_price = parseFloat(yield fastx.web3.utils.fromWei((fillTx.amount1+''), 'ether'));
+    }
+
     yield put({
       type: 'ALLPS_RECEIVED',
       allPs: allPs
@@ -213,26 +229,12 @@ function* watchCheckOwnerAsync(action) {
     yield getFastx();
     yield getAccountAsync();
     let isOwner = false;
-    // let currency = store.getState().account.currency;
 
-    // let allPs = yield allPsTransactions();
-    // let inFastX = false;
-    // for(let ps of allPs){
-    //     if(action.id == ps.tokenid2)inFastX = true;
-    // }
     if(action.locationParams){
         isOwner = yield checkEthOwner(action);
     }else{
         isOwner = yield checkFastxOwner(action);
     }
-    // switch(currency){
-    //     case 'Ethereum':
-    //         isOwner = yield checkEthOwner(action);
-    //         break;
-    //     case 'FastX':
-    //     default:
-    //         isOwner = yield checkFastxOwner(action);
-    // }
 
     yield put({
       type: 'SET_ASSETS_IS_OWNER',
@@ -295,39 +297,36 @@ function* watchTakeOutAsync(action) {
             const nft_ad = yield depositNFT(action.category, action.id);
         }
 
+        //刷新用户商品列表
+        yield put({
+          type: 'SET_ASSETS_LOADING',
+          isLoading: true
+        })
 
+        let assets = store.getState().account.items;
+        let index = -1;
+        for(let i in assets){
+            if(assets[i].id == action.id && assets[i].category == action.category){
+                index = i;
+                break;
+            }
+        }
+
+        if(index != -1){
+            assets.splice(parseInt(index), 1);
+            yield put({
+              type: 'USER_ITEMS_RECEIVED',
+              items: assets
+            })
+        }
+
+        yield put({
+          type: 'SET_ASSETS_LOADING',
+          isLoading: false
+        })
     }catch(err){
         console.log(err);
     }
-
-    //刷新用户商品列表
-    yield put({
-      type: 'SET_ASSETS_LOADING',
-      isLoading: true
-    })
-
-    let assets = store.getState().account.items;
-    let index = -1;
-    for(let i in assets){
-        console.log(i)
-        if(assets[i].id == action.id && assets[i].category == action.category){
-            index = i;
-            break;
-        }
-    }
-
-    if(index != -1){
-        assets.splice(parseInt(index), 1);
-        yield put({
-          type: 'USER_ITEMS_RECEIVED',
-          items: assets
-        })
-    }
-
-    yield put({
-      type: 'SET_ASSETS_LOADING',
-      isLoading: false
-    })
 }
 
 async function getFastx(func) {

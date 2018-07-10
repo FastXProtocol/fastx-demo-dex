@@ -4,9 +4,10 @@ export const getAssets = () => {
   };
 }
 
-export const getAssetDetail = (id) => {
+export const getAssetDetail = (category, id) => {
   return {
     type: "GET_ASSET_DETAIL",
+    category,
     id
   };
 }

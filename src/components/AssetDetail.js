@@ -14,12 +14,11 @@ import '../components/Dropdown.css';
 export default class AssetDetail extends Component {
 
     render() {
-    	const { asset, fillTx } = this.props;
-		let auction = asset.auction?asset.auction:null, current_price = 0;
+    	const { asset, fillTx} = this.props;
+		let auction = asset.auction?asset.auction:null;
 		let sellerHtml, dateHtml = 'Now';
 
 		if(auction){
-			current_price = fillTx.amount1 || 0;
 			if(auction.seller){
 				sellerHtml = <Feed>
 						    <Feed.Event>
@@ -33,14 +32,14 @@ export default class AssetDetail extends Component {
 						</Feed>
 			}
 
-			if(fillTx.expiretimestamp){
-				let diffDate = moment(fillTx.expiretimestamp*1000).diff(moment(), 'days');
+			if(asset.expiretimestamp){
+				let diffDate = moment(asset.expiretimestamp*1000).diff(moment(), 'days');
 				dateHtml = 'Ends in '+diffDate+' days';
 				if(diffDate>30){
-					diffDate = moment(fillTx.expiretimestamp*1000).diff(moment(), 'months');
+					diffDate = moment(asset.expiretimestamp*1000).diff(moment(), 'months');
 					dateHtml = 'Ends in '+diffDate+' months';
 				}else if(diffDate<1){
-					diffDate = moment(fillTx.expiretimestamp*1000).diff(moment(), 'hours');
+					diffDate = moment(asset.expiretimestamp*1000).diff(moment(), 'hours');
 					dateHtml = 'Ends in '+diffDate+' hours';
 				}
 			}
@@ -88,7 +87,7 @@ export default class AssetDetail extends Component {
 						    </Card.Content>
 						    <Card.Content extra>
 						    	<p>Listed for</p>
-						    	<p style={{ color: 'black' , fontSize: '30px'}}>㆔ { current_price }</p>
+						    	<p style={{ color: 'black' , fontSize: '30px'}}>㆔ { asset.current_price } ETH</p>
 						    	{ confirmBtnHtml }
 						    </Card.Content>
 						</Card>
