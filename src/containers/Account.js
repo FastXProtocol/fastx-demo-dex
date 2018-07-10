@@ -34,6 +34,7 @@ function mapDispatchToProps(dispatch) {
         },
         takeOut: (category, id, currency) => {
             dispatch(assetsActions.takeOut(category, id, currency))
+            dispatch(push('/deposit'))
         },
         toDeposit: (price) => {
             dispatch(accountActions.deposit(price))

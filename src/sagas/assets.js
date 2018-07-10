@@ -288,41 +288,21 @@ const depositNFT = async (asset_contract, tokenid) => {
 function* watchTakeOutAsync(action) {
     yield getFastx();
     try{
+        yield put({
+          type: 'DEPOSIT_STATUS',
+          waiting: false
+        })
         if(action.currency == 'FastX'){
             let utxo = yield fastx.searchUTXO({'category':action.category,'tokenId':action.id})
             console.log(utxo)
             const [blknum, txindex, oindex, contractAddress, amount, tokenid] = utxo;
             yield fastx.startExit(blknum, txindex, oindex, contractAddress, amount, tokenid, {from:fastx.defaultAccount});
         }else if(action.currency == 'Ethereum'){
-            const nft_ad = yield depositNFT(action.category, action.id);
+            yield depositNFT(action.category, action.id);
         }
-
-        //刷新用户商品列表
         yield put({
-          type: 'SET_ASSETS_LOADING',
-          isLoading: true
-        })
-
-        let assets = store.getState().account.items;
-        let index = -1;
-        for(let i in assets){
-            if(assets[i].id == action.id && assets[i].category == action.category){
-                index = i;
-                break;
-            }
-        }
-
-        if(index != -1){
-            assets.splice(parseInt(index), 1);
-            yield put({
-              type: 'USER_ITEMS_RECEIVED',
-              items: assets
-            })
-        }
-
-        yield put({
-          type: 'SET_ASSETS_LOADING',
-          isLoading: false
+          type: 'DEPOSIT_STATUS',
+          waiting: true
         })
     }catch(err){
         console.log(err);
