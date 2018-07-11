@@ -15,7 +15,7 @@ import * as modalActions from '../actions/modal';
 
 class AssetDetail extends Component {
     componentWillMount() {
-      this.props.getAssetDetail(this.props.id);
+      this.props.getAssetDetail(this.props.category, this.props.id);
       this.props.getPublishStatus(this.props.category, this.props.id);
       this.props.getBalance();
       this.props.checkIsOwner(this.props.category, this.props.id, this.props.locationParams);
@@ -48,6 +48,7 @@ const getFillTx = (category, id, allPs) => {
       break;
     }
   }
+
   return fillTx;
 }
 

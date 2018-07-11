@@ -90,7 +90,7 @@ const postAd = async (data) => {
 	const nft_ad = await depositNFT(data.params.category, data.params.sellId);
 	await logBalance();
 	const end = moment(data.params.end).add(1, 'days').unix();
-	const price = parseFloat(data.params.sellPrice);
+	const price = parseFloat(await fastx.web3.utils.toWei((data.params.sellPrice+''), 'ether'));
 	let transaction = await postNftAd(nft_ad.category, nft_ad.tokenId, end, price);
     return transaction;
 }
@@ -115,6 +115,7 @@ const getFastxBalance = async() => {
         }
     }
 
+    balance = await fastx.web3.utils.fromWei((balance+''), 'ether');
     return balance
 }
 
@@ -263,7 +264,7 @@ function* watchSellAssetAsync(data) {
         })
     }else{
         const end = moment(data.params.end).add(1, 'days').unix();
-        const price = parseFloat(data.params.sellPrice);
+        const price = parseFloat(yield fastx.web3.utils.toWei((data.params.sellPrice+''), 'ether'));
         console.log("sellContractAssetParams",data.params)
         try{
             let result = yield postNftAd(data.params.category, data.params.sellId, end, price);
@@ -282,18 +283,23 @@ const depositChannel = channel();
 
 function* watchDepositAsync(action) {
     yield getFastx();
-
     yield put({
-      type: 'DEPOSIT_STATUS',
-      waiting: false
+      type: 'SET_STEPS',
+      steps: [{'title':'Confirm','desc':'deposit the contract to access your asset'}]
+    })
+    yield put({
+        type: 'SET_CUR_STEP',
+        curStep: 1
     })
 
+    let price = yield fastx.web3.utils.toWei((action.depositPrice+''), 'ether');
+
     try{
-        fastx.deposit("0x0", action.depositPrice, 0, { from: fastx.defaultAccount}).on('transactionHash', function (hash){
+        fastx.deposit("0x0", price, 0, { from: fastx.defaultAccount}).on('transactionHash', function (hash){
             //在回调中无法直接yield put更新，所以使用channel的方式处理
             depositChannel.put({
-              type: 'DEPOSIT_STATUS',
-              waiting: true
+              type: 'SET_CUR_STEP',
+              curStep: 2
             })
         });
     }catch (err){

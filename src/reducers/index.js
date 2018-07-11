@@ -8,5 +8,6 @@ export default combineReducers({
     account: require('./account').default,
     modal: require('./modal').default,
     app: require('./app').default,
+    transaction: require('./transaction').default,
     error: require('./error').default
 });
