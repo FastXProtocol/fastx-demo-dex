@@ -11,7 +11,7 @@ class tipModal extends Component {
             <p>{this.props.desc}</p>
           </Modal.Content>
           <Modal.Actions>
-            <Button positive onClick={this.props.close}>确定</Button>
+            <Button color='teal' onClick={this.props.close}>确定</Button>
           </Modal.Actions>
         </Modal>
       )

@@ -5,10 +5,15 @@ import {
     Image,
     Step
 } from 'semantic-ui-react';
-//Confirm
-// Approve the contract to access your asset
+import TipModal from '../components/Modal/tipModal';
+
 export default class TransactionStep extends Component {
+    componentDidMount() {
+
+    }
+
     render() {
+        this.props.checkError(this.props.error, this.props.modal.open);
         let curItem = this.props.steps[this.props.curStep-1];
     	let html;
         let stepsHtml = this.props.steps.map( (item, i) => {
@@ -35,18 +40,9 @@ export default class TransactionStep extends Component {
 	    	</div>
     	}
 
-    	// if(this.props.waiting){
-    	// 	html =  <div>
-		// 		<Button primary size='big' onClick={() => this.props.goto()}>返回 Account</Button>
-	    // 	</div>
-    	// }else{
-	    // 	html =  <div>
-		// 		<Image src='/assets/images/help/metamask.png' size='medium' inline={true}/>
-	    // 	</div>
-    	// }
-
         return (
             <Container style={{ marginTop: '1em' }} textAlign='center'>
+                <TipModal open={this.props.modal.open} close={this.props.close} desc={this.props.modal.desc} />
                 <Step.Group ordered>
                     { stepsHtml }
                     <Step active={this.props.curStep > this.props.steps.length}>

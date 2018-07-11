@@ -182,12 +182,11 @@ function* assetBuyAsync(action) {
     try{
         yield bidAd(action.category, action.id, action.fillTx);
     }catch(err){
-        console.log("bidAd:",err);
+        console.log('assetBuyAsync: ',err.message)
         yield put({
-          type: 'BID_AD_ERROR',
-          error: err
+          type: 'TRANSACTION_ERROR',
+          transactionErr: err.message
         })
-        return;
     }
 }
 

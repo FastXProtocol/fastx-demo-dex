@@ -1,15 +1,15 @@
-const BID_AD_ERROR = 'BID_AD_ERROR';
+const TRANSACTION_ERROR = 'TRANSACTION_ERROR';
 
 const initialState = {
-  error: ''
+  transactionErr: ''
 };
 
 export default function error (state = initialState, action = {}) {
   switch (action.type) {
-    case BID_AD_ERROR:
+    case TRANSACTION_ERROR:
       return {
         ...state,
-        error: action.error
+        transactionErr: action.transactionErr
       };
     default:
       return state;
