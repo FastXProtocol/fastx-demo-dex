@@ -25,7 +25,8 @@ function mapStateToProps(state){
         items: state.account.items,
         isLoading: state.assets.isLoading,
         currency: state.account.currency,
-        unit: state.account.unit
+        unit: state.account.unit,
+        userReviewAssets: state.reviewAssets.userReviewAssets
     }
 }
 

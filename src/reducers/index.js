@@ -5,6 +5,7 @@ export default combineReducers({
     router: routerReducer,
     // search: require('./search').default,
     assets: require('./assets').default,
+    reviewAssets: require('./reviewAssets').default,
     account: require('./account').default,
     modal: require('./modal').default,
     app: require('./app').default,

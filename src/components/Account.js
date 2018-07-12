@@ -18,6 +18,7 @@ import '../components/Label.css';
 export default class Account extends Component {
     componentDidMount() {
         this.props.getBalance();
+        this.props.getReviewAssets();
     }
 
     render() {
@@ -32,6 +33,18 @@ export default class Account extends Component {
             )
         })
 
+        let exCards;
+        if(this.props.currency==='FastX'){
+            exCards = this.props.userReviewAssets.map((item, i) => {
+                let url = '/assets/'+item.category+'/'+item.id;
+                return (
+                    <Grid.Column key={i} mobile={16} tablet={8} computer={4} >
+                        <Asset image={item.image_url_cdn} name={item.name} id={item.id} status='审核中' />
+                    </Grid.Column>
+                )
+            })
+        }
+
         let loaderHtml = '';
         if(this.props.isLoading) {
             loaderHtml = <div style={{width:"100%",textAlign:'center',padding:'20px'}}><Loader active inline /></div>;
@@ -42,6 +55,7 @@ export default class Account extends Component {
                 <Grid>
                 {loaderHtml}
                 {this.props.isLoading?'':cards}
+                {this.props.isLoading?'':exCards}
                 </Grid>
             </Tab.Pane> },
             // { menuItem: 'My Ads', render: () => <Tab.Pane attached={false}>Tab 2 Content</Tab.Pane> },

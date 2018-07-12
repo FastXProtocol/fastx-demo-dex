@@ -45,8 +45,9 @@ export default class Asset extends Component {
 					{this.props.name} · #{this.props.id}
 				</Card.Header>
 				<Card.Meta>
-					<span>{ preHtml }</span>
-					<span>{ nowHtml }</span>
+                    <span style={{color:'#00b5ad',lineHeight:'46px',fontSize:'18px',float:'right'}}> { this.props.status }</span>
+					{ preHtml }
+					{ nowHtml }
                     { btnHtml }
 				</Card.Meta>
 			</Card.Content>

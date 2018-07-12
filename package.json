@@ -18,6 +18,7 @@
     "react-scripts": "1.1.4",
     "react-web3": "^0.4.5",
     "redux": "^4.0.0",
+    "redux-localstorage": "^0.4.1",
     "redux-saga": "^0.16.0",
     "semantic-ui-css": "^2.3.1",
     "semantic-ui-react": "^0.80.2",

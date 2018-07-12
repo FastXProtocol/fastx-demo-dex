@@ -4,6 +4,12 @@ export const getBalance = () => {
   };
 }
 
+export const getReviewAssets = () => {
+    return {
+        type: "GET_REVIEW_ASSETS"
+    };
+}
+
 export const getAccount = () => {
   return {
     type: "GET_ACCOUNT"

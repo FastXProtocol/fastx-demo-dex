@@ -1,6 +1,7 @@
 import {createStore, compose, applyMiddleware} from 'redux';
 import createHistory from 'history/createBrowserHistory';
 import { routerMiddleware } from 'react-router-redux';
+import persistState from 'redux-localstorage'
 import rootReducer from '../reducers';
 import createSagaMiddleware from 'redux-saga'
 import rootSaga from '../sagas';
@@ -18,10 +19,12 @@ function configureStoreDev(initialState) {
       reactRouterMiddleware,
       sagaMiddleware
     ];
-  
+
     const composeEnhancers = window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__ || compose; // add support for Redux dev tools
+
     const store = createStore(rootReducer, initialState, composeEnhancers(
-      applyMiddleware(...middlewares)
+        applyMiddleware(...middlewares),
+        persistState('reviewAssets')//将store中reviewAssets的变化同步更新到localstorge
       )
     );
 
@@ -30,9 +33,9 @@ function configureStoreDev(initialState) {
     }catch(err){
       console.log("setFastx:",err)
     }
-    
+
     sagaMiddleware.run(rootSaga, store);
-    
+
     return store;
   }
 

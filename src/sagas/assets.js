@@ -326,6 +326,21 @@ function* watchTakeOutAsync(action) {
                 type: 'SET_CUR_STEP',
                 curStep: 2
             })
+
+            let reviewAssets = store.getState().reviewAssets.results;
+            if(!reviewAssets[fastx.defaultAccount]) reviewAssets[fastx.defaultAccount] = [];
+            reviewAssets[fastx.defaultAccount].push({
+                blknum,
+                txindex,
+                oindex,
+                contractAddress,
+                tokenid
+            })
+
+            yield put({
+                type: 'SET_REVIEW_ASSETS',
+                results: reviewAssets
+            })
         }else if(action.currency == 'Ethereum'){
             yield depositNFT(action.category, action.id);
         }
@@ -333,6 +348,51 @@ function* watchTakeOutAsync(action) {
     }catch(err){
         console.log(err);
     }
+}
+
+function* getReviewAssetsAsync() {
+    yield getFastx();
+
+    // let utxoPos = yield fastx.getUtxoPos(blknum, txindex, oindex);
+    // let exit = yield fastx.rootChainInfo.getExit(utxoPos);
+    // console.log('getExit:',exit);
+    let reviewAssets = store.getState().reviewAssets.results;
+    let newReviewAssets = [];
+    let userReviewAssets = [];
+    let accounts = yield fastx.web3.eth.getAccounts();
+    try{
+        if(reviewAssets[fastx.defaultAccount])
+        for(let value of reviewAssets[accounts[0]]){
+            let utxoPos = yield fastx.getUtxoPos(value.blknum, value.txindex, value.oindex);
+            let exit = yield fastx.rootChainInfo.getExit(utxoPos);
+            console.log('getExit:',exit);
+            if(exit[0]!='0x'+'0'.repeat(40)){
+                let kittyRes = yield axios({
+                    method: 'get',
+                    url: 'https://api.cryptokitties.co/kitties/'+value['tokenid']
+                })
+                let kitty = kittyRes.data;
+                if(!kitty.auction)kitty.auction = {};
+                kitty.category = value['contractAddress'];
+                userReviewAssets.push(kitty);
+                newReviewAssets.push(value);
+            }
+        }
+    }catch(err){
+        console.log(err)
+    }
+
+    reviewAssets[accounts[0]] = newReviewAssets;
+
+    yield put({
+        type: 'SET_USER_REVIEW_ASSETS',
+        userReviewAssets: userReviewAssets
+    })
+
+    yield put({
+        type: 'SET_REVIEW_ASSETS',
+        results: reviewAssets
+    })
 }
 
 async function getFastx(func) {
@@ -356,9 +416,10 @@ function* watchTransactionChannel() {
 export default function * assetSaga (arg) {
     store = arg;
     yield takeEvery('GET_ASSETS', getAssetsAsync)
-    yield takeEvery('GET_ASSET_DETAIL', getAssetsDetailAsync)
     yield takeEvery('SET_ASSETS_FILTER', getAssetsAsync)
     yield takeEvery('ASSETS_SEARCH', getAssetsAsync)
+    yield takeEvery('GET_ASSET_DETAIL', getAssetsDetailAsync)
+    yield takeEvery('GET_REVIEW_ASSETS', getReviewAssetsAsync)
     yield takeEvery('ASSETS_BUY', assetBuyAsync)
     yield takeEvery('ASSETS_BUY', watchTransactionChannel)
     yield takeEvery('GET_PUBLISH_STATUS',publishStatusAsync)
