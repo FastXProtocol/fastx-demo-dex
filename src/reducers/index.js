@@ -10,5 +10,7 @@ export default combineReducers({
     modal: require('./modal').default,
     app: require('./app').default,
     transaction: require('./transaction').default,
-    error: require('./error').default
+    error: require('./error').default,
+    network: require('./network').default,
+    header: require('./header').default
 });

@@ -8,7 +8,7 @@ function* modalCloseAsync(action) {
     })
 }
 
-export default function * assetSaga (arg) {
+export default function * modalSaga (arg) {
     store = arg;
     yield takeEvery('CLOSE', modalCloseAsync)
 }
