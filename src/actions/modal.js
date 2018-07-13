@@ -12,3 +12,18 @@ export const open = (desc) => {
     desc
   };
 }
+
+export const flashMsgClose = () => {
+  return {
+    type: "FLASH_MSG_CLOSE",
+    isOpen: false
+  };
+}
+
+export const flashMsgOpen = (msgDesc) => {
+  return {
+    type: "FLASH_MSG_OPEN",
+    isOpen: true,
+    msgDesc
+  };
+}

@@ -9,6 +9,7 @@ import { Provider } from 'react-redux'
 import { ConnectedRouter } from 'react-router-redux'
 
 const store = configureStore();
+export default store;
 
 render(
     <Provider store={store}>

@@ -11,7 +11,7 @@ import NetworkIndicator from '../components/NetworkIndicator'
 
 import * as accountActions from '../actions/account';
 import * as headerActions from '../actions/header';
-import * as networkActions from '../actions/header';
+import * as networkActions from '../actions/network';
 
 class Header extends Component{
     componentDidMount() {
@@ -93,7 +93,7 @@ function mapDispatchToProps(dispatch) {
             dispatch(accountActions.getAccount())
         },
         toMarketplace: () => {
-            dispatch(networkActions.setActiveItem('marketplace'))
+            dispatch(headerActions.setActiveItem('marketplace'))
             dispatch(push('/assets'))
         },
         toAccounnt: () => {
@@ -101,7 +101,7 @@ function mapDispatchToProps(dispatch) {
             dispatch(push('/account'))
         },
         onLoadNetwork: (name) => {
-          dispatch(headerActions.loadNetwork(name));
+          dispatch(networkActions.loadNetwork(name));
         }
     }
 }

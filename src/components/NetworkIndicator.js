@@ -10,7 +10,7 @@ function NetworkIndicator(props) {
     }
 
     if (error && error !== 'Offline') {
-      component = <Popup trigger={<Icon color='red' name='close' />} position='bottom center' content={ error } />
+      component = <Popup trigger={<Icon size='big' color='red' name='close' style={{margin: '10px 0'}} />} position='bottom center' content={ error } />
     }
 
     return (
