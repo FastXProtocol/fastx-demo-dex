@@ -1,6 +1,10 @@
 import { flashMsgOpen } from '../actions/modal'
 import store from '../index'
 
+const message = (text) => {
+    store.dispatch(text);
+}
+
 /**
  * Connect to eth network using address from network.js file
  *
@@ -21,7 +25,7 @@ export function loadNetwork(networkName) {
  * @return {object}      An action object with a type of LOAD_NETWORK_SUCCESS passing the repos
  */
 export function loadNetworkSuccess(blockNumber) {
-  store.dispatch(flashMsgOpen(`Connected sucessfully, current block: ${blockNumber}`))
+  message(`Connected sucessfully, current block: ${blockNumber}`)
   return {
     type: "LOAD_NETWORK_SUCCESS",
     blockNumber
@@ -39,7 +43,7 @@ export function loadNetworkError(error) {
   if (error !== 'Offline') {
     const err = error.indexOf('Invalid JSON RPC response from host provider') >= 0 ?
       `${error}, Check Internet connection and connectivity to RPC` : error;
-    store.dispatch(flashMsgOpen(err))
+    message(err)
   }
   return {
     type: "LOAD_NETWORK_ERROR",

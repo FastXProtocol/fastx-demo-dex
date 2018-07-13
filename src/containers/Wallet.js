@@ -1,29 +1,86 @@
-import { connect } from 'react-redux';
-import { bindActionCreators } from 'redux';
-import { push } from 'react-router-redux';
-import Wallet from '../components/Wallet';
+import { connect } from 'react-redux'
+import { bindActionCreators } from 'redux'
+import { push } from 'react-router-redux'
+import React, { Component } from 'react'
+import {
+    Container
+} from 'semantic-ui-react'
+
+import SubHeader from '../components/SubHeader'
+import GenerateWalletModal from '../components/Modal/GenerateWalletModal'
+import * as walletActions from '../actions/wallet'
+
+class Wallet extends Component {
+    render() {
+        const {
+            isShowGenerateWallet,
+            generateWalletLoading,
+            seed,
+            password,
+            onGenerateWallet,
+            onGenerateWalletCancel,
+            onGenerateKeystore,
+            onShowRestoreWallet,
+            onRestoreWalletCancel,
+            isShowTipMessage,
+            onTipMsgCancel
+        } = this.props
+
+        const subHeaderProps = {
+            onGenerateWallet,
+            onShowRestoreWallet
+        }
+
+        const generateWalletProps = {
+          isShowGenerateWallet,
+          generateWalletLoading,
+          seed,
+          password,
+          onGenerateWallet,
+          onGenerateWalletCancel,
+          onGenerateKeystore,
+          isShowTipMessage,
+          onTipMsgCancel
+        }
+
+        return (
+            <Container style={{ marginTop: '8em' }} textAlign='center'>
+                <SubHeader { ...subHeaderProps} />
+                <GenerateWalletModal {...generateWalletProps} />
+		    </Container>
+        );
+    };
+}
 
 function mapStateToProps(state){
     return {
-        fastx: state.app.fastx
+        isShowGenerateWallet: state.wallet.isShowGenerateWallet,
+        generateWalletLoading: state.wallet.generateWalletLoading,
+        seed: state.wallet.seed,
+        password: state.wallet.password,
+        isShowTipMessage: state.wallet.isShowTipMessage
     }
 }
 
 function mapDispatchToProps(dispatch) {
     return {
-        creatWallet: async (fastx) => {
-            let wallet = await fastx.web3.eth.accounts.wallet.create(2);
-            console.log(wallet)
+        onGenerateWallet: () => {
+          dispatch(walletActions.generateWallet())
         },
-        setWalletPwd: async (fastx) => {
-            let res = await fastx.web3.eth.accounts.wallet.save('abc123')
-            console.log(res)
+        onGenerateWalletCancel: () => {
+          dispatch(walletActions.generateWalletCancel())
         },
-        loginWallet: async (fastx) => {
-            let wallet = await fastx.web3.eth.accounts.wallet.load('abc123')
-            console.log(wallet)
-            let accounts = await fastx.web3.eth.getAccounts()
-            console.log(accounts)
+        onShowRestoreWallet: () => {
+          dispatch(walletActions.showRestoreWallet())
+        },
+        onRestoreWalletCancel: () => {
+          dispatch(walletActions.restoreWalletCancel())
+        },
+        onGenerateKeystore: () => {
+            dispatch(walletActions.generateKeystore())
+        },
+        onTipMsgCancel: () => {
+            dispatch(walletActions.onTipMsgCancel())
         }
     }
 }

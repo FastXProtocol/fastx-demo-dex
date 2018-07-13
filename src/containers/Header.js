@@ -26,6 +26,7 @@ class Header extends Component{
             blockNumber,
             toMarketplace,
             toAccounnt,
+            toWallet,
             availableNetworks,
             networkName,
             onLoadNetwork } = this.props;
@@ -53,6 +54,12 @@ class Header extends Component{
                     />
                     FastX Dex <Label color='orange' horizontal>Rinkeby</Label>
                     </Menu.Item>
+                    <Menu.Item
+                        name='wallet'
+                        active={activeItem === 'wallet'}
+                        content='Wallet'
+                        onClick={() => toWallet()}
+                    />
                     <Menu.Item
                         name='marketplace'
                         active={activeItem === 'marketplace'}
@@ -99,6 +106,10 @@ function mapDispatchToProps(dispatch) {
         toAccounnt: () => {
             dispatch(headerActions.setActiveItem('account'))
             dispatch(push('/account'))
+        },
+        toWallet: () => {
+            dispatch(headerActions.setActiveItem('wallet'))
+            dispatch(push('/wallet'))
         },
         onLoadNetwork: (name) => {
           dispatch(networkActions.loadNetwork(name));
