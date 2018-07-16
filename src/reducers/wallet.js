@@ -9,9 +9,13 @@ const TIP_MSG_CANCEL = 'TIP_MSG_CANCEL'
 const SAVE_WALLET = 'SAVE_WALLET'
 const SAVE_WALLET_SUCCESS = 'SAVE_WALLET_SUCCESS'
 const SAVE_WALLET_ERROR = 'SAVE_WALLET_ERROR'
+const SAVE_KS = 'SAVE_KS'
+const LOAD_WALLET_SUCCESS = 'LOAD_WALLET_SUCCESS'
+const LOAD_WALLET_ERROR = 'LOAD_WALLET_ERROR'
 
 const initialState = {
     keystore: false,
+    ks: false,
     isShowTipMessage: true,
     isShowGenerateWallet: false,
     generateWalletLoading: false,  // generate new seed and password
@@ -21,11 +25,14 @@ const initialState = {
     generateKeystoreLoading: false,
     generateKeystoreError: false,
     isComfirmed: false,
+    addressList: false,
     addressListLoading: false, // for addressList loading and error
     addressListError: false,
     addressListMsg: false,
     saveWalletLoading: false,
-    saveWalletError: false
+    saveWalletError: false,
+    loadWalletLoading: false,
+    loadWalletError: false
 };
 
 export default function wallet (state = initialState, action = {}) {
@@ -104,6 +111,23 @@ export default function wallet (state = initialState, action = {}) {
             ...state,
             saveWalletLoading: false,
             saveWalletError: action.error
+        }
+    case SAVE_KS:
+        return {
+            ...state,
+            ks : action.ks
+        }
+    case LOAD_WALLET_SUCCESS:
+        return {
+            ...state,
+            loadWalletLoading: true,
+            loadWalletError: false
+        }
+    case LOAD_WALLET_ERROR:
+        return {
+            ...state,
+            loadWalletLoading: true,
+            loadWalletError: action.error
         }
     default:
       return state;

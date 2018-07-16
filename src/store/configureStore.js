@@ -24,7 +24,7 @@ function configureStoreDev(initialState) {
 
     const store = createStore(rootReducer, initialState, composeEnhancers(
         applyMiddleware(...middlewares),
-        persistState('reviewAssets')//将store中reviewAssets的变化同步更新到localstorge
+        persistState(['reviewAssets', 'localStorage'])//将store中reviewAssets的变化同步更新到localstorge
       )
     );
 

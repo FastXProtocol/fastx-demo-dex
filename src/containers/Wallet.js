@@ -7,10 +7,15 @@ import {
 } from 'semantic-ui-react'
 
 import SubHeader from '../components/SubHeader'
+import AddressView from '../components/AddressView'
 import GenerateWalletModal from '../components/Modal/GenerateWalletModal'
 import * as walletActions from '../actions/wallet'
 
 class Wallet extends Component {
+    componentDidMount() {
+        this.props.onLoadWallet();
+    }
+
     render() {
         const {
             isShowGenerateWallet,
@@ -23,12 +28,17 @@ class Wallet extends Component {
             onShowRestoreWallet,
             onRestoreWalletCancel,
             isShowTipMessage,
-            onTipMsgCancel
+            onTipMsgCancel,
+            generateKeystoreLoading,
+            generateKeystoreError,
+            isComfirmed,
+            addressList,
         } = this.props
 
         const subHeaderProps = {
             onGenerateWallet,
-            onShowRestoreWallet
+            onShowRestoreWallet,
+            isComfirmed
         }
 
         const generateWalletProps = {
@@ -43,10 +53,40 @@ class Wallet extends Component {
           onTipMsgCancel
         }
 
+        const addressViewProps = {
+          generateKeystoreLoading,
+          generateKeystoreError,
+          isComfirmed,
+          addressList,
+          // addressMap,
+          // tokenDecimalsMap,
+          //
+          // onShowSendToken,
+          // onShowTokenChooser,
+          //
+          // onCheckBalances,
+          // onGenerateAddress,
+          // addressListLoading,
+          // addressListError,
+          // addressListMsg,
+          // networkReady,
+          // checkingBalanceDoneTime,
+          // checkingBalances,
+          // checkingBalancesError,
+          // onSelectCurrency,
+          // exchangeRates,
+          // convertTo,
+          // onGetExchangeRates,
+          // getExchangeRatesDoneTime,
+          // getExchangeRatesLoading,
+          // getExchangeRatesError,
+        };
+
         return (
             <Container style={{ marginTop: '8em' }} textAlign='center'>
                 <SubHeader { ...subHeaderProps} />
                 <GenerateWalletModal {...generateWalletProps} />
+                <AddressView {...addressViewProps} />
 		    </Container>
         );
     };
@@ -58,7 +98,11 @@ function mapStateToProps(state){
         generateWalletLoading: state.wallet.generateWalletLoading,
         seed: state.wallet.seed,
         password: state.wallet.password,
-        isShowTipMessage: state.wallet.isShowTipMessage
+        isShowTipMessage: state.wallet.isShowTipMessage,
+        isComfirmed: state.wallet.isComfirmed,
+        generateKeystoreLoading: state.wallet.generateKeystoreLoading,
+        generateKeystoreError: state.wallet.generateKeystoreError,
+        addressList: state.wallet.addressList
     }
 }
 
@@ -81,6 +125,9 @@ function mapDispatchToProps(dispatch) {
         },
         onTipMsgCancel: () => {
             dispatch(walletActions.onTipMsgCancel())
+        },
+        onLoadWallet: () => {
+            dispatch(walletActions.loadWallet())
         }
     }
 }

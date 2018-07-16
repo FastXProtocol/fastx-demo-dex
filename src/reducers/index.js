@@ -13,5 +13,6 @@ export default combineReducers({
     error: require('./error').default,
     network: require('./network').default,
     header: require('./header').default,
-    wallet: require('./wallet').default
+    wallet: require('./wallet').default,
+    localStorage: require('./localStorage').default
 });
