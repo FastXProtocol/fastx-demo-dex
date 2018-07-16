@@ -8,15 +8,15 @@ import {
 
 export default class SubHeader extends Component {
     render() {
-        const { isComfirmed, onGenerateWallet, onShowRestoreWallet } = this.props
+        const { isComfirmed, onGenerateWallet, onShowRestoreWallet, onCloseWallet } = this.props
         const noWalletSubHeader = [
-            <Button primary size='big' onClick={onGenerateWallet}>New wallet</Button>,
-            <Button basic size='big' onClick={onShowRestoreWallet}>Restore wallet</Button>
+            <Button primary size='big' onClick={onGenerateWallet} key='1'>New wallet</Button>,
+            <Button basic size='big' onClick={onShowRestoreWallet} key='2'>Restore wallet</Button>
         ]
 
         const existingWalletSubHeader =[
-            <Button primary size='big' >Lock wallet</Button>,
-            <Button basic size='big' >Close wallet</Button>
+            <Button primary size='big' key='1'>Lock wallet</Button>,
+            <Button basic size='big' onClick={onCloseWallet} key='2'>Close wallet</Button>
         ]
         const subHeader = isComfirmed ? existingWalletSubHeader : noWalletSubHeader;
         return (

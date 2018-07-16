@@ -1,9 +1,9 @@
 import { flashMsgOpen } from '../actions/modal'
 import store from '../index'
 
-const message = (text) => {
-    store.dispatch(text);
-}
+// const message = (text) => {
+//     store.dispatch(text);
+// }
 
 export function onTipMsgCancel() {
   return {
@@ -46,7 +46,7 @@ export function generateWalletSucces(seed, password) {
  * @return {object} An action object with a type of GENERATE_WALLET_ERROR passing the error
  */
 export function generateWalletError(error) {
-  message(error);
+  // message(error);
   return {
     type: 'GENERATE_WALLET_ERROR',
     error,
@@ -147,7 +147,7 @@ export function restoreWalletFromSeedSuccess(userSeed, userPassword) {
  * @return {object}    An action object with a type of RESTORE_WALLET_FROM_SEED_ERROR
  */
 export function restoreWalletFromSeedError(error) {
-  message(error);
+  // message(error);
   return {
     type: 'RESTORE_WALLET_FROM_SEED_ERROR',
     error,
@@ -340,5 +340,20 @@ export function loadWalletError(error) {
   return {
     type: 'LOAD_WALLET_ERROR',
     error,
+  };
+}
+
+/* ********************* CLOSE WALLET **************************************** */
+
+
+/**
+ * Removes keystore from memory and closes wallet
+ *
+ * @return {object} An action object with a type of CLOSE_WALLET
+ */
+export function closeWallet() {
+  // message('Wallet removed from memory');
+  return {
+    type: 'CLOSE_WALLET',
   };
 }

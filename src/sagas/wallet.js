@@ -9,6 +9,7 @@ import generateString from '../utils/crypto'
 import {
   generateWalletSucces,
   generateWalletError,
+  generateKeystore,
   generateKeystoreError,
   generateKeystoreSuccess,
   saveWallet,
@@ -16,7 +17,10 @@ import {
   saveWalletError,
   saveKs,
   loadWalletSuccess,
-  loadWalletError
+  loadWalletError,
+  changeUserSeed,
+  restoreWalletFromSeedError,
+  restoreWalletFromSeedSuccess
 } from '../actions/wallet'
 
 import {
@@ -27,6 +31,7 @@ const generatedPasswordLength = 12
 const hdPathString = `m/44'/60'/0'/0`
 const defaultNetwork = 'Ropsten Testnet'
 const localStorageKey = 'ks';
+const offlineModeString = 'Offline';
 let store
 
 /**
@@ -158,10 +163,50 @@ export function* loadWalletS() {
   }
 }
 
+/**
+ * check seed given by user
+ */
+export function* restoreFromSeed() {
+  try {
+    const userPassword = store.getState().wallet.userPassword;
+    let userSeed = store.getState().wallet.userSeed;
+
+    // remove trailing spaces if needed
+    yield put(changeUserSeed(userSeed.replace(/^\s+|\s+$/g, '')));
+    userSeed = store.getState().wallet.userSeed;
+
+    if (!lightwallet.keystore.isSeedValid(userSeed)) {
+      yield put(restoreWalletFromSeedError('Invalid seed'));
+      return;
+    }
+
+    if (userPassword.length < 8) {
+      yield put(restoreWalletFromSeedError('Password length must be 8 characters at least'));
+      return;
+    }
+
+    yield put(restoreWalletFromSeedSuccess(userSeed, userPassword));
+    yield put(generateKeystore());
+  } catch (err) {
+    yield put(restoreWalletFromSeedError(err));
+  }
+}
+
+/**
+ * Disconnect from network during closeWallet
+ */
+export function* closeWallet() {
+    console.log(123)
+  yield put(saveKs(null))
+  yield put(loadNetwork(offlineModeString));
+}
+
 export default function* walletSaga(args) {
     store = args
     yield takeLatest('GENERATE_WALLET', generateWallet)
     yield takeLatest('GENERATE_KEYSTORE', genKeystore)
     yield takeLatest('SAVE_WALLET', saveWalletS);
     yield takeLatest('LOAD_WALLET', loadWalletS);
+    yield takeLatest('RESTORE_WALLET_FROM_SEED', restoreFromSeed);
+    yield takeLatest('CLOSE_WALLET', closeWallet);
 }

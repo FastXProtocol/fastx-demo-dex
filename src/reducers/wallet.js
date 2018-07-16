@@ -12,6 +12,14 @@ const SAVE_WALLET_ERROR = 'SAVE_WALLET_ERROR'
 const SAVE_KS = 'SAVE_KS'
 const LOAD_WALLET_SUCCESS = 'LOAD_WALLET_SUCCESS'
 const LOAD_WALLET_ERROR = 'LOAD_WALLET_ERROR'
+const SHOW_RESTORE_WALLET = 'SHOW_RESTORE_WALLET'
+const CHANGE_USER_SEED = 'CHANGE_USER_SEED'
+const CHANGE_USER_PASSWORD = 'CHANGE_USER_PASSWORD'
+const RESTORE_WALLET_FROM_SEED = 'RESTORE_WALLET_FROM_SEED'
+const RESTORE_WALLET_FROM_SEED_ERROR = 'RESTORE_WALLET_FROM_SEED_ERROR'
+const RESTORE_WALLET_FROM_SEED_SUCCESS = 'RESTORE_WALLET_FROM_SEED_SUCCESS'
+const RESTORE_WALLET_CANCEL = 'RESTORE_WALLET_CANCEL'
+const CLOSE_WALLET = 'CLOSE_WALLET'
 
 const initialState = {
     keystore: false,
@@ -32,7 +40,11 @@ const initialState = {
     saveWalletLoading: false,
     saveWalletError: false,
     loadWalletLoading: false,
-    loadWalletError: false
+    loadWalletError: false,
+    isShowRestoreWallet: false,
+    restoreWalletError: false,
+    userSeed: '',
+    userPassword: '',
 };
 
 export default function wallet (state = initialState, action = {}) {
@@ -129,6 +141,53 @@ export default function wallet (state = initialState, action = {}) {
             loadWalletLoading: true,
             loadWalletError: action.error
         }
+    case SHOW_RESTORE_WALLET:
+        return {
+            ...state,
+            isShowRestoreWallet: true,
+            seed: false,
+            userSeed: ''
+        }
+    case RESTORE_WALLET_CANCEL:
+        return {
+            ...state,
+            isShowRestoreWallet: false,
+            userPassword: '',
+            userSeed: '',
+            restoreWalletError: false
+        }
+    case CHANGE_USER_SEED:
+        return {
+            ...state,
+            userSeed: action.userSeed
+        }
+    case CHANGE_USER_PASSWORD:
+        return {
+            ...state,
+            userPassword: action.password
+        }
+    case RESTORE_WALLET_FROM_SEED:
+        return {
+            ...state,
+            restoreWalletError: false,
+            isComfirmed: false
+        }
+    case RESTORE_WALLET_FROM_SEED_ERROR:
+        return {
+            ...state,
+            restoreWalletError: action.error
+        }
+    case RESTORE_WALLET_FROM_SEED_SUCCESS:
+        return {
+            ...state,
+            isShowRestoreWallet: false,
+            seed: action.userSeed,
+            password: action.userPassword,
+            userSeed: '',
+            userPassword: ''
+        }
+    case CLOSE_WALLET:
+        return initialState
     default:
       return state;
   }

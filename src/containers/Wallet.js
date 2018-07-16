@@ -9,6 +9,7 @@ import {
 import SubHeader from '../components/SubHeader'
 import AddressView from '../components/AddressView'
 import GenerateWalletModal from '../components/Modal/GenerateWalletModal'
+import RestoreWalletModal from '../components/Modal/RestoreWalletModal'
 import * as walletActions from '../actions/wallet'
 
 class Wallet extends Component {
@@ -26,31 +27,51 @@ class Wallet extends Component {
             onGenerateWalletCancel,
             onGenerateKeystore,
             onShowRestoreWallet,
-            onRestoreWalletCancel,
             isShowTipMessage,
             onTipMsgCancel,
             generateKeystoreLoading,
             generateKeystoreError,
             isComfirmed,
             addressList,
+            isShowRestoreWallet,
+            userSeed,
+            userPassword,
+            restoreWalletError,
+            onChangeUserSeed,
+            onChangeUserPassword,
+            onRestoreWalletCancel,
+            onRestoreWalletFromSeed,
+            onCloseWallet,
         } = this.props
 
         const subHeaderProps = {
             onGenerateWallet,
             onShowRestoreWallet,
-            isComfirmed
+            isComfirmed,
+            onCloseWallet
         }
 
         const generateWalletProps = {
-          isShowGenerateWallet,
-          generateWalletLoading,
-          seed,
-          password,
-          onGenerateWallet,
-          onGenerateWalletCancel,
-          onGenerateKeystore,
-          isShowTipMessage,
-          onTipMsgCancel
+            isShowGenerateWallet,
+            generateWalletLoading,
+            seed,
+            password,
+            onGenerateWallet,
+            onGenerateWalletCancel,
+            onGenerateKeystore,
+            isShowTipMessage,
+            onTipMsgCancel
+        }
+
+        const restoreWalletModalProps = {
+            isShowRestoreWallet,
+            userSeed,
+            userPassword,
+            restoreWalletError,
+            onChangeUserSeed,
+            onChangeUserPassword,
+            onRestoreWalletCancel,
+            onRestoreWalletFromSeed,
         }
 
         const addressViewProps = {
@@ -86,6 +107,7 @@ class Wallet extends Component {
             <Container style={{ marginTop: '8em' }} textAlign='center'>
                 <SubHeader { ...subHeaderProps} />
                 <GenerateWalletModal {...generateWalletProps} />
+                <RestoreWalletModal {...restoreWalletModalProps} />
                 <AddressView {...addressViewProps} />
 		    </Container>
         );
@@ -102,7 +124,11 @@ function mapStateToProps(state){
         isComfirmed: state.wallet.isComfirmed,
         generateKeystoreLoading: state.wallet.generateKeystoreLoading,
         generateKeystoreError: state.wallet.generateKeystoreError,
-        addressList: state.wallet.addressList
+        addressList: state.wallet.addressList,
+        isShowRestoreWallet: state.wallet.isShowRestoreWallet,
+        userSeed: state.wallet.userSeed,
+        userPassword: state.wallet.userPassword,
+        restoreWalletError: state.wallet.restoreWalletError
     }
 }
 
@@ -128,6 +154,18 @@ function mapDispatchToProps(dispatch) {
         },
         onLoadWallet: () => {
             dispatch(walletActions.loadWallet())
+        },
+        onChangeUserSeed: (e, target) => {
+            dispatch(walletActions.changeUserSeed(target && target.value))
+        },
+        onChangeUserPassword: (e, target) => {
+            dispatch(walletActions.changeUserPassword(target && target.value))
+        },
+        onRestoreWalletFromSeed: () => {
+            dispatch(walletActions.restoreWalletFromSeed())
+        },
+        onCloseWallet: () => {
+            dispatch(walletActions.closeWallet())
         }
     }
 }
