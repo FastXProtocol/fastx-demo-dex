@@ -31,7 +31,7 @@ export default class AddressTable extends Component {
                       eth
                       </Table.Cell>
                       <Table.Cell>
-                        { item['balance'] }
+                        { item['balance'] || 'n/a' }
                       </Table.Cell>
                       <Table.Cell>
                         <a>Send</a>

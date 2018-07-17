@@ -11,7 +11,7 @@ function NetworkMenu(props) {
     })
     console.log(availableNetworks)
     return (
-        <Dropdown style={{ width: '140px',margin: '5px 20px' }} placeholder='' fluid selection options={networkOptions} value={networkName} onChange={ (e, target) => onLoadNetwork( target.value ) } />
+        <Dropdown style={{ width: '170px',margin: '5px 20px' }} placeholder='' fluid selection options={networkOptions} value={networkName} onChange={ (e, target) => onLoadNetwork( target.value ) } />
     )
 }
 

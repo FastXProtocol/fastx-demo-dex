@@ -11,6 +11,7 @@ import AddressView from '../components/AddressView'
 import GenerateWalletModal from '../components/Modal/GenerateWalletModal'
 import RestoreWalletModal from '../components/Modal/RestoreWalletModal'
 import * as walletActions from '../actions/wallet'
+import * as networkActions from '../actions/network'
 
 class Wallet extends Component {
     componentDidMount() {
@@ -23,12 +24,7 @@ class Wallet extends Component {
             generateWalletLoading,
             seed,
             password,
-            onGenerateWallet,
-            onGenerateWalletCancel,
-            onGenerateKeystore,
-            onShowRestoreWallet,
             isShowTipMessage,
-            onTipMsgCancel,
             generateKeystoreLoading,
             generateKeystoreError,
             isComfirmed,
@@ -37,11 +33,23 @@ class Wallet extends Component {
             userSeed,
             userPassword,
             restoreWalletError,
+            networkReady,
+            checkingBalances,
+            checkingBalancesError,
+            addressListError,
+            addressListLoading,
             onChangeUserSeed,
             onChangeUserPassword,
             onRestoreWalletCancel,
             onRestoreWalletFromSeed,
             onCloseWallet,
+            onGenerateWallet,
+            onGenerateWalletCancel,
+            onGenerateKeystore,
+            onShowRestoreWallet,
+            onTipMsgCancel,
+            onCheckBalances,
+            onGenerateAddress
         } = this.props
 
         const subHeaderProps = {
@@ -79,28 +87,13 @@ class Wallet extends Component {
           generateKeystoreError,
           isComfirmed,
           addressList,
-          // addressMap,
-          // tokenDecimalsMap,
-          //
-          // onShowSendToken,
-          // onShowTokenChooser,
-          //
-          // onCheckBalances,
-          // onGenerateAddress,
-          // addressListLoading,
-          // addressListError,
-          // addressListMsg,
-          // networkReady,
-          // checkingBalanceDoneTime,
-          // checkingBalances,
-          // checkingBalancesError,
-          // onSelectCurrency,
-          // exchangeRates,
-          // convertTo,
-          // onGetExchangeRates,
-          // getExchangeRatesDoneTime,
-          // getExchangeRatesLoading,
-          // getExchangeRatesError,
+          networkReady,
+          checkingBalances,
+          checkingBalancesError,
+          addressListLoading,
+          addressListError,
+          onCheckBalances,
+          onGenerateAddress,
         };
 
         return (
@@ -128,7 +121,12 @@ function mapStateToProps(state){
         isShowRestoreWallet: state.wallet.isShowRestoreWallet,
         userSeed: state.wallet.userSeed,
         userPassword: state.wallet.userPassword,
-        restoreWalletError: state.wallet.restoreWalletError
+        restoreWalletError: state.wallet.restoreWalletError,
+        networkReady: state.network.networkReady,
+        checkingBalances: state.network.checkingBalances,
+        checkingBalancesError: state.network.checkingBalancesError,
+        addressListLoading: state.wallet.addressListLoading,
+        addressListError: state.wallet.addressListError
     }
 }
 
@@ -166,6 +164,12 @@ function mapDispatchToProps(dispatch) {
         },
         onCloseWallet: () => {
             dispatch(walletActions.closeWallet())
+        },
+        onCheckBalances: () => {
+            dispatch(networkActions.checkBalances())
+        },
+        onGenerateAddress: () => {
+            dispatch(walletActions.generateAddress());
         }
     }
 }

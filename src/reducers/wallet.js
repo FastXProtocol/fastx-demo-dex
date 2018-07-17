@@ -20,6 +20,10 @@ const RESTORE_WALLET_FROM_SEED_ERROR = 'RESTORE_WALLET_FROM_SEED_ERROR'
 const RESTORE_WALLET_FROM_SEED_SUCCESS = 'RESTORE_WALLET_FROM_SEED_SUCCESS'
 const RESTORE_WALLET_CANCEL = 'RESTORE_WALLET_CANCEL'
 const CLOSE_WALLET = 'CLOSE_WALLET'
+const UPDATE_ADDRESS = 'UPDATE_ADDRESS'
+const GENERATE_ADDRESS = 'GENERATE_ADDRESS'
+const GENERATE_ADDRESS_SUCCESS = 'GENERATE_ADDRESS_SUCCESS'
+const GENERATE_ADDRESS_ERROR = 'GENERATE_ADDRESS_ERROR'
 
 const initialState = {
     keystore: false,
@@ -100,6 +104,11 @@ export default function wallet (state = initialState, action = {}) {
             addressList: action.addressMap,
             generateKeystoreLoading: false
         };
+    case UPDATE_ADDRESS:
+        return {
+            ...state,
+            addressList: action.addressMap,
+        }
     case GENERATE_KEYSTORE_ERROR:
         return {
             ...state,
@@ -188,6 +197,26 @@ export default function wallet (state = initialState, action = {}) {
         }
     case CLOSE_WALLET:
         return initialState
+    case GENERATE_ADDRESS:
+        return {
+            ...state,
+            addressListLoading: true,
+            addressListError: false,
+            addressListMsg: false
+        }
+    case GENERATE_ADDRESS_SUCCESS:
+        return {
+            ...state,
+            addressListLoading: false,
+            addressListError: false,
+            addressListMsg: 'New address generated succesfully'
+        }
+    case GENERATE_ADDRESS_ERROR:
+        return {
+            ...state,
+            addressListLoading: false,
+            addressListError: action.error
+        }
     default:
       return state;
   }

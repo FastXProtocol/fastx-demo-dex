@@ -12,6 +12,8 @@ import {
   generateKeystore,
   generateKeystoreError,
   generateKeystoreSuccess,
+  generateAddressSuccess,
+  generateAddressError,
   saveWallet,
   saveWalletSuccess,
   saveWalletError,
@@ -26,6 +28,8 @@ import {
 import {
   loadNetwork
 } from '../actions/network'
+
+import { getEthBalancePromise } from './network';
 
 const generatedPasswordLength = 12
 const hdPathString = `m/44'/60'/0'/0`
@@ -195,16 +199,57 @@ export function* restoreFromSeed() {
 /**
  * Disconnect from network during closeWallet
  */
-export function* closeWallet() {
-    console.log(123)
+function* closeWallet() {
   yield put(saveKs(null))
   yield put(loadNetwork(offlineModeString));
+}
+
+function* generateAddress() {
+  try {
+    const ks = store.getState().wallet.keystore;
+    if (!ks) {
+      throw new Error('No keystore found');
+    }
+
+    const password = store.getState().wallet.password;
+    if (!password) {
+      // TODO: Handle password
+      throw new Error('Wallet Locked');
+    }
+
+    function keyFromPasswordPromise(param) { // eslint-disable-line no-inner-declarations
+      return new Promise((resolve, reject) => {
+        ks.keyFromPassword(param, (err, data) => {
+          if (err !== null) return reject(err);
+          return resolve(data);
+        });
+      });
+    }
+
+    const pwDerivedKey = yield call(keyFromPasswordPromise, password);
+    ks.generateNewAddress(pwDerivedKey, 1);
+    console.log(ks.getAddresses())
+    let addressList = store.getState().wallet.addressList;
+    const newAddress = ks.getAddresses().slice(-1)[0];
+    const index = ks.getAddresses().length;
+    const balance = yield call(getEthBalancePromise, newAddress);
+    addressList[newAddress] = {
+        'eth': {'balance': balance},
+        'index': index
+    }
+    yield put(generateAddressSuccess(addressList));
+    yield put(saveWallet());
+  } catch (err) {
+    yield call(delay, 1000);
+    yield put(generateAddressError(err.message));
+  }
 }
 
 export default function* walletSaga(args) {
     store = args
     yield takeLatest('GENERATE_WALLET', generateWallet)
     yield takeLatest('GENERATE_KEYSTORE', genKeystore)
+    yield takeLatest('GENERATE_ADDRESS', generateAddress);
     yield takeLatest('SAVE_WALLET', saveWalletS);
     yield takeLatest('LOAD_WALLET', loadWalletS);
     yield takeLatest('RESTORE_WALLET_FROM_SEED', restoreFromSeed);

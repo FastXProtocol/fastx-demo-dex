@@ -1,12 +1,24 @@
 import { take, call, put, select, takeLatest, race, fork } from 'redux-saga/effects';
 import { delay, channel } from 'redux-saga';
-import { SignerProvider } from 'ethjs-provider-signer';
+import SignerProvider from 'ethjs-provider-signer';
 
 import { network } from '../config';
 
-import { loadNetworkSuccess, loadNetworkError } from '../actions/network';
+import {
+    loadNetworkSuccess,
+    loadNetworkError,
+    checkBalances,
+    checkBalancesSuccess,
+    checkBalancesError
+ } from '../actions/network';
+
+ import {
+     updateAddress
+ } from '../actions/wallet'
 
 const offlineModeString = 'Offline';
+// time in ms for check balancess polling
+export const timeBetweenCheckbalances = 180 * 1000;
 let store,fastx;
 
 async function getFastx(func) {
@@ -35,12 +47,17 @@ function* loadNetworkAsync(action) {
         const keystore = store.getState().wallet.keystore;
 
         if (keystore) {
-            const provider = new SignerProvider(rpcAddress, {
-                signTransaction: keystore.signTransaction.bind(keystore),
-                accounts: (cb) => cb(null, keystore.getAddresses()),
-            });
+            try{
+                const provider = new SignerProvider(rpcAddress, {
+                    signTransaction: keystore.signTransaction.bind(keystore),
+                    accounts: (cb) => cb(null, keystore.getAddresses()),
+                });
 
-            fastx.web3.setProvider(provider);
+                fastx.web3.setProvider(provider);
+            }catch(err){
+                console.log(err)
+
+            }
 
             function getBlockNumberPromise() { // eslint-disable-line no-inner-declarations
                 return new Promise((resolve, reject) => {
@@ -53,8 +70,8 @@ function* loadNetworkAsync(action) {
             const blockNumber = yield call(getBlockNumberPromise);
 
             yield delay(600);
-
             yield put(loadNetworkSuccess(blockNumber));
+            yield put(checkBalances());
         } else {
             throw new Error('keystore not initiated - Create wallet before connecting');
         }
@@ -64,7 +81,70 @@ function* loadNetworkAsync(action) {
     }
 }
 
+export function getEthBalancePromise(address) {
+  return new Promise((resolve, reject) => {
+    fastx.web3.eth.getBalance(address, (err, data) => {
+      if (err !== null) return reject(err);
+      return resolve(data);
+    });
+  });
+}
+
+function* pollData() {
+  try {
+    yield call(delay, timeBetweenCheckbalances);
+    yield put(checkBalances());
+  } catch (error) {
+    console.log(error);
+  }
+}
+
+function* watchPollData() {
+  while (true) { // eslint-disable-line
+    yield take(['CHECK_BALANCES_SUCCESS', 'CHECK_BALANCES_ERROR']);
+    yield race([ // eslint-disable-line
+      call(pollData),
+      take('STOP_POLL_BALANCES'),
+    ]);
+  }
+}
+
+function* checkAllBalances() {
+  try {
+    let j = 0;
+    const addressList = store.getState().wallet.addressList;
+    for (let address in addressList){
+        const balance = yield call(getEthBalancePromise, address);
+        addressList[address]['eth']['balance'] = balance;
+    }
+    yield put(updateAddress(addressList))
+// console.log(addressList)
+//     do { // Iterate over all addresses and check for balance
+//       const address = addressList[j];
+//       // handle eth
+//       const balance = yield call(getEthBalancePromise, address);
+//       yield put(changeBalance(address, 'eth', balance));
+//
+//       // handle tokens
+//       yield checkTokensBalances(address);
+//
+//       j += 1;
+//     } while (j < addressList.length);
+
+    yield put(checkBalancesSuccess());
+  } catch (err) {
+    yield put(checkBalancesError(err.message));
+  }
+}
+
 export default function * networkSaga (arg) {
     store = arg;
     yield takeLatest('LOAD_NETWORK', loadNetworkAsync)
+
+    /* poll check balances */
+    yield [
+        fork(watchPollData),
+        takeLatest('CHECK_BALANCES', checkAllBalances),
+    ];
+    /* End of poll check balances */
 }

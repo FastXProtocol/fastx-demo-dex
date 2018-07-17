@@ -7,6 +7,7 @@ import {
 } from 'semantic-ui-react';
 
 import AddressTable from '../components/AddressTable'
+import AddressTableFooter from '../components/AddressTableFooter'
 
 export default class AddressView extends Component {
     render() {
@@ -14,17 +15,38 @@ export default class AddressView extends Component {
             generateKeystoreLoading,
             generateKeystoreError,
             isComfirmed,
-            addressList
+            addressList,
+            networkReady,
+            addressListLoading,
+            addressListError,
+            checkingBalances,
+            checkingBalancesError,
+            onCheckBalances,
+            onGenerateAddress,
         } = this.props;
 
         const addressTableProps = {
             addressList
         };
 
+        const addressTableFooterProps = {
+            networkReady,
+            isComfirmed,
+            checkingBalances,
+            checkingBalancesError,
+            addressListLoading,
+            addressListError,
+            onCheckBalances,
+            onGenerateAddress
+        }
+
         let addressViewContent = <div>{generateKeystoreError}</div>
 
         if (isComfirmed) {
-            addressViewContent = <AddressTable { ...addressTableProps }/>
+            addressViewContent = [
+                <AddressTable key='1' { ...addressTableProps }/>,
+                <AddressTableFooter key='2' {...addressTableFooterProps} />
+            ]
         }
 
         return (

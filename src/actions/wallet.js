@@ -357,3 +357,52 @@ export function closeWallet() {
     type: 'CLOSE_WALLET',
   };
 }
+
+export function updateAddress(addressMap) {
+    return {
+        type: 'UPDATE_ADDRESS',
+        addressMap
+    }
+}
+
+
+/* ******************* Generate new address from existing keystore********** */
+/**
+ * Generate new address and attach it to store
+ *
+ *
+ * @return {object} An action object with a type of GENERATE_ADDRESS
+ */
+export function generateAddress() {
+  return {
+    type: 'GENERATE_ADDRESS',
+  };
+}
+
+/**
+ * After successfull address generation create new addressList for our store.
+ *
+ * @return {object} An action object with a type of GENERATE_ADDRESS_SUCCESS,
+ * newAddress and tokenMap for the new address
+ */
+export function generateAddressSuccess(addressList) {
+  return {
+    type: 'GENERATE_ADDRESS_SUCCESS',
+    addressList
+  };
+}
+
+/**
+ * Dispatched when generating new address fails
+ *
+ * @param  {object} error The error
+ *
+ * @return {object} An action object with a type of GENERATE_ADDRESS_ERROR passing the error
+ */
+export function generateAddressError(error) {
+  // message(error);
+  return {
+    type: 'GENERATE_ADDRESS_ERROR',
+    error,
+  };
+}

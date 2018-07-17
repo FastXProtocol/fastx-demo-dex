@@ -1,16 +1,22 @@
-import {network} from '../config';
+import {network} from '../config'
 
-const LOAD_NETWORK = 'LOAD_NETWORK';
-const LOAD_NETWORK_SUCCESS = 'LOAD_NETWORK_SUCCESS';
-const LOAD_NETWORK_ERROR = 'LOAD_NETWORK_ERROR';
+const LOAD_NETWORK = 'LOAD_NETWORK'
+const LOAD_NETWORK_SUCCESS = 'LOAD_NETWORK_SUCCESS'
+const LOAD_NETWORK_ERROR = 'LOAD_NETWORK_ERROR'
+const CHECK_BALANCES = 'CHECK_BALANCES'
+const CHECK_BALANCES_SUCCESS = 'CHECK_BALANCES_SUCCESS'
+const CHECK_BALANCES_ERROR = 'CHECK_BALANCES_ERROR'
 
 const initialState = {
-  availableNetworks: Object.keys(network),
-  networkName: 'Offline',
-  networkReady: false,
-  blockNumber: 0,
-  loading: false,
-  error: false
+    availableNetworks: Object.keys(network),
+    networkName: 'Offline',
+    networkReady: false,
+    blockNumber: 0,
+    loading: false,
+    error: false,
+    checkingBalanceDoneTime: false, // should update after every succesfull balance check
+    checkingBalances: false, // Loading
+    checkingBalancesError: false,
 };
 
 export default function Network (state = initialState, action = {}) {
@@ -37,6 +43,28 @@ export default function Network (state = initialState, action = {}) {
               error: action.error,
               networkReady: false
           }
+      case CHECK_BALANCES:
+          return {
+              ...state,
+              checkingBalances: true,
+              checkingBalancesError: false,
+              checkingBalanceDoneTime: false
+          }
+      case CHECK_BALANCES_SUCCESS:
+          return {
+              ...state,
+              checkingBalances: false,
+              checkingBalancesError: false,
+              checkingBalanceDoneTime: action.timeString
+          }
+      case CHECK_BALANCES_ERROR:
+          return {
+              ...state,
+              checkingBalances: false,
+              checkingBalancesError: action.error,
+              checkingBalanceDoneTime: false
+          }
+
       default:
           return state;
   }

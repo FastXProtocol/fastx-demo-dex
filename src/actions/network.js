@@ -50,3 +50,44 @@ export function loadNetworkError(error) {
     error
   }
 }
+
+/* *********************************** Check Balances Actions ******************* */
+/**
+ * Initiate process to check balance of all known addresses
+ *
+ * @return {object}    An action object with a type of CHECK_BALANCES
+ */
+export function checkBalances() {
+  return {
+    type: 'CHECK_BALANCES',
+  };
+}
+
+/**
+ * checkBalances successful
+ *
+ * @return {object}      An action object with a type of CHECK_BALANCES_SUCCESS
+ */
+export function checkBalancesSuccess() {
+  const timeString = new Date().toLocaleTimeString();
+  // message.success('Balances updated succesfully');
+  return {
+    type: 'CHECK_BALANCES_SUCCESS',
+    timeString,
+  };
+}
+
+/**
+ * checkBalances failed
+ *
+ * @param  {object} error The error
+ *
+ * @return {object} An action object with a type of CHECK_BALANCES_ERROR passing the error
+ */
+export function checkBalancesError(error) {
+  // message(error);
+  return {
+    type: 'CHECK_BALANCES_ERROR',
+    error,
+  };
+}
