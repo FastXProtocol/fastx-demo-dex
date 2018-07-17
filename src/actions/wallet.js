@@ -406,3 +406,59 @@ export function generateAddressError(error) {
     error,
   };
 }
+
+/* **********************LOCK AND UNLOCK WALLET ***************************** */
+
+
+/**
+ * Lock wallet by removing encription password from state (syncronic)
+ *
+ * @return {object} An action object with a type of LOCK_WALLET
+ */
+export function lockWallet() {
+  // message('Wallet locked succesfuly');
+  return {
+    type: 'LOCK_WALLET',
+  };
+}
+
+/**
+ * Unlock wallet
+ *
+ * @return {object} An action object with a type of UNLOCK_WALLET
+ */
+export function unlockWallet() {
+  return {
+    type: 'UNLOCK_WALLET',
+  };
+}
+
+/**
+ * Password given is checked to successfully unlock the wallet
+ *
+ * @param  {keystore} password for unlocking the wallet
+ *
+ * @return {object}      An action object with a type of UNLOCK_WALLET_SUCCESS and the password
+ */
+export function unlockWalletSuccess(password) {
+  // message('Wallet unlocked succesfuly');
+  return {
+    type: 'UNLOCK_WALLET_SUCCESS',
+    password,
+  };
+}
+
+/**
+ * Dispatched when password given by user is incorrect
+ *
+ * @param  {object} error
+ *
+ * @return {object} An action object with a type of GENERATE_ADDRESS_ERROR passing the error
+ */
+export function unlockWalletError(error) {
+  // message.error(error, 5);
+  return {
+    type: 'UNLOCK_WALLET_ERROR',
+    error,
+  };
+}

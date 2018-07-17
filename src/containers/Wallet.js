@@ -49,14 +49,19 @@ class Wallet extends Component {
             onShowRestoreWallet,
             onTipMsgCancel,
             onCheckBalances,
-            onGenerateAddress
+            onGenerateAddress,
+            onLockWallet,
+            onUnlockWallet
         } = this.props
 
         const subHeaderProps = {
+            password,
+            isComfirmed,
             onGenerateWallet,
             onShowRestoreWallet,
-            isComfirmed,
-            onCloseWallet
+            onCloseWallet,
+            onLockWallet,
+            onUnlockWallet
         }
 
         const generateWalletProps = {
@@ -170,6 +175,12 @@ function mapDispatchToProps(dispatch) {
         },
         onGenerateAddress: () => {
             dispatch(walletActions.generateAddress());
+        },
+        onLockWallet: () => {
+            dispatch(walletActions.lockWallet());
+        },
+        onUnlockWallet: () => {
+            dispatch(walletActions.unlockWallet());
         }
     }
 }

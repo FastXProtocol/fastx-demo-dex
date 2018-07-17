@@ -24,6 +24,10 @@ const UPDATE_ADDRESS = 'UPDATE_ADDRESS'
 const GENERATE_ADDRESS = 'GENERATE_ADDRESS'
 const GENERATE_ADDRESS_SUCCESS = 'GENERATE_ADDRESS_SUCCESS'
 const GENERATE_ADDRESS_ERROR = 'GENERATE_ADDRESS_ERROR'
+const LOCK_WALLET = 'LOCK_WALLET'
+const UNLOCK_WALLET = 'UNLOCK_WALLET'
+const UNLOCK_WALLET_SUCCESS = 'UNLOCK_WALLET_SUCCESS'
+const UNLOCK_WALLET_ERROR = 'UNLOCK_WALLET_ERROR'
 
 const initialState = {
     keystore: false,
@@ -216,6 +220,24 @@ export default function wallet (state = initialState, action = {}) {
             ...state,
             addressListLoading: false,
             addressListError: action.error
+        }
+    case LOCK_WALLET:
+        return {
+            ...state,
+            password: false
+        }
+    case UNLOCK_WALLET:
+        return {
+            ...state
+        }
+    case UNLOCK_WALLET_SUCCESS:
+        return {
+            ...state,
+            password: action.password
+        }
+    case UNLOCK_WALLET_ERROR:
+        return {
+            ...state,
         }
     default:
       return state;

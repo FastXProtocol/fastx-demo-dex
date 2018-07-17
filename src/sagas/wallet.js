@@ -22,7 +22,9 @@ import {
   loadWalletError,
   changeUserSeed,
   restoreWalletFromSeedError,
-  restoreWalletFromSeedSuccess
+  restoreWalletFromSeedSuccess,
+  unlockWalletSuccess,
+  unlockWalletError
 } from '../actions/wallet'
 
 import {
@@ -245,11 +247,65 @@ function* generateAddress() {
   }
 }
 
+function* unlockWallet() {
+  try {
+    const currentPassword = store.getState().wallet.password;
+    if (currentPassword) {
+      throw Error('Wallet Already unlocked');
+    }
+
+    const ks = store.getState().wallet.keystore;
+    if (!ks) {
+      throw new Error('No keystore to unlock');
+    }
+
+    const passwordProvider = ks.passwordProvider;
+
+    function passwordProviderPromise() { // eslint-disable-line no-inner-declarations
+      return new Promise((resolve, reject) => {
+        passwordProvider((err, data) => {
+          if (err !== null) return reject(err);
+          return resolve(data);
+        });
+      });
+    }
+
+    function keyFromPasswordPromise(param) { // eslint-disable-line no-inner-declarations
+      return new Promise((resolve, reject) => {
+        ks.keyFromPassword(param, (err, data) => {
+          if (err !== null) return reject(err);
+          return resolve(data);
+        });
+      });
+    }
+
+    const userPassword = yield call(passwordProviderPromise);
+
+    if (!userPassword) {
+      throw Error('No password entered');
+    }
+
+    const pwDerivedKey = yield call(keyFromPasswordPromise, userPassword);
+    // TODO: Move into password provider?
+    const isPasswordCorrect = ks.isDerivedKeyCorrect(pwDerivedKey);
+
+    if (!isPasswordCorrect) {
+      throw Error('Invalid Password');
+    }
+
+    yield put(unlockWalletSuccess(userPassword));
+  } catch (err) {
+    const errorString = `Unlock wallet error - ${err.message}`;
+    yield put(unlockWalletError(errorString));
+  }
+}
+
 export default function* walletSaga(args) {
     store = args
     yield takeLatest('GENERATE_WALLET', generateWallet)
     yield takeLatest('GENERATE_KEYSTORE', genKeystore)
     yield takeLatest('GENERATE_ADDRESS', generateAddress);
+    yield takeLatest('UNLOCK_WALLET', unlockWallet);
     yield takeLatest('SAVE_WALLET', saveWalletS);
     yield takeLatest('LOAD_WALLET', loadWalletS);
     yield takeLatest('RESTORE_WALLET_FROM_SEED', restoreFromSeed);
