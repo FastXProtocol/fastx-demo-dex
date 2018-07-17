@@ -38,7 +38,16 @@ const hdPathString = `m/44'/60'/0'/0`
 const defaultNetwork = 'Ropsten Testnet'
 const localStorageKey = 'ks';
 const offlineModeString = 'Offline';
-let store
+let fastx,store
+
+async function getFastx(func) {
+    while(!fastx) {
+        fastx = store.getState().app.fastx;
+        await delay(200);
+    }
+
+    return true;
+}
 
 /**
  * Create new seed and password
@@ -207,6 +216,7 @@ function* closeWallet() {
 }
 
 function* generateAddress() {
+  yield getFastx();
   try {
     const ks = store.getState().wallet.keystore;
     if (!ks) {
@@ -230,11 +240,11 @@ function* generateAddress() {
 
     const pwDerivedKey = yield call(keyFromPasswordPromise, password);
     ks.generateNewAddress(pwDerivedKey, 1);
-    console.log(ks.getAddresses())
     let addressList = store.getState().wallet.addressList;
     const newAddress = ks.getAddresses().slice(-1)[0];
     const index = ks.getAddresses().length;
-    const balance = yield call(getEthBalancePromise, newAddress);
+    let balance = yield call(getEthBalancePromise, newAddress);
+    balance = yield fastx.web3.utils.fromWei((balance+''), 'ether')
     addressList[newAddress] = {
         'eth': {'balance': balance},
         'index': index

@@ -114,23 +114,11 @@ function* checkAllBalances() {
     let j = 0;
     const addressList = store.getState().wallet.addressList;
     for (let address in addressList){
-        const balance = yield call(getEthBalancePromise, address);
+        let balance = yield call(getEthBalancePromise, address);
+        balance = yield fastx.web3.utils.fromWei((balance+''), 'ether')
         addressList[address]['eth']['balance'] = balance;
     }
     yield put(updateAddress(addressList))
-// console.log(addressList)
-//     do { // Iterate over all addresses and check for balance
-//       const address = addressList[j];
-//       // handle eth
-//       const balance = yield call(getEthBalancePromise, address);
-//       yield put(changeBalance(address, 'eth', balance));
-//
-//       // handle tokens
-//       yield checkTokensBalances(address);
-//
-//       j += 1;
-//     } while (j < addressList.length);
-
     yield put(checkBalancesSuccess());
   } catch (err) {
     yield put(checkBalancesError(err.message));
