@@ -88,6 +88,20 @@ export function restoreWalletCancel() {
 }
 
 /**
+ * Changes the input field for user password
+ *
+ * @param  {name} seed The new text of the input field
+ *
+ * @return {object}    An action object with a type of CHANGE_USER_SEED
+ */
+export function changePassword(password) {
+  return {
+    type: 'CHANGE_PASSWORD',
+    password,
+  };
+}
+
+/**
  * Changes the input field for user seed
  *
  * @param  {name} seed The new text of the input field

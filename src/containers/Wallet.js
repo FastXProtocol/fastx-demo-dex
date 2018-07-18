@@ -59,7 +59,8 @@ class Wallet extends Component {
             onUnlockWallet,
             onShowSendToken,
             onHideSendToken,
-            onChangeCurAccount
+            onChangeCurAccount,
+            onChangePassword
         } = this.props
 
         const subHeaderProps = {
@@ -69,7 +70,8 @@ class Wallet extends Component {
             onShowRestoreWallet,
             onCloseWallet,
             onLockWallet,
-            onUnlockWallet
+            onUnlockWallet,
+            onChangePassword
         }
 
         const generateWalletProps = {
@@ -81,7 +83,8 @@ class Wallet extends Component {
             onGenerateWalletCancel,
             onGenerateKeystore,
             isShowTipMessage,
-            onTipMsgCancel
+            onTipMsgCancel,
+            onChangePassword
         }
 
         const restoreWalletModalProps = {
@@ -202,6 +205,9 @@ function mapDispatchToProps(dispatch) {
         },
         onChangeUserPassword: (e, target) => {
             dispatch(walletActions.changeUserPassword(target && target.value))
+        },
+        onChangePassword: (e, target) => {
+            dispatch(walletActions.changePassword(target && target.value))
         },
         onRestoreWalletFromSeed: () => {
             dispatch(walletActions.restoreWalletFromSeed())

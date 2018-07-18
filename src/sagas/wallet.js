@@ -236,6 +236,7 @@ export function* restoreFromSeed() {
 function* closeWallet() {
   yield put(saveKs(null))
   yield put(loadNetwork(offlineModeString));
+  yield changeCurAccount({address:''})
 }
 
 function* generateAddress() {

@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { Button, Icon, Modal, Message } from 'semantic-ui-react';
+import { Button, Icon, Input, Modal, Message } from 'semantic-ui-react';
 
 class GenerateWalletModal extends Component {
     render() {
@@ -8,11 +8,12 @@ class GenerateWalletModal extends Component {
             generateWalletLoading,
             seed,
             password,
+            isShowTipMessage,
             onGenerateWallet,
             onGenerateWalletCancel,
             onGenerateKeystore,
-            isShowTipMessage,
-            onTipMsgCancel
+            onTipMsgCancel,
+            onChangePassword
         } = this.props
 
         let tipMsg;
@@ -35,7 +36,7 @@ class GenerateWalletModal extends Component {
               </Message>
               <Message color='blue' style={{color: 'grey',lineHeight: '22px'}}>
                   <span style={{color: '#333',fontSize:'16px'}} >Password for browser encryption: </span><br />
-                  <span>{password}</span>
+                  <Input type='text' fluid placeholder='Enter password for keystore encryption' onChange={ (e, target) => this.props.onChangePassword(e, target) } value={password}/>
               </Message>
               <Button icon circular basic onClick={onGenerateWallet}>
                 <Icon name='redo alternate' loading={generateWalletLoading} />

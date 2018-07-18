@@ -15,6 +15,7 @@ const LOAD_WALLET_ERROR = 'LOAD_WALLET_ERROR'
 const SHOW_RESTORE_WALLET = 'SHOW_RESTORE_WALLET'
 const CHANGE_USER_SEED = 'CHANGE_USER_SEED'
 const CHANGE_USER_PASSWORD = 'CHANGE_USER_PASSWORD'
+const CHANGE_PASSWORD = 'CHANGE_PASSWORD'
 const RESTORE_WALLET_FROM_SEED = 'RESTORE_WALLET_FROM_SEED'
 const RESTORE_WALLET_FROM_SEED_ERROR = 'RESTORE_WALLET_FROM_SEED_ERROR'
 const RESTORE_WALLET_FROM_SEED_SUCCESS = 'RESTORE_WALLET_FROM_SEED_SUCCESS'
@@ -181,6 +182,11 @@ export default function wallet (state = initialState, action = {}) {
         return {
             ...state,
             userPassword: action.password
+        }
+    case CHANGE_PASSWORD:
+        return {
+            ...state,
+            password: action.password
         }
     case RESTORE_WALLET_FROM_SEED:
         return {
