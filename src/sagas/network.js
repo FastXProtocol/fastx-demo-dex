@@ -1,6 +1,7 @@
 import { take, call, put, select, takeLatest, race, fork } from 'redux-saga/effects';
 import { delay, channel } from 'redux-saga';
 import SignerProvider from 'ethjs-provider-signer';
+import BigNumber from 'bignumber.js';
 
 import { network } from '../config';
 
@@ -16,9 +17,19 @@ import {
      updateAddress
  } from '../actions/wallet'
 
+ import {
+  confirmSendTransactionSuccess,
+  confirmSendTransactionError,
+  sendTransactionSuccess,
+  sendTransactionError,
+} from '../actions/sendToken';
+
 const offlineModeString = 'Offline';
 // time in ms for check balancess polling
-export const timeBetweenCheckbalances = 180 * 1000;
+const maxGasForEthSend = 25000;
+const timeBetweenCheckbalances = 180 * 1000;
+const Ether = (1.0e18).toString();
+const Gwei = (1.0e9).toString();
 let store,fastx;
 
 async function getFastx(func) {
@@ -125,9 +136,97 @@ function* checkAllBalances() {
   }
 }
 
+export function* confirmSendTransaction() {
+    yield getFastx();
+    try {
+        const fromAddress = store.getState().sendToken.from;
+        const amount = store.getState().sendToken.amount;
+        const toAddress = store.getState().sendToken.to;
+        const gasPrice = store.getState().sendToken.gasPrice;
+
+        if (!fastx.web3.utils.isAddress(fromAddress)) {
+            alert('Source address invalid')
+            return
+        }
+
+        if (amount <= 0) {
+            alert('Amount must be possitive')
+            return
+        }
+
+        if (!fastx.web3.utils.isAddress(toAddress)) {
+            alert('Destenation address invalid')
+            return
+        }
+
+        if (!(gasPrice > 0.1)) {
+            alert('Gas price must be at least 0.1 Gwei')
+            return
+        }
+
+        const msg = `Transaction created successfully.
+        Sending ${amount} from ...${fromAddress.slice(-5)} to ...${toAddress.slice(-5)}`;
+        yield put(confirmSendTransactionSuccess(msg));
+    } catch (err) {
+        yield put(confirmSendTransactionError(err.message));
+    }
+}
+
+export function* SendTransaction() {
+
+    const keystore = store.getState().wallet.keystore;
+    const origProvider = keystore.passwordProvider;
+    try {
+        const fromAddress = store.getState().sendToken.from;
+        const amount = store.getState().sendToken.amount;
+        const toAddress = store.getState().sendToken.to;
+        const gasPrice = new BigNumber(store.getState().sendToken.gasPrice).times(Gwei);
+        const password = store.getState().wallet.password;
+
+        const tokenToSend = 'eth';
+
+        if (!password) {
+            alert('No password found - please unlock wallet before send')
+            return;
+        }
+        if (!keystore) {
+            alert('No keystore found - please create wallet')
+            return;
+        }
+        keystore.passwordProvider = (callback) => {
+            const ksPassword = password;
+            callback(null, ksPassword);
+        };
+
+        let tx;
+        const sendAmount = new BigNumber(amount).times(Ether);
+        const sendParams = { from: fromAddress, to: toAddress, value: sendAmount, gasPrice, gas: maxGasForEthSend };
+        function sendTransactionPromise(params) { // eslint-disable-line no-inner-declarations
+          return new Promise((resolve, reject) => {
+            fastx.web3.eth.sendTransaction(params, (err, data) => {
+              if (err !== null) return reject(err);
+              return resolve(data);
+            });
+          });
+        }
+        tx = yield call(sendTransactionPromise, sendParams);
+
+        yield put(sendTransactionSuccess(tx));
+    } catch (err) {
+        console.log(err)
+        const loc = err.message.indexOf('at runCall');
+        const errMsg = (loc > -1) ? err.message.slice(0, loc) : err.message;
+        yield put(sendTransactionError(errMsg));
+    } finally {
+        keystore.passwordProvider = origProvider;
+    }
+}
+
 export default function * networkSaga (arg) {
     store = arg;
     yield takeLatest('LOAD_NETWORK', loadNetworkAsync)
+    yield takeLatest('COMFIRM_SEND_TRANSACTION', confirmSendTransaction);
+    yield takeLatest('SEND_TRANSACTION', SendTransaction);
 
     /* poll check balances */
     yield [

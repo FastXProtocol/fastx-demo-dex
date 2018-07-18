@@ -23,10 +23,12 @@ export default class AddressView extends Component {
             checkingBalancesError,
             onCheckBalances,
             onGenerateAddress,
+            onShowSendToken
         } = this.props;
 
         const addressTableProps = {
-            addressList
+            addressList,
+            onShowSendToken
         };
 
         const addressTableFooterProps = {

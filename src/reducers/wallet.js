@@ -28,6 +28,8 @@ const LOCK_WALLET = 'LOCK_WALLET'
 const UNLOCK_WALLET = 'UNLOCK_WALLET'
 const UNLOCK_WALLET_SUCCESS = 'UNLOCK_WALLET_SUCCESS'
 const UNLOCK_WALLET_ERROR = 'UNLOCK_WALLET_ERROR'
+const SHOW_SEND_TOKEN = 'SHOW_SEND_TOKEN'
+const HIDE_SEND_TOKEN = 'HIDE_SEND_TOKEN'
 
 const initialState = {
     keystore: false,
@@ -53,6 +55,7 @@ const initialState = {
     restoreWalletError: false,
     userSeed: '',
     userPassword: '',
+    isShowSendToken: false,
 };
 
 export default function wallet (state = initialState, action = {}) {
@@ -238,6 +241,16 @@ export default function wallet (state = initialState, action = {}) {
     case UNLOCK_WALLET_ERROR:
         return {
             ...state,
+        }
+    case SHOW_SEND_TOKEN:
+        return {
+            ...state,
+            isShowSendToken: true
+        }
+    case HIDE_SEND_TOKEN:
+        return {
+            ...state,
+            isShowSendToken: false
         }
     default:
       return state;

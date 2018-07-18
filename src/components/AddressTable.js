@@ -9,7 +9,7 @@ import {
 export default class AddressTable extends Component {
 
     render() {
-        const { addressList } = this.props
+        const { addressList, onShowSendToken } = this.props
         let tableContent;
         if(addressList){
             let accounts = [];
@@ -34,7 +34,7 @@ export default class AddressTable extends Component {
                         { item['balance'] || 'n/a' }
                       </Table.Cell>
                       <Table.Cell>
-                        <a>Send</a>
+                        <a onClick={ () => onShowSendToken(item['address']) }>Send</a>
                       </Table.Cell>
                     </Table.Row>
                 )

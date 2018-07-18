@@ -31,11 +31,15 @@ import {
   loadNetwork
 } from '../actions/network'
 
+import {
+  changeFrom
+} from '../actions/sendToken'
+
 import { getEthBalancePromise } from './network';
 
 const generatedPasswordLength = 12
 const hdPathString = `m/44'/60'/0'/0`
-const defaultNetwork = 'Ropsten Testnet'
+const defaultNetwork = 'Local RPC'
 const localStorageKey = 'ks';
 const offlineModeString = 'Offline';
 let fastx,store
@@ -310,6 +314,13 @@ function* unlockWallet() {
   }
 }
 
+export function* changeSourceAddress(action) {
+  // wait for container to load and then change from address
+  if (action.address) {
+    yield put(changeFrom(action.address, action.sendTokenSymbol));
+  }
+}
+
 export default function* walletSaga(args) {
     store = args
     yield takeLatest('GENERATE_WALLET', generateWallet)
@@ -320,4 +331,5 @@ export default function* walletSaga(args) {
     yield takeLatest('LOAD_WALLET', loadWalletS);
     yield takeLatest('RESTORE_WALLET_FROM_SEED', restoreFromSeed);
     yield takeLatest('CLOSE_WALLET', closeWallet);
+    yield takeLatest('SHOW_SEND_TOKEN', changeSourceAddress);
 }

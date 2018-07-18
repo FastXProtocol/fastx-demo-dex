@@ -8,6 +8,7 @@ import {
 
 import SubHeader from '../components/SubHeader'
 import AddressView from '../components/AddressView'
+import SendToken from '../containers/SendToken'
 import GenerateWalletModal from '../components/Modal/GenerateWalletModal'
 import RestoreWalletModal from '../components/Modal/RestoreWalletModal'
 import * as walletActions from '../actions/wallet'
@@ -38,6 +39,7 @@ class Wallet extends Component {
             checkingBalancesError,
             addressListError,
             addressListLoading,
+            isShowSendToken,
             onChangeUserSeed,
             onChangeUserPassword,
             onRestoreWalletCancel,
@@ -51,7 +53,9 @@ class Wallet extends Component {
             onCheckBalances,
             onGenerateAddress,
             onLockWallet,
-            onUnlockWallet
+            onUnlockWallet,
+            onShowSendToken,
+            onHideSendToken
         } = this.props
 
         const subHeaderProps = {
@@ -88,18 +92,24 @@ class Wallet extends Component {
         }
 
         const addressViewProps = {
-          generateKeystoreLoading,
-          generateKeystoreError,
-          isComfirmed,
-          addressList,
-          networkReady,
-          checkingBalances,
-          checkingBalancesError,
-          addressListLoading,
-          addressListError,
-          onCheckBalances,
-          onGenerateAddress,
+            generateKeystoreLoading,
+            generateKeystoreError,
+            isComfirmed,
+            addressList,
+            networkReady,
+            checkingBalances,
+            checkingBalancesError,
+            addressListLoading,
+            addressListError,
+            onCheckBalances,
+            onGenerateAddress,
+            onShowSendToken
         };
+
+        const sendTokenProps = {
+            isShowSendToken,
+            onHideSendToken
+        }
 
         return (
             <Container style={{ marginTop: '8em' }} textAlign='center'>
@@ -107,6 +117,7 @@ class Wallet extends Component {
                 <GenerateWalletModal {...generateWalletProps} />
                 <RestoreWalletModal {...restoreWalletModalProps} />
                 <AddressView {...addressViewProps} />
+                <SendToken {...sendTokenProps} />
 		    </Container>
         );
     };
@@ -131,7 +142,8 @@ function mapStateToProps(state){
         checkingBalances: state.network.checkingBalances,
         checkingBalancesError: state.network.checkingBalancesError,
         addressListLoading: state.wallet.addressListLoading,
-        addressListError: state.wallet.addressListError
+        addressListError: state.wallet.addressListError,
+        isShowSendToken: state.wallet.isShowSendToken,
     }
 }
 
@@ -181,6 +193,12 @@ function mapDispatchToProps(dispatch) {
         },
         onUnlockWallet: () => {
             dispatch(walletActions.unlockWallet());
+        },
+        onShowSendToken: (address) => {
+            dispatch(walletActions.showSendToken(address));
+        },
+        onHideSendToken: (address) => {
+            dispatch(walletActions.hideSendToken());
         }
     }
 }
