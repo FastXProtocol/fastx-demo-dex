@@ -46,7 +46,7 @@ export function generateWalletSucces(seed, password) {
  * @return {object} An action object with a type of GENERATE_WALLET_ERROR passing the error
  */
 export function generateWalletError(error) {
-  // message(error);
+  alert(error)
   return {
     type: 'GENERATE_WALLET_ERROR',
     error,
@@ -147,7 +147,7 @@ export function restoreWalletFromSeedSuccess(userSeed, userPassword) {
  * @return {object}    An action object with a type of RESTORE_WALLET_FROM_SEED_ERROR
  */
 export function restoreWalletFromSeedError(error) {
-  // message(error);
+  alert(error)
   return {
     type: 'RESTORE_WALLET_FROM_SEED_ERROR',
     error,
@@ -352,7 +352,7 @@ export function loadWalletError(error) {
  * @return {object} An action object with a type of CLOSE_WALLET
  */
 export function closeWallet() {
-  // message('Wallet removed from memory');
+  alert('Wallet removed from memory')
   return {
     type: 'CLOSE_WALLET',
   };
@@ -400,7 +400,7 @@ export function generateAddressSuccess(addressList) {
  * @return {object} An action object with a type of GENERATE_ADDRESS_ERROR passing the error
  */
 export function generateAddressError(error) {
-  // message(error);
+  alert(error)
   return {
     type: 'GENERATE_ADDRESS_ERROR',
     error,
@@ -416,7 +416,7 @@ export function generateAddressError(error) {
  * @return {object} An action object with a type of LOCK_WALLET
  */
 export function lockWallet() {
-  // message('Wallet locked succesfuly');
+  alert('Wallet locked succesfuly')
   return {
     type: 'LOCK_WALLET',
   };
@@ -441,7 +441,7 @@ export function unlockWallet() {
  * @return {object}      An action object with a type of UNLOCK_WALLET_SUCCESS and the password
  */
 export function unlockWalletSuccess(password) {
-  // message('Wallet unlocked succesfuly');
+  alert('Wallet unlocked succesfuly')
   return {
     type: 'UNLOCK_WALLET_SUCCESS',
     password,
@@ -456,7 +456,7 @@ export function unlockWalletSuccess(password) {
  * @return {object} An action object with a type of GENERATE_ADDRESS_ERROR passing the error
  */
 export function unlockWalletError(error) {
-  // message.error(error, 5);
+  alert(error)
   return {
     type: 'UNLOCK_WALLET_ERROR',
     error,
@@ -472,7 +472,6 @@ export function unlockWalletError(error) {
  * @return {object} An action object with a type of SHOW_SEND_TOKEN
  */
 export function showSendToken(address, sendTokenSymbol) {
-  // console.log(address);
   return {
     type: 'SHOW_SEND_TOKEN',
     address

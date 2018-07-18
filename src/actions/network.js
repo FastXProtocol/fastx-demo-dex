@@ -25,7 +25,6 @@ export function loadNetwork(networkName) {
  * @return {object}      An action object with a type of LOAD_NETWORK_SUCCESS passing the repos
  */
 export function loadNetworkSuccess(blockNumber) {
-  // message(`Connected sucessfully, current block: ${blockNumber}`)
   return {
     type: "LOAD_NETWORK_SUCCESS",
     blockNumber
@@ -85,7 +84,7 @@ export function checkBalancesSuccess() {
  * @return {object} An action object with a type of CHECK_BALANCES_ERROR passing the error
  */
 export function checkBalancesError(error) {
-  // message(error);
+  alert(error)
   return {
     type: 'CHECK_BALANCES_ERROR',
     error,
