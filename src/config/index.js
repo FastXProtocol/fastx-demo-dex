@@ -8,8 +8,8 @@ console.log(process.env.ENV);
 if (process.env.ENV.toLowerCase() === "local") {
     chainOptions = {
         ...chainOptions,
-        gethRpc: "//localhost:8545",
-        fastXRpc: "//localhost:8546/jsonrpc",
+        gethRpc: "http://localhost:8545",
+        fastXRpc: "http://localhost:8546/jsonrpc",
         rootChainAddress: "0xa3b2a1804203b75b494028966c0f62e677447a39",
     }
 
@@ -17,8 +17,8 @@ if (process.env.ENV.toLowerCase() === "local") {
 } else {
     chainOptions = {
         ...chainOptions,
-        gethRpc: "//localhost:8545",
-        fastXRpc: "//fastx-rinkeby.msan.cn/jsonrpc",
+        gethRpc: "http://localhost:8545",
+        fastXRpc: "http://fastx-rinkeby.msan.cn/jsonrpc",
         rootChainAddress: "0xffc5DE2513F5F256dB660CDd566D6C54fBa90405",
     }
 

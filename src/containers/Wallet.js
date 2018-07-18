@@ -148,6 +148,7 @@ const getSelectOptions = (addressList) => {
 }
 
 export const getCurAccount = (fastx) => {
+    if(!fastx)return '';
     return fastx.defaultAccount;
 }
 

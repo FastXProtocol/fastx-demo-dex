@@ -46,8 +46,8 @@ async function getFastx(func) {
 }
 
 function* loadNetworkAsync(action) {
-    yield getFastx();
     try {
+        yield getFastx();
         const rpcAddress = network[action.networkName].rpc;
         if (!rpcAddress) {
           throw new Error(`${action.networkName} network not found`);
@@ -93,6 +93,7 @@ function* loadNetworkAsync(action) {
             throw new Error('keystore not initiated - Create wallet before connecting');
         }
     } catch (err) {
+        console.log(err)
         const errorString = `loadNetwork error - ${err.message}`;
         yield put(loadNetworkError(err.message));
     }

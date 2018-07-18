@@ -18,7 +18,6 @@ export default class App extends Component {
       <div>
         <Header />
           <FlashMessage/>
-
             <Switch>
               <Route path='/account' component={Account} />
               <Route exact path='/assets' component={AssetList} />
@@ -28,7 +27,6 @@ export default class App extends Component {
               <Route exact path='/wallet' component={Wallet} />
               <Redirect path="/" to={{pathname: '/wallet'}} />
             </Switch>
-
         <SiteFooter />
       </div>
     );
