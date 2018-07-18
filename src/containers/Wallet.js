@@ -16,9 +16,9 @@ import * as walletActions from '../actions/wallet'
 import * as networkActions from '../actions/network'
 
 class Wallet extends Component {
-    componentDidMount() {
-        this.props.onLoadWallet();
-    }
+    // componentDidMount() {
+    //     this.props.onLoadWallet();
+    // }
 
     render() {
         const {
