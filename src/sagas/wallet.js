@@ -59,17 +59,6 @@ async function getFastx(func) {
     return true;
 }
 
-function* setAccount(address) {
-    yield getFastx()
-    if(!fastx.defaultAccount)
-    fastx.defaultAccount = address;
-    yield put({
-      type: 'ACCOUNT_RECEIVED',
-      ownerAddress: fastx.defaultAccount
-    })
-    yield put(setFastx(fastx));
-}
-
 /**
  * Create new seed and password
  */
@@ -137,7 +126,7 @@ export function* genKeystore() {
     yield put(generateKeystoreSuccess(ks, tokenList));
     yield put(loadNetwork(defaultNetwork));
     yield put(saveWallet());
-    yield setAccount('0x'+ks.addresses[0])
+    yield changeCurAccount({address:('0x'+ks.addresses[0])})
   } catch (err) {
     const errorString = `genKeystore error - ${err}`;
     yield put(generateKeystoreError(errorString));
@@ -194,7 +183,7 @@ export function* loadWalletS() {
     yield put(generateKeystoreSuccess(ks, tokenList));
     yield put(loadNetwork(defaultNetwork));
     yield put(loadWalletSuccess());
-    yield setAccount('0x'+ks.addresses[0])
+    yield changeCurAccount({address:('0x'+ks.addresses[0])})
   } catch (err) {
     const errorString = `${err.message}`;
     yield put(loadWalletError(errorString));
