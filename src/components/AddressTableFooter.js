@@ -18,11 +18,7 @@ export default class AddressTableFooter extends Component {
                     <Icon name='plus'  />
                     Add address
                 </Button>
-                <Button basic size='big' key='2'>
-                    <Icon name='plus' />
-                    Import address
-                </Button>
-                <Button basic size='big' key='3' disabled={!networkReady}  onClick={onCheckBalances} loading={checkingBalances}>
+                <Button basic size='big' key='2' disabled={!networkReady}  onClick={onCheckBalances} loading={checkingBalances}>
                     <Icon name='redo alternate' />
                     Check balances
                 </Button>

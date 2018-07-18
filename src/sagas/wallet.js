@@ -27,9 +27,15 @@ import {
   unlockWalletError
 } from '../actions/wallet'
 
+import { getAccountAsync } from './account'
+
 import {
   loadNetwork
 } from '../actions/network'
+
+import {
+  setFastx
+} from '../actions/app'
 
 import {
   changeFrom
@@ -51,6 +57,17 @@ async function getFastx(func) {
     }
 
     return true;
+}
+
+function* setAccount(address) {
+    yield getFastx()
+    if(!fastx.defaultAccount)
+    fastx.defaultAccount = address;
+    yield put({
+      type: 'ACCOUNT_RECEIVED',
+      ownerAddress: fastx.defaultAccount
+    })
+    yield put(setFastx(fastx));
 }
 
 /**
@@ -120,6 +137,7 @@ export function* genKeystore() {
     yield put(generateKeystoreSuccess(ks, tokenList));
     yield put(loadNetwork(defaultNetwork));
     yield put(saveWallet());
+    yield setAccount('0x'+ks.addresses[0])
   } catch (err) {
     const errorString = `genKeystore error - ${err}`;
     yield put(generateKeystoreError(errorString));
@@ -176,6 +194,7 @@ export function* loadWalletS() {
     yield put(generateKeystoreSuccess(ks, tokenList));
     yield put(loadNetwork(defaultNetwork));
     yield put(loadWalletSuccess());
+    yield setAccount('0x'+ks.addresses[0])
   } catch (err) {
     const errorString = `${err.message}`;
     yield put(loadWalletError(errorString));
@@ -321,6 +340,16 @@ export function* changeSourceAddress(action) {
   }
 }
 
+export function* changeCurAccount(action) {
+    yield getFastx()
+    fastx.defaultAccount = action.address;
+    yield put({
+      type: 'ACCOUNT_RECEIVED',
+      ownerAddress: fastx.defaultAccount
+    })
+    yield put(setFastx(fastx));
+}
+
 export default function* walletSaga(args) {
     store = args
     yield takeLatest('GENERATE_WALLET', generateWallet)
@@ -332,4 +361,5 @@ export default function* walletSaga(args) {
     yield takeLatest('RESTORE_WALLET_FROM_SEED', restoreFromSeed);
     yield takeLatest('CLOSE_WALLET', closeWallet);
     yield takeLatest('SHOW_SEND_TOKEN', changeSourceAddress);
+    yield takeLatest('CHANGE_CUR_ACCOUNT', changeCurAccount);
 }

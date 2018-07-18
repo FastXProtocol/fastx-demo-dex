@@ -489,3 +489,14 @@ export function hideSendToken() {
     type: 'HIDE_SEND_TOKEN',
   };
 }
+
+/**
+ * change current use account
+ *
+ */
+ export function changeCurAccount(address) {
+     return {
+         type: 'CHANGE_CUR_ACCOUNT',
+         address
+     }
+ }

@@ -3,6 +3,8 @@ import { delay, channel } from 'redux-saga';
 import axios from 'axios';
 import { chainOptions, retry, chainCategory} from '../config';
 
+import { getAccountAsync } from './account'
+
 let store,fastx;
 
 const allPsTransactions = async () => {
@@ -15,31 +17,6 @@ const allPsTransactions = async () => {
         console.log('allPsTransactionsError',e)
         return [];
     }
-}
-
-function* getAccountAsync() {
-    yield getFastx();
-    let accounts = [];
-    for (let i = 1; i<=retry.count; i++){
-        try {
-            accounts = yield fastx.web3.eth.getAccounts();
-            break;
-        }catch(err){
-            if(i <= retry.count) {
-                console.log("getAccountErr:",i,err)
-                yield delay(retry.time);
-            }else{
-                throw new Error('getAccount request failed');
-            }
-        }
-    }
-
-    fastx.defaultAccount = accounts[0];
-    console.log('getAccountAddress:',fastx.defaultAccount);
-    yield put({
-      type: 'ACCOUNT_RECEIVED',
-      ownerAddress: accounts[0]
-    })
 }
 
 function* getAssetsAsync(params) {
@@ -360,9 +337,10 @@ function* getReviewAssetsAsync() {
     let newReviewAssets = [];
     let userReviewAssets = [];
     let accounts = yield fastx.web3.eth.getAccounts();
+    let curAddress = fastx.defaultAccount?fastx.defaultAccount:accounts[0];
     try{
         if(reviewAssets[fastx.defaultAccount])
-        for(let value of reviewAssets[accounts[0]]){
+        for(let value of reviewAssets[curAddress]){
             let utxoPos = yield fastx.getUtxoPos(value.blknum, value.txindex, value.oindex);
             let exit = yield fastx.rootChainInfo.getExit(utxoPos);
             console.log('getExit:',exit);

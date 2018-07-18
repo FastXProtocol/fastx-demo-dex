@@ -8,6 +8,7 @@ import {
 
 import SubHeader from '../components/SubHeader'
 import AddressView from '../components/AddressView'
+import CurAccount from '../components/CurAccount'
 import SendToken from '../containers/SendToken'
 import GenerateWalletModal from '../components/Modal/GenerateWalletModal'
 import RestoreWalletModal from '../components/Modal/RestoreWalletModal'
@@ -40,6 +41,8 @@ class Wallet extends Component {
             addressListError,
             addressListLoading,
             isShowSendToken,
+            selectOptions,
+            curAccount,
             onChangeUserSeed,
             onChangeUserPassword,
             onRestoreWalletCancel,
@@ -55,7 +58,8 @@ class Wallet extends Component {
             onLockWallet,
             onUnlockWallet,
             onShowSendToken,
-            onHideSendToken
+            onHideSendToken,
+            onChangeCurAccount
         } = this.props
 
         const subHeaderProps = {
@@ -111,16 +115,37 @@ class Wallet extends Component {
             onHideSendToken
         }
 
+        const curAccountProps = {
+            selectOptions,
+            curAccount,
+            isComfirmed,
+            onChangeCurAccount
+        }
+
         return (
             <Container style={{ marginTop: '8em' }} textAlign='center'>
                 <SubHeader { ...subHeaderProps} />
                 <GenerateWalletModal {...generateWalletProps} />
                 <RestoreWalletModal {...restoreWalletModalProps} />
+                <CurAccount {...curAccountProps} />
                 <AddressView {...addressViewProps} />
                 <SendToken {...sendTokenProps} />
 		    </Container>
         );
     };
+}
+
+const getSelectOptions = (addressList) => {
+    let keys = [];
+    for(let address in addressList){
+        keys.push({ value: address, text: address });
+    }
+
+    return keys;
+}
+
+export const getCurAccount = (fastx) => {
+    return fastx.defaultAccount;
 }
 
 function mapStateToProps(state){
@@ -134,6 +159,8 @@ function mapStateToProps(state){
         generateKeystoreLoading: state.wallet.generateKeystoreLoading,
         generateKeystoreError: state.wallet.generateKeystoreError,
         addressList: state.wallet.addressList,
+        selectOptions: getSelectOptions(state.wallet.addressList),
+        curAccount: getCurAccount(state.app.fastx),
         isShowRestoreWallet: state.wallet.isShowRestoreWallet,
         userSeed: state.wallet.userSeed,
         userPassword: state.wallet.userPassword,
@@ -199,6 +226,9 @@ function mapDispatchToProps(dispatch) {
         },
         onHideSendToken: (address) => {
             dispatch(walletActions.hideSendToken());
+        },
+        onChangeCurAccount: (e, target) => {
+            dispatch(walletActions.changeCurAccount(target && target.value));
         }
     }
 }

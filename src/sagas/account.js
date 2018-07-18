@@ -4,6 +4,10 @@ import { chainOptions, retry, chainCategory} from '../config';
 import moment from 'moment';
 import axios from 'axios';
 
+import {
+  setFastx
+} from '../actions/app'
+
 let store, fastx;
 
 const getAssent = async (NFT) => {
@@ -225,7 +229,7 @@ function* getAssetsAsync() {
     })
 }
 
-function* getAccountAsync() {
+export function* getAccountAsync() {
     yield getFastx();
     let accounts = [];
     for (let i = 1; i<=retry.count; i++){
@@ -242,12 +246,14 @@ function* getAccountAsync() {
         }
     }
 
+    if(!fastx.defaultAccount)
     fastx.defaultAccount = accounts[0];
     console.log('getAccountAddress:',fastx.defaultAccount);
     yield put({
       type: 'ACCOUNT_RECEIVED',
-      ownerAddress: accounts[0]
+      ownerAddress: fastx.defaultAccount
     })
+    yield put(setFastx(fastx));
 }
 
 function* watchSellAssetAsync(data) {

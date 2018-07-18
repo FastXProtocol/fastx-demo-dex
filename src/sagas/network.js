@@ -18,6 +18,10 @@ import {
  } from '../actions/wallet'
 
  import {
+   setFastx
+ } from '../actions/app'
+
+ import {
   confirmSendTransactionSuccess,
   confirmSendTransactionError,
   sendTransactionSuccess,
@@ -52,6 +56,7 @@ function* loadNetworkAsync(action) {
         if (action.networkName === offlineModeString) {
           fastx.web3.setProvider(null);
           yield put(loadNetworkError(offlineModeString));
+          yield put(setFastx(fastx));
           return;
         }
 
@@ -83,6 +88,7 @@ function* loadNetworkAsync(action) {
             yield delay(600);
             yield put(loadNetworkSuccess(blockNumber));
             yield put(checkBalances());
+            yield put(setFastx(fastx));
         } else {
             throw new Error('keystore not initiated - Create wallet before connecting');
         }
