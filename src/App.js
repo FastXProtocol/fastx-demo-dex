@@ -64,7 +64,7 @@ export default class App extends Component {
                     <Redirect path="/" to={{pathname: '/wallet'}} />
                  </Switch>
     }else{
-        routes =
+        routes = <Web3Provider>
                     <Switch>
                         <Route path='/account' component={Account} />
                         <Route exact path='/assets' component={AssetList} />
@@ -73,7 +73,7 @@ export default class App extends Component {
                         <Route exact path='/deposit' component={Deposit} />
                         <Redirect path="/" to={{pathname: '/assets'}} />
                     </Switch>
-                 
+                 </Web3Provider>
     }
 
     return (
