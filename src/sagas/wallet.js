@@ -164,7 +164,7 @@ export function* saveWalletS() {
  */
 export function* loadWalletS() {
   try {
-    yield delay(1000);
+
     const existingKs = store.getState().wallet.keystore;
     if (existingKs) {
       throw new Error('Existing keystore present  - aborting load form localStorage');
@@ -178,12 +178,11 @@ export function* loadWalletS() {
 
     const ksDump = dump.ks;
     const ks = lightwallet.keystore.deserialize(ksDump);
-
+    yield changeCurAccount({address:('0x'+ks.addresses[0])})
     const tokenList = ['eth'];
     yield put(generateKeystoreSuccess(ks, tokenList));
     yield put(loadNetwork(defaultNetwork));
     yield put(loadWalletSuccess());
-    yield changeCurAccount({address:('0x'+ks.addresses[0])})
   } catch (err) {
     const errorString = `${err.message}`;
     yield put(loadWalletError(errorString));

@@ -10,6 +10,25 @@ import {
 
 let store, fastx;
 
+async function getFastx() {
+    while(!fastx) {
+        fastx = store.getState().app.fastx;
+        await delay(200);
+    }
+
+    return true;
+}
+
+async function waitNetworkReady() {
+    let isReady = store.getState().network.networkReady;
+    while(!isReady && typeof window.Web3 === 'undefined') {
+        await delay(500);
+        isReady = store.getState().network.networkReady;
+    }
+
+    return true;
+}
+
 const getAssent = async (NFT) => {
     let assets = [];
     try {
@@ -178,7 +197,8 @@ const getETHAssets = async() => {
 }
 
 function* getBalanceAsync() {
-    yield getFastx();
+    yield getFastx()
+    yield waitNetworkReady()
     let currency = store.getState().account.currency;
     let balance;
     yield getAccountAsync();
@@ -199,7 +219,8 @@ function* getBalanceAsync() {
 }
 
 function* getAssetsAsync() {
-    yield getFastx();
+    yield getFastx()
+    yield waitNetworkReady()
     let currency = store.getState().account.currency;
     let assets;
     yield put({
@@ -319,15 +340,6 @@ function* watchDepositChannel() {
     const action = yield take(depositChannel)
     yield put(action)
   }
-}
-
-async function getFastx(func) {
-    while(!fastx) {
-        fastx = store.getState().app.fastx;
-        await delay(200);
-    }
-
-    return true;
 }
 
 export default function * accountSaga (arg) {
