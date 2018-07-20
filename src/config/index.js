@@ -8,7 +8,7 @@ console.log(process.env.ENV);
 if (process.env.ENV.toLowerCase() === "local") {
     chainOptions = {
         ...chainOptions,
-        gethRpc: "http://localhost:8545",
+        gethRpc: "ws://localhost:8545",
         fastXRpc: "http://localhost:8546/jsonrpc",
         rootChainAddress: "0xa3b2a1804203b75b494028966c0f62e677447a39",
     }

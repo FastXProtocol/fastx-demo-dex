@@ -1,4 +1,4 @@
-import { put, takeEvery, take} from 'redux-saga/effects';
+import { put, takeLatest, take} from 'redux-saga/effects';
 import { delay, channel} from 'redux-saga';
 import { chainOptions, retry, chainCategory} from '../config';
 import moment from 'moment';
@@ -299,7 +299,8 @@ function* watchDepositAsync(action) {
     })
 
     let price = yield fastx.web3.utils.toWei((action.depositPrice+''), 'ether');
-
+    let accounts = yield fastx.web3.eth.getAccounts()
+    console.log(accounts)
     try{
         fastx.deposit("0x0", price, 0, { from: fastx.defaultAccount}).on('transactionHash', function (hash){
             //在回调中无法直接yield put更新，所以使用channel的方式处理
@@ -331,12 +332,12 @@ async function getFastx(func) {
 
 export default function * accountSaga (arg) {
     store = arg;
-    yield takeEvery('GET_ACCOUNT', getAccountAsync)
-    yield takeEvery('SELL_ASSET',  watchSellAssetAsync)
-    yield takeEvery('DEPOSIT', watchDepositAsync)
-    yield takeEvery('DEPOSIT', watchDepositChannel)
-    yield takeEvery('GET_BALANCE', getBalanceAsync)
-    yield takeEvery('GET_BALANCE', getAssetsAsync)
-    yield takeEvery('web3/CHANGE_ACCOUNT',getBalanceAsync)
-    yield takeEvery('web3/CHANGE_ACCOUNT',getAssetsAsync)
+    yield takeLatest('GET_ACCOUNT', getAccountAsync)
+    yield takeLatest('SELL_ASSET',  watchSellAssetAsync)
+    yield takeLatest('DEPOSIT', watchDepositAsync)
+    yield takeLatest('DEPOSIT', watchDepositChannel)
+    yield takeLatest('GET_BALANCE', getBalanceAsync)
+    yield takeLatest('GET_BALANCE', getAssetsAsync)
+    yield takeLatest('web3/CHANGE_ACCOUNT',getBalanceAsync)
+    yield takeLatest('web3/CHANGE_ACCOUNT',getAssetsAsync)
 }

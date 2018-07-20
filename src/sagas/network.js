@@ -2,6 +2,7 @@ import { take, call, put, select, takeLatest, race, fork } from 'redux-saga/effe
 import { delay, channel } from 'redux-saga';
 import SignerProvider from 'ethjs-provider-signer';
 import BigNumber from 'bignumber.js';
+import lightwallet from 'eth-lightwallet'
 
 import { network } from '../config';
 
@@ -45,6 +46,40 @@ async function getFastx(func) {
     return true;
 }
 
+let sign = function(hash, signingAddress) {
+    var self = this;
+    return new Promise((resolve, reject) => {
+        this.passwordProvider( function (err, password, salt) {
+            if (err) return reject(err);
+
+            self.keyFromPassword(password, function (err, pwDerivedKey) {
+              if (err) return reject(err);
+              // let privateKey = self.exportPrivateKey(fastx.defaultAccount, pwDerivedKey);
+              // console.log(fastx.defaultAccount, {privateKey})
+              // return resolve(account.sign(hash, privateKey));
+              const signObj = lightwallet.signing.signMsgHash(self, pwDerivedKey, hash, signingAddress)
+              let hex = "0x"+signObj.r.toString('hex')+signObj.s.toString('hex')+"0"+(signObj.v-27)
+              return resolve(hex);
+            })
+        })
+    })
+}
+
+export function setProvider (keystore, rpcAddress) {
+    try{
+        const provider = new SignerProvider(rpcAddress, {
+            signTransaction: keystore.signTransaction.bind(keystore),
+            sign: sign.bind(keystore),
+            accounts: (cb) => cb(null, keystore.getAddresses()),
+        });
+
+        fastx.setProvider(provider);
+    }catch(err){
+        console.log(err)
+
+    }
+}
+
 function* loadNetworkAsync(action) {
     try {
         yield getFastx();
@@ -54,27 +89,15 @@ function* loadNetworkAsync(action) {
         }
 
         if (action.networkName === offlineModeString) {
-          fastx.web3.setProvider(null);
+          fastx.setProvider(null);
           yield put(loadNetworkError(offlineModeString));
           yield put(setFastx(fastx));
           return;
         }
 
         const keystore = store.getState().wallet.keystore;
-
         if (keystore) {
-            try{
-                const provider = new SignerProvider(rpcAddress, {
-                    signTransaction: keystore.signTransaction.bind(keystore),
-                    accounts: (cb) => cb(null, keystore.getAddresses()),
-                });
-
-                fastx.web3.setProvider(provider);
-            }catch(err){
-                console.log(err)
-
-            }
-
+            setProvider(keystore, rpcAddress);
             function getBlockNumberPromise() { // eslint-disable-line no-inner-declarations
                 return new Promise((resolve, reject) => {
                     fastx.web3.eth.getBlockNumber((err, data) => {
@@ -227,6 +250,24 @@ export function* SendTransaction() {
     } finally {
         keystore.passwordProvider = origProvider;
     }
+}
+
+export function* signTx(rawTx) {
+    yield getFastx();
+    const keystore = store.getState().wallet.keystore;
+    const password = store.getState().wallet.password;
+    const signingAddress = fastx.defaultAccount;
+    function keyFromPasswordPromise(param) { // eslint-disable-line no-inner-declarations
+      return new Promise((resolve, reject) => {
+        keystore.keyFromPassword(param, (err, data) => {
+          if (err !== null) return reject(err);
+          return resolve(data);
+        });
+      });
+    }
+    const pwDerivedKey = yield call(keyFromPasswordPromise, password);
+
+    return lightwallet.signing.signTx(keystore, pwDerivedKey, rawTx, signingAddress);
 }
 
 export default function * networkSaga (arg) {

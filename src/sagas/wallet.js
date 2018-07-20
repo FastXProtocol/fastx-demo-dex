@@ -1,6 +1,6 @@
 import { take, call, put, select, takeLatest, race, fork } from 'redux-saga/effects'
 import { delay, channel } from 'redux-saga'
-import { SignerProvider } from 'ethjs-provider-signer'
+import SignerProvider from 'ethjs-provider-signer';
 import lightwallet from 'eth-lightwallet'
 
 import { network } from '../config'
@@ -41,7 +41,7 @@ import {
   changeFrom
 } from '../actions/sendToken'
 
-import { getEthBalancePromise } from './network';
+import { getEthBalancePromise, setProvider } from './network';
 
 const generatedPasswordLength = 12
 const hdPathString = `m/44'/60'/0'/0`
@@ -270,6 +270,16 @@ function* generateAddress() {
   }
 }
 
+function* lockWallet() {
+    const ks = store.getState().wallet.keystore;
+    ks.passwordProvider = (callback) => {
+      const pw = prompt('Please enter keystore password', 'Password'); // eslint-disable-line
+      callback(null, pw);
+    };
+    const rpcAddress = network[store.getState().network.networkName].rpc;
+    setProvider(ks, rpcAddress)
+}
+
 function* unlockWallet() {
   try {
     const currentPassword = store.getState().wallet.password;
@@ -317,7 +327,17 @@ function* unlockWallet() {
     }
 
     yield put(unlockWalletSuccess(userPassword));
+
+    ks.passwordProvider = (callback) => {
+        const ksPassword = store.getState().wallet.password;
+        // const pw = prompt('Please enter keystore password', ksPassword);
+        // callback(null, pw);
+        callback(null, ksPassword);
+    };
+    const rpcAddress = network[store.getState().network.networkName].rpc;
+    setProvider(ks, rpcAddress)
   } catch (err) {
+    console.log(err)
     const errorString = `Unlock wallet error - ${err.message}`;
     yield put(unlockWalletError(errorString));
   }
@@ -345,6 +365,7 @@ export default function* walletSaga(args) {
     yield takeLatest('GENERATE_WALLET', generateWallet)
     yield takeLatest('GENERATE_KEYSTORE', genKeystore)
     yield takeLatest('GENERATE_ADDRESS', generateAddress);
+    yield takeLatest('LOCK_WALLET', lockWallet);
     yield takeLatest('UNLOCK_WALLET', unlockWallet);
     yield takeLatest('SAVE_WALLET', saveWalletS);
     yield takeLatest('LOAD_WALLET', loadWalletS);

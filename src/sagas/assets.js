@@ -1,4 +1,4 @@
-import { put, takeEvery, take} from 'redux-saga/effects';
+import { put, takeLatest, take} from 'redux-saga/effects';
 import { delay, channel } from 'redux-saga';
 import axios from 'axios';
 import { chainOptions, retry, chainCategory} from '../config';
@@ -130,6 +130,7 @@ const bidAd = async (category,tokenId,fillTx) => {
         type: 'SET_CUR_STEP',
         curStep: 1
     })
+
     let utxo = await fastx.getOrNewEthUtxo(fillTx.amount1, {from:fastx.defaultAccount})
     transactionChannel.put({
         type: 'SET_CUR_STEP',
@@ -159,7 +160,7 @@ function* assetBuyAsync(action) {
     try{
         yield bidAd(action.category, action.id, action.fillTx);
     }catch(err){
-        console.log('assetBuyAsync: ',err.message)
+        console.log('assetBuyAsync: ',err)
         yield put({
           type: 'TRANSACTION_ERROR',
           transactionErr: err.message
@@ -393,16 +394,16 @@ function* watchTransactionChannel() {
 
 export default function * assetSaga (arg) {
     store = arg;
-    yield takeEvery('GET_ASSETS', getAssetsAsync)
-    yield takeEvery('SET_ASSETS_FILTER', getAssetsAsync)
-    yield takeEvery('ASSETS_SEARCH', getAssetsAsync)
-    yield takeEvery('GET_ASSET_DETAIL', getAssetsDetailAsync)
-    yield takeEvery('GET_REVIEW_ASSETS', getReviewAssetsAsync)
-    yield takeEvery('ASSETS_BUY', assetBuyAsync)
-    yield takeEvery('ASSETS_BUY', watchTransactionChannel)
-    yield takeEvery('GET_PUBLISH_STATUS',publishStatusAsync)
-    yield takeEvery('CHECK_IS_OWNER', watchCheckOwnerAsync)
-    yield takeEvery('CHECK_BLANCE_ENOUGH', watchCheckBlanceEnough)
-    yield takeEvery('TAKE_OUT', watchTakeOutAsync)
-    yield takeEvery('TAKE_OUT', watchTransactionChannel)
+    yield takeLatest('GET_ASSETS', getAssetsAsync)
+    yield takeLatest('SET_ASSETS_FILTER', getAssetsAsync)
+    yield takeLatest('ASSETS_SEARCH', getAssetsAsync)
+    yield takeLatest('GET_ASSET_DETAIL', getAssetsDetailAsync)
+    yield takeLatest('GET_REVIEW_ASSETS', getReviewAssetsAsync)
+    yield takeLatest('ASSETS_BUY', assetBuyAsync)
+    yield takeLatest('ASSETS_BUY', watchTransactionChannel)
+    yield takeLatest('GET_PUBLISH_STATUS',publishStatusAsync)
+    yield takeLatest('CHECK_IS_OWNER', watchCheckOwnerAsync)
+    yield takeLatest('CHECK_BLANCE_ENOUGH', watchCheckBlanceEnough)
+    yield takeLatest('TAKE_OUT', watchTakeOutAsync)
+    yield takeLatest('TAKE_OUT', watchTransactionChannel)
 }

@@ -43,6 +43,20 @@ class Header extends Component{
             blockNumber
         }
 
+        let walletItem,networkMenu
+        if(typeof window.Web3 === 'undefined'){
+            walletItem = <Menu.Item
+                name='wallet'
+                active={activeItem === 'wallet'}
+                content='Wallet'
+                onClick={() => toWallet()}
+            />
+            networkMenu = [
+                <NetworkIndicator {...networkIndicatorProps} key='1' />,
+                <NetworkMenu {...networkMenuProps} key='2' />
+            ]
+        }
+
         return (
             <Menu fixed='top' inverted>
                 <Container>
@@ -54,12 +68,7 @@ class Header extends Component{
                     />
                     FastX Dex <Label color='orange' horizontal>Rinkeby</Label>
                     </Menu.Item>
-                    <Menu.Item
-                        name='wallet'
-                        active={activeItem === 'wallet'}
-                        content='Wallet'
-                        onClick={() => toWallet()}
-                    />
+                    {walletItem}
                     <Menu.Item
                         name='marketplace'
                         active={activeItem === 'marketplace'}
@@ -72,11 +81,8 @@ class Header extends Component{
                         content='Account'
                         onClick={()=> toAccounnt()}
                     />
-
-
                 </Container>
-                <NetworkIndicator {...networkIndicatorProps} />
-                <NetworkMenu {...networkMenuProps} />
+                {networkMenu}
             </Menu>
         )
     }
