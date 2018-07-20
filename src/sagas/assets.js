@@ -41,18 +41,20 @@ function* getAssetsAsync(params) {
                 method: 'get',
                 url: 'https://api.cryptokitties.co/kitties/'+value.tokenid2
             })
+
+            let kitty = kittyRes.data;
+            if(!kitty.auction)kitty.auction = {};
+            kitty.auction.discount = 0;
+            kitty.auction.ending_at = value.expiretimestamp;
+            let price = yield fastx.web3.utils.fromWei(value.amount1.toString(), 'ether');
+            kitty.auction.current_price = parseFloat(price);
+            kitty.auction.starting_price = '0';
+            kitty.category = value.contractaddress2;
+            assets.push(kitty);
         } catch (error) {
-            return yield put({ type: 'ASSET_CATEGORIES_REQUEST_FAILED', error })
+            console.log(error)
+            yield put({ type: 'ASSET_CATEGORIES_REQUEST_FAILED', error })
         }
-        let kitty = kittyRes.data;
-        if(!kitty.auction)kitty.auction = {};
-        kitty.auction.discount = 0;
-        kitty.auction.ending_at = value.expiretimestamp;
-        let price = yield fastx.web3.utils.fromWei(value.amount1.toString(), 'ether');
-        kitty.auction.current_price = parseFloat(price);
-        kitty.auction.starting_price = '0';
-        kitty.category = value.contractaddress2;
-        assets.push(kitty);
     }
 
     yield put({
