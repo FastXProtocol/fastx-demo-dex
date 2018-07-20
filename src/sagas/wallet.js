@@ -114,7 +114,7 @@ export function* genKeystore() {
 
     ks.passwordProvider = (callback) => {
       // const password = yield select(makeSelectPassword());
-      const pw = prompt('Please enter keystore password', 'Password'); // eslint-disable-line
+      const pw = prompt('Please enter keystore password', ''); // eslint-disable-line
       callback(null, pw);
     };
 
@@ -273,7 +273,7 @@ function* generateAddress() {
 function* lockWallet() {
     const ks = store.getState().wallet.keystore;
     ks.passwordProvider = (callback) => {
-      const pw = prompt('Please enter keystore password', 'Password'); // eslint-disable-line
+      const pw = prompt('Please enter keystore password', ''); // eslint-disable-line
       callback(null, pw);
     };
     const rpcAddress = network[store.getState().network.networkName].rpc;
@@ -330,9 +330,9 @@ function* unlockWallet() {
 
     ks.passwordProvider = (callback) => {
         const ksPassword = store.getState().wallet.password;
-        // const pw = prompt('Please enter keystore password', ksPassword);
-        // callback(null, pw);
-        callback(null, ksPassword);
+        const pw = prompt('Enter password to continue', ksPassword);
+        callback(null, pw);
+        //callback(null, ksPassword);
     };
     const rpcAddress = network[store.getState().network.networkName].rpc;
     setProvider(ks, rpcAddress)
