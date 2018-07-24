@@ -149,6 +149,15 @@ export default class Account extends Component {
                     <Button type='submit' color='teal' style={{marginLeft:'110px'}} onClick={() => this.props.toDeposit(this.props.depositPrice)}>Submit</Button>
                 </Form>
             </Tab.Pane> },
+            { menuItem: 'Withdrawal', render: () => <Tab.Pane attached={false}>
+                <Form>
+                    <Form.Field inline>
+                      <label className='align_right_label'>Price*</label>
+                      <Input label='ETH' type='number' placeholder='' onChange={this.props.setWithdrawalPrice} />
+                    </Form.Field>
+                    <Button type='submit' color='teal' style={{marginLeft:'110px'}} onClick={() => this.props.toWithdrawal(this.props.withdrawalPrice)}>Submit</Button>
+                </Form>
+            </Tab.Pane> },
             ];
         return (
             <Container style={{ marginTop: '1em' }}>

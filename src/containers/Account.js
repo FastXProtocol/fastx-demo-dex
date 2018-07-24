@@ -22,6 +22,7 @@ function mapStateToProps(state){
         sellId: state.account.sellId,
         sellPrice: state.account.sellPrice,
         depositPrice: state.account.depositPrice,
+        withdrawalPrice: state.account.withdrawalPrice,
         items: state.account.items,
         isLoading: state.assets.isLoading,
         currency: state.account.currency,
@@ -50,6 +51,10 @@ function mapDispatchToProps(dispatch) {
         },
         toDeposit: (price) => {
             dispatch(accountActions.deposit(price))
+            dispatch(push('/deposit'))
+        },
+        toWithdrawal: (price) => {
+            dispatch(accountActions.withdrawal(price))
             dispatch(push('/deposit'))
         },
         switching: (currency, unit) => {

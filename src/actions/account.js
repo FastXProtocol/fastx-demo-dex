@@ -58,6 +58,13 @@ export const setSellPrice = (e, target) => {
   };
 }
 
+export const setWithdrawalPrice = (e, target) => {
+  return {
+    type: "SET_WITHDRAWAL_PRICE",
+    withdrawalPrice: target && target.value
+  };
+}
+
 export const setDepositPrice = (e, target) => {
   return {
     type: "SET_DEPOSIT_PRICE",
@@ -69,6 +76,13 @@ export const deposit = (depositPrice) => {
   return {
     type: "DEPOSIT",
     depositPrice
+  };
+}
+
+export const withdrawal = (withdrawalPrice) => {
+  return {
+    type: "WITHDRAWAL",
+    withdrawalPrice
   };
 }
 

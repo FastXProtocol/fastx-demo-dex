@@ -9,6 +9,7 @@ const SET_SELL_category = 'SET_SELL_category';
 const SET_SELL_ID = 'SET_SELL_ID';
 const SET_SELL_PRICE = 'SET_SELL_PRICE';
 const SET_DEPOSIT_PRICE = 'SET_DEPOSIT_PRICE';
+const SET_WITHDRAWAL_PRICE = 'SET_WITHDRAWAL_PRICE';
 const USER_ITEMS_RECEIVED = 'USER_ITEMS_RECEIVED';
 const DEPOSIT_STATUS = 'DEPOSIT_STATUS';
 const SWITCH_UNIT = 'SWITCH_UNIT';
@@ -21,6 +22,7 @@ const initialState = {
   sellId: '',
   sellPrice: 0,
   depositPrice: 0,
+  withdrawalPrice: 0,
   items: [],
   waiting: false,
   currency: 'FastX',
@@ -72,6 +74,11 @@ export default function account(state = initialState, action = {}) {
         ...state,
         depositPrice: action.depositPrice
       }
+    case SET_WITHDRAWAL_PRICE:
+        return {
+          ...state,
+          withdrawalPrice: action.withdrawalPrice
+        }
     case USER_ITEMS_RECEIVED:
       return {
         ...state,

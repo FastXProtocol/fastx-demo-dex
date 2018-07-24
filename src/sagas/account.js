@@ -342,12 +342,39 @@ function* watchDepositChannel() {
   }
 }
 
+function* watchWithdrawalAsync(action) {
+    yield getFastx();
+    yield put({
+      type: 'SET_STEPS',
+      steps: [{'title':'Confirm','desc':'Approve the contract to access your asset'}]
+    })
+    yield put({
+        type: 'SET_CUR_STEP',
+        curStep: 1
+    })
+    try {
+        let price = yield fastx.web3.utils.toWei((action.withdrawalPrice+''), 'ether');
+        let utxo = yield fastx.getOrNewEthUtxo(price, {from:fastx.defaultAccount})
+        const [blknum, txindex, oindex, contractAddress, amount, tokenid] = utxo;
+        yield fastx.startExit(blknum, txindex, oindex, contractAddress, amount, tokenid, {from:fastx.defaultAccount});
+    } catch (e) {
+        console.log(e)
+        alert(e)
+    } finally {
+        yield put({
+            type: 'SET_CUR_STEP',
+            curStep: 2
+        })
+    }
+}
+
 export default function * accountSaga (arg) {
     store = arg;
     yield takeLatest('GET_ACCOUNT', getAccountAsync)
     yield takeLatest('SELL_ASSET',  watchSellAssetAsync)
     yield takeLatest('DEPOSIT', watchDepositAsync)
     yield takeLatest('DEPOSIT', watchDepositChannel)
+    yield takeLatest('WITHDRAWAL', watchWithdrawalAsync)
     yield takeLatest('GET_BALANCE', getBalanceAsync)
     yield takeLatest('GET_BALANCE', getAssetsAsync)
     yield takeLatest('web3/CHANGE_ACCOUNT',getBalanceAsync)
