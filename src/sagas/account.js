@@ -267,7 +267,7 @@ export function* getAccountAsync() {
         }
     }
 
-    if(!fastx.defaultAccount)
+    // if(!fastx.defaultAccount)
     fastx.defaultAccount = accounts[0];
     console.log('getAccountAddress:',fastx.defaultAccount);
     yield put({
