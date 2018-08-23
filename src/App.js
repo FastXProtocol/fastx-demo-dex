@@ -19,9 +19,7 @@ import * as walletActions from './actions/wallet'
 
 window.addEventListener('load', function () {
     if (typeof window.web3 !== 'undefined') {
-        console.log(window.web3)
         window.web3 = new Web3(window.web3.currentProvider)
-        console.log(window.web3)
     }
 });
 
