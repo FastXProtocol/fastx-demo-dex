@@ -13,8 +13,17 @@ import AssetSell from './containers/AssetSell';
 import Account from './containers/Account';
 import FlashMessage from './containers/FlashMessage';
 import Wallet from './containers/Wallet';
+import Web3 from 'web3'
 
 import * as walletActions from './actions/wallet'
+
+window.addEventListener('load', function () {
+    if (typeof window.web3 !== 'undefined') {
+        console.log(window.web3)
+        window.web3 = new Web3(window.web3.currentProvider)
+        console.log(window.web3)
+    }
+});
 
 class AppInitView extends Component {
     componentDidMount() {
