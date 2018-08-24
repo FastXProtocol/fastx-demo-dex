@@ -3,7 +3,7 @@ import React, { Component } from 'react'
 import { bindActionCreators } from 'redux';
 import { push } from 'react-router-redux';
 import { connect } from 'react-redux'
-import { Container, Image, Menu, Label } from 'semantic-ui-react';
+import { Container, Image, Menu, Label, Responsive } from 'semantic-ui-react';
 
 import SiteHeader from '../components/SiteHeader'
 import NetworkMenu from '../components/NetworkMenu'
@@ -60,14 +60,16 @@ class Header extends Component{
         return (
             <Menu fixed='top' inverted>
                 <Container>
-                    <Menu.Item as='a' header>
-                    <Image
-                        size='mini'
-                        src='/logo.png'
-                        style={{ marginRight: '1.5em' }}
-                    />
-                    FastX Dex <Label color='orange' horizontal>Rinkeby</Label>
-                    </Menu.Item>
+                    <Responsive minWidth={Responsive.onlyTablet.minWidth}>
+                        <Menu.Item as='a' header>
+                        <Image
+                            size='mini'
+                            src='/logo.png'
+                            style={{ marginRight: '1.5em' }}
+                        />
+                        FastX Dex <Label color='orange' horizontal>Rinkeby</Label>
+                        </Menu.Item>
+                    </Responsive>
                     {walletItem}
                     <Menu.Item
                         name='marketplace'

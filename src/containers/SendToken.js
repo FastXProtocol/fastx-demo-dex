@@ -71,7 +71,7 @@ class SendToken extends Component {
                     <Modal.Content style={{textAlign: 'center'}}>
                         <div>
                             Source:<br />
-                            <Select options={selectOptions} onChange={onChangeFrom} value={from} disabled={locked} />
+                            <Select style={{width: '340px'}} options={selectOptions} onChange={onChangeFrom} value={from} disabled={locked} />
                         </div>
                         <div style={{marginTop:'16px'}}>
                             <span>
@@ -82,7 +82,7 @@ class SendToken extends Component {
                             </span>
                         </div>
                         <div style={{marginTop:'16px'}}>
-                            <Input style={{ width: '360px' }} placeholder="Send to address" type='text' onChange={onChangeTo} value={to}  disabled={locked} />
+                            <Input style={{ width: '340px' }} placeholder="Send to address" type='text' onChange={onChangeTo} value={to}  disabled={locked} />
                         </div>
                         <div style={{marginTop:'16px'}}>
                             <p>Gas price (Gwei):</p>
