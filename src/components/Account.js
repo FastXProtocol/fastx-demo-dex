@@ -58,55 +58,6 @@ export default class Account extends Component {
                 {this.props.isLoading?'':exCards}
                 </Grid>
             </Tab.Pane> },
-            // { menuItem: 'My Ads', render: () => <Tab.Pane attached={false}>Tab 2 Content</Tab.Pane> },
-            // { menuItem: 'Bids', render: () => <Tab.Pane attached={false}>
-            //     <Grid>
-            //         <Grid.Column width={12}>
-            //             <Grid.Row>
-            //                 <Grid>
-            //                     <Grid.Column width={8}>
-            //                         <Dropdown selection options={bidsOptions} defaultValue={bidsOptions[0].value}/>
-            //                     </Grid.Column>
-            //                     <Grid.Column width={8}>
-            //                         <p style={{ fontSize:'16px', color:'grey', lineHeight:'32px'}}>Here are your recent bids</p>
-            //                     </Grid.Column>
-            //                 </Grid>
-            //             </Grid.Row>
-            //             <Grid.Row>
-            //                 <div style={{padding: '16px', textAlign:'center',boxShadow: '1px 1px 10px grey',marginTop: '1em'}}>
-            //                     <p style={{ fontSize:'16px', color:'grey', lineHeight:'32px'}}>No bids yet.</p>
-            //                     <Button color='teal' size='big'>Find assets you can bid on</Button>
-            //                 </div>
-            //             </Grid.Row>
-            //         </Grid.Column>
-            //         <Grid.Column width={4}>
-            //             <p>W-ETH Station</p>
-            //             <Card>
-            //                 <Card.Content extra >
-            //                     <Feed>
-            //                         <Feed.Event>
-            //                           <Feed.Label image='/assets/images/avatar/small/elliot.jpg' />
-            //                           <Feed.Content>
-            //                             <Feed.Date content='ETH' />
-            //                             <Feed.Summary>
-            //                               {this.props.balance}
-            //                             </Feed.Summary>
-            //                           </Feed.Content>
-            //                         </Feed.Event>
-            //                     </Feed>
-            //                 </Card.Content>
-            //                 <Card.Content extra className="card-input" >
-            //                     <Input placeholder='Convert to W-ETH' type="number" />
-            //                 </Card.Content>
-            //                 <Card.Content extra textAlign="center">
-            //                     <a style={{ color: 'dodgerblue' }}>Upgrade <Icon name='chevron right' /></a>
-            //                 </Card.Content>
-            //             </Card>
-            //         </Grid.Column>
-
-
-            //     </Grid>
-            // </Tab.Pane> },
             { menuItem: 'Sell', render: () => <Tab.Pane attached={false}>
                 <Form>
                     <Form.Field inline>
@@ -162,27 +113,33 @@ export default class Account extends Component {
         return (
             <Container style={{ marginTop: '1em' }}>
                 <Grid centered>
-                    <Grid.Column verticalAlign='middle' width={4}>
-                        <Image centered size='small' circular src='/assets/images/avatar/large/elliot.jpg' />
-                        <Rail attached position='left'>
+                    <Grid.Row centered columns={16}>
+                        <Grid.Column textAlign='center' width={5}>
                             <Button circular floated="right" disabled={this.props.isLoading} color={this.props.currency==='FastX'?'teal':'grey'} style={{marginTop:'3em', width: 100, height: 100}} onClick={() => this.props.switching('FastX', 'ETH')}>FastX</Button>
-                        </Rail>
-                        <Rail attached position='right'>
-                            <Button circular floated="left" disabled={this.props.isLoading} color={this.props.currency==='Ethereum'?'teal':'grey'} style={{marginTop:'3em', width: 100, height: 100}} onClick={() => this.props.switching('Ethereum', 'ETH')}>Ethereum</Button>
-                        </Rail>
-                    </Grid.Column>
-                    <Grid.Row centered columns={8}>
+                        </Grid.Column>
                         <Grid.Column textAlign='center' width={6}>
-                            <Label as='a' size='big'>Anonymous account</Label>
-                            <Label as='a' basic style={{ marginTop: '1em' }}>{this.props.ownerAddress}</Label>
+                            <Image centered size='small' circular src='/assets/images/avatar/large/elliot.jpg' />
+                        </Grid.Column>
+                        <Grid.Column textAlign='center' width={5}>
+                            <Button circular floated="left" disabled={this.props.isLoading} color={this.props.currency==='Ethereum'?'teal':'grey'} style={{marginTop:'3em', width: 100, height: 100}} onClick={() => this.props.switching('Ethereum', 'ETH')}>Ethereum</Button>
                         </Grid.Column>
                     </Grid.Row>
                 </Grid>
-                <Grid>
-                    <Grid.Column textAlign='center'>
-                        <p style={{ fontSize: '18px', margin: '0'}}>{this.props.balance} {this.props.unit}</p>
-                        <p style={{ color: 'grey', fontSize: '18px'}}>{this.props.currency}</p>
-                    </Grid.Column>
+                <Grid centered>
+                    <Grid.Row centered columns={16}>
+                        <Grid.Column textAlign='center' width={16}>
+                            <div><Label as='a' size='big'>Anonymous account</Label></div>
+                            <div><Label as='a' basic style={{ marginTop: '1em' }}>{this.props.ownerAddress}</Label></div>
+                        </Grid.Column>
+                    </Grid.Row>
+                </Grid>
+                <Grid centered>
+                    <Grid.Row centered columns={16}>
+                        <Grid.Column textAlign='center' width={16}>
+                            <p style={{ fontSize: '18px', margin: '0'}}>{this.props.balance} {this.props.unit}</p>
+                            <p style={{ color: 'grey', fontSize: '18px'}}>{this.props.currency}</p>
+                        </Grid.Column>
+                    </Grid.Row>
                 </Grid>
                 <Tab menu={{ secondary: true, pointing: true }} panes={panes} />
             </Container>

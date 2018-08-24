@@ -7,7 +7,8 @@ import {
 	Feed,
 	Grid,
 	Image,
-	Icon
+	Icon,
+	Responsive
 } from 'semantic-ui-react';
 import '../components/Dropdown.css';
 
@@ -47,8 +48,8 @@ export default class AssetDetail extends Component {
 
 		let confirmBtnHtml;
 		if(this.props.isOwner){
-			confirmBtnHtml = <Button type='submit' color='teal' style={{marginLeft:'110px',marginTop: '2em'}} onClick={() => this.props.sellCheck(this.props.category,
-					  this.props.id, this.props.hasPublished, this.props.locationParams)}>Sell</Button>
+			confirmBtnHtml = <Button type='submit' color='teal' onClick={() => this.props.sellCheck(this.props.category,
+					  this.props.id, this.props.hasPublished, this.props.locationParams)}>SELL</Button>
 		}else{
 			confirmBtnHtml = <Button primary size='big' onClick={() => this.props.toTransactionStep(this.props.category, this.props.id, fillTx, this.props.blanceEnough)}>
 	    		BUY THIS ITEM
@@ -58,10 +59,10 @@ export default class AssetDetail extends Component {
 
         return (
         	<Grid>
-			    <Grid.Column width={8}>
+			    <Grid.Column mobile={16} tablet={8} computer={8}>
 			      <Image src={ asset.image_url_cdn } />
 			    </Grid.Column>
-			    <Grid.Column width={8}>
+			    <Grid.Column mobile={16} tablet={8} computer={8}>
 				    <Grid.Row>
 				      <Grid.Column width={8}>
 				        <h2>
