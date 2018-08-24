@@ -267,8 +267,9 @@ export function* getAccountAsync() {
         }
     }
 
-    // if(!fastx.defaultAccount)
-    fastx.defaultAccount = accounts[0];
+    //使用本地钱包时不在getAccountAsync内更新defaultAccount
+    if(!fastx.defaultAccount && typeof window.Web3 !== 'undefined')
+        fastx.defaultAccount = accounts[0];
     console.log('getAccountAddress:',fastx.defaultAccount);
     yield put({
       type: 'ACCOUNT_RECEIVED',
