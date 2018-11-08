@@ -9,11 +9,13 @@ import {
     Input,
     Image,
     Loader,
+    Dropdown,
     Tab
   } from 'semantic-ui-react';
 import Asset from '../components/Asset';
 import '../components/Card.css';
 import '../components/Label.css';
+import { tokensOptions } from '../config';
 
 export default class Account extends Component {
     componentDidMount() {
@@ -49,6 +51,13 @@ export default class Account extends Component {
         if(this.props.isLoading) {
             loaderHtml = <div style={{width:"100%",textAlign:'center',padding:'20px'}}><Loader active inline /></div>;
         }
+
+        let balanceHtml = "";
+
+        for (let i in this.props.balance){
+            balanceHtml += ` / ${this.props.balance[i]} ${i}`
+        }
+        balanceHtml = balanceHtml.slice(2)
 
         const panes = [
             { menuItem: 'My Items', render: () => <Tab.Pane attached={false}>
@@ -95,7 +104,7 @@ export default class Account extends Component {
                 <Form>
                     <Form.Field inline>
                       <label className='align_right_label'>Price*</label>
-                      <Input label='ETH' type='number' placeholder='' onChange={this.props.setDepositPrice} />
+                      <Input label={<Dropdown defaultValue='ETH' options={tokensOptions} onChange={this.props.setDepositUnit} />} type='number' placeholder='' onChange={this.props.setDepositPrice} />
                     </Form.Field>
                     <Button type='submit' color='teal' style={{marginLeft:'110px'}} onClick={() => this.props.toDeposit(this.props.depositPrice)}>Submit</Button>
                 </Form>
@@ -104,7 +113,7 @@ export default class Account extends Component {
                 <Form>
                     <Form.Field inline>
                       <label className='align_right_label'>Price*</label>
-                      <Input label='ETH' type='number' placeholder='' onChange={this.props.setWithdrawalPrice} />
+                      <Input label={<Dropdown defaultValue='ETH' options={tokensOptions} onChange={this.props.setWithdrawalUnit} />} type='number' placeholder='' onChange={this.props.setWithdrawalPrice} />
                     </Form.Field>
                     <Button type='submit' color='teal' style={{marginLeft:'110px'}} onClick={() => this.props.toWithdrawal(this.props.withdrawalPrice)}>Submit</Button>
                 </Form>
@@ -136,7 +145,9 @@ export default class Account extends Component {
                 <Grid centered>
                     <Grid.Row centered columns={16}>
                         <Grid.Column textAlign='center' width={16}>
-                            <p style={{ fontSize: '18px', margin: '0'}}>{this.props.balance} {this.props.unit}</p>
+                            <p style={{ fontSize: '18px', margin: '0'}}>
+                                {balanceHtml}
+                            </p>
                             <p style={{ color: 'grey', fontSize: '18px'}}>{this.props.currency}</p>
                         </Grid.Column>
                     </Grid.Row>

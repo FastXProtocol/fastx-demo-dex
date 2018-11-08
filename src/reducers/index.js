@@ -15,5 +15,6 @@ export default combineReducers({
     header: require('./header').default,
     wallet: require('./wallet').default,
     localStorage: require('./localStorage').default,
-    sendToken: require('./sendToken').default
+    sendToken: require('./sendToken').default,
+    exchange: require('./exchange').default,
 });

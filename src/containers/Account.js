@@ -58,7 +58,7 @@ function mapDispatchToProps(dispatch) {
             dispatch(push('/deposit'))
         },
         switching: (currency, unit) => {
-            dispatch(accountActions.switchingUnit(currency, unit))
+            dispatch(accountActions.switchingUnit(currency))
             dispatch(accountActions.getBalance())
         },
         ...bindActionCreators(accountActions, dispatch)

@@ -128,17 +128,22 @@ const getFastxBalance = async() => {
         console.log("getBalanceErr:",err)
     }
 
-    let balance = 0;
+    let balance = {},ethBalance = 0,fastxBalance = 0;
     const eth = '0'.repeat(40);
+    const fastxToken = chainOptions.erc20ContractAddress.replace('0x','').toLocaleLowerCase();
     for(let value of balanceFT){
         const [_currency, _amount] = value;
         if(_currency == eth){
-            balance = _amount;
-            break;
+            ethBalance = _amount;
+        }else if(_currency == fastxToken){
+            fastxBalance = _amount;
         }
     }
-
-    balance = await fastx.web3.utils.fromWei((balance+''), 'ether');
+    
+    ethBalance = await fastx.web3.utils.fromWei((ethBalance+''), 'ether')
+    fastxBalance = await fastx.web3.utils.fromWei((fastxBalance+''), 'ether')
+    balance['eth'] = ethBalance
+    balance['fastx'] = fastxBalance
     return balance
 }
 
@@ -157,12 +162,19 @@ const getFastxAssets = async() => {
 }
 
 const getETHBalance = async() => {
-    let balance = 0;
+    let balance = {}, ethBalance = 0, fastxBalance = 0;
 
     try{
-        let wei = await fastx.web3.eth.getBalance(fastx.defaultAccount);
-        balance = await fastx.web3.utils.fromWei(wei, 'ether');
-        balance = parseFloat(parseFloat(balance).toFixed(4))
+        let wei = await fastx.web3.eth.getBalance(fastx.defaultAccount)
+        ethBalance = await fastx.web3.utils.fromWei(wei, 'ether')
+        ethBalance = parseFloat(parseFloat(ethBalance).toFixed(4))
+        balance['eth'] = ethBalance
+
+        let erc20Contract = fastx.getErc20Interface(chainOptions.erc20ContractAddress)
+        fastxBalance = await erc20Contract.methods.balanceOf(fastx.defaultAccount).call();
+        fastxBalance = await fastx.web3.utils.fromWei(wei, 'ether')
+        fastxBalance = parseFloat(parseFloat(fastxBalance).toFixed(4))
+        balance['fastx'] = fastxBalance
     }catch(err){
         console.log(err);
     }
@@ -196,6 +208,10 @@ const getETHAssets = async() => {
     return assets
 }
 
+const getUTXOs = async (address) => {
+    return (await fastx.getAllUTXO(address)).data.result;
+};
+
 function* getBalanceAsync() {
     yield getFastx()
     yield waitNetworkReady()
@@ -214,7 +230,7 @@ function* getBalanceAsync() {
 
     yield put({
       type: 'BALANCE_RECEIVED',
-      balance: parseFloat(balance)
+      balance: balance
     })
 }
 
@@ -311,6 +327,7 @@ const depositChannel = channel();
 
 function* watchDepositAsync(action) {
     yield getFastx();
+    const unit = store.getState().account.depositUnit;
     yield put({
       type: 'SET_STEPS',
       steps: [{'title':'Confirm','desc':'deposit the contract to access your asset'}]
@@ -324,13 +341,24 @@ function* watchDepositAsync(action) {
     let accounts = yield fastx.web3.eth.getAccounts()
     console.log(accounts)
     try{
-        fastx.deposit("0x0", price, 0, { from: fastx.defaultAccount}).on('transactionHash', function (hash){
-            //在回调中无法直接yield put更新，所以使用channel的方式处理
-            depositChannel.put({
-              type: 'SET_CUR_STEP',
-              curStep: 2
-            })
-        });
+        if(unit == 'ETH'){
+            fastx.deposit("0x0", price, 0, { from: fastx.defaultAccount}).on('transactionHash', function (hash){
+                //在回调中无法直接yield put更新，所以使用channel的方式处理
+                depositChannel.put({
+                  type: 'SET_CUR_STEP',
+                  curStep: 2
+                })
+            });
+        }else if(unit == 'fastx'){
+            yield fastx.approve(chainOptions.erc20ContractAddress, price, 0, { from: fastx.defaultAccount});
+            fastx.deposit(normalizeAddress(chainOptions.erc20ContractAddress).toString("hex"), price, 0, { from: fastx.defaultAccount}).on('transactionHash', function (hash){
+                //在回调中无法直接yield put更新，所以使用channel的方式处理
+                depositChannel.put({
+                  type: 'SET_CUR_STEP',
+                  curStep: 2
+                })
+            });
+        }
     }catch (err){
         console.log("deposit error:",err)
     }
@@ -345,6 +373,8 @@ function* watchDepositChannel() {
 
 function* watchWithdrawalAsync(action) {
     yield getFastx();
+    const unit = store.getState().account.withdrawalUnit;
+  
     yield put({
       type: 'SET_STEPS',
       steps: [{'title':'Confirm','desc':'Approve the contract to access your asset'}]
@@ -355,8 +385,20 @@ function* watchWithdrawalAsync(action) {
     })
     try {
         let price = yield fastx.web3.utils.toWei((action.withdrawalPrice+''), 'ether');
-        let utxo = yield fastx.getOrNewEthUtxo(price, {from:fastx.defaultAccount})
-        const [blknum, txindex, oindex, contractAddress, amount, tokenid] = utxo;
+        let useUtxo
+        if(unit == 'ETH'){
+            useUtxo = yield fastx.getOrNewEthUtxo(price, {from:fastx.defaultAccount})
+        }else if(unit == 'fastx'){
+            const utxos = yield getUTXOs();
+            for(const utxo of utxos){
+                const [blknum, txindex, oindex, contractAddress, amount, tokenid] = utxo;
+                if (blknum % 1000 == 0 && normalizeAddress(contractAddress).toString("hex") == normalizeAddress(chainOptions.erc20ContractAddress).toString("hex")) {
+                    console.log("UTXO", utxo);
+                    useUtxo = utxo;
+                }
+            }
+        }
+        const [blknum, txindex, oindex, contractAddress, amount, tokenid] = useUtxo;
         yield fastx.startExit(blknum, txindex, oindex, contractAddress, amount, tokenid, {from:fastx.defaultAccount});
     } catch (e) {
         console.log(e)

@@ -65,10 +65,24 @@ export const setWithdrawalPrice = (e, target) => {
   };
 }
 
+export const setWithdrawalUnit = (e, target) => {
+  return {
+    type: "SET_WITHDRAWAL_UNIT",
+    withdrawalUnit: target && target.value
+  };
+}
+
 export const setDepositPrice = (e, target) => {
   return {
     type: "SET_DEPOSIT_PRICE",
     depositPrice: target && target.value
+  };
+}
+
+export const setDepositUnit = (e, target) => {
+  return {
+    type: "SET_DEPOSIT_UNIT",
+    depositUnit: target && target.value
   };
 }
 
@@ -89,7 +103,6 @@ export const withdrawal = (withdrawalPrice) => {
 export const switchingUnit = (currency, unit) => {
   return {
     type: "SWITCH_UNIT",
-    currency,
-    unit
+    currency
   };
 }

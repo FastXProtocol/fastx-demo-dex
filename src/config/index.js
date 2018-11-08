@@ -8,9 +8,10 @@ console.log(process.env.ENV);
 if (process.env.ENV.toLowerCase() === "local") {
     chainOptions = {
         ...chainOptions,
-        gethRpc: "ws://localhost:8545",
+        gethRpc: "http://localhost:8545",
         fastXRpc: "http://localhost:8546/jsonrpc",
-        rootChainAddress: "0xa3b2a1804203b75b494028966c0f62e677447a39",
+        rootChainAddress: "0xA3B2a1804203b75b494028966C0f62e677447A39",
+        erc20ContractAddress: "0x395B650707cAA0d300615bBa2901398DFf64CF7c"
     }
 
     chainCategory = "0xd641205E8F36A858c5867945782C917E3F63d1e8"
@@ -29,6 +30,11 @@ export const retry = {
 	count: 5,
 	time: 1000
 }
+
+export const tokensOptions = [
+    { key: 'ETH', text: 'ETH', value: 'ETH' },
+    { key: 'fastx', text: 'fastx', value: 'fastx' },
+]
 
 export const network = {
     'Offline': { rpc: 'offline', tx_explorer: null },

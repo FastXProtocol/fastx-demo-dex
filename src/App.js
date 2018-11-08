@@ -11,8 +11,10 @@ import AssetList from './containers/AssetList';
 import AssetDetail from './containers/AssetDetail';
 import AssetSell from './containers/AssetSell';
 import Account from './containers/Account';
+import Exchange from './containers/Exchange';
 import FlashMessage from './containers/FlashMessage';
 import Wallet from './containers/Wallet';
+
 import Web3 from 'web3'
 
 import * as walletActions from './actions/wallet'
@@ -63,6 +65,7 @@ export default class App extends Component {
     if(typeof window.Web3 === 'undefined'){
         routes = <Switch>
                     <Route path='/account' component={Account} />
+                    <Route exact path='/exchange' component={Exchange} />
                     <Route exact path='/assets' component={AssetList} />
                     <Route exact path='/assets/:category/:id' component={AssetDetail} />
                     <Route exact path='/assets/:category/:id/sell' component={AssetSell} />
@@ -74,6 +77,7 @@ export default class App extends Component {
         routes = <Web3Provider>
                     <Switch>
                         <Route path='/account' component={Account} />
+                        <Route exact path='/exchange' component={Exchange} />
                         <Route exact path='/assets' component={AssetList} />
                         <Route exact path='/assets/:category/:id' component={AssetDetail} />
                         <Route exact path='/assets/:category/:id/sell' component={AssetSell} />

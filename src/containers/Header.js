@@ -27,6 +27,7 @@ class Header extends Component{
             toMarketplace,
             toAccounnt,
             toWallet,
+            toExchange,
             availableNetworks,
             networkName,
             onLoadNetwork } = this.props;
@@ -71,6 +72,12 @@ class Header extends Component{
                         </Menu.Item>
                     </Responsive>
                     {walletItem}
+                    <Menu.Item
+                        name='exchange'
+                        active={activeItem === 'exchange'}
+                        content='Exchange'
+                        onClick={() => toExchange()}
+                    />
                     <Menu.Item
                         name='marketplace'
                         active={activeItem === 'marketplace'}
@@ -118,6 +125,10 @@ function mapDispatchToProps(dispatch) {
         toWallet: () => {
             dispatch(headerActions.setActiveItem('wallet'))
             dispatch(push('/wallet'))
+        },
+        toExchange: () => {
+            dispatch(headerActions.setActiveItem('exchange'))
+            dispatch(push('/exchange'))
         },
         onLoadNetwork: (name) => {
           dispatch(networkActions.loadNetwork(name));
