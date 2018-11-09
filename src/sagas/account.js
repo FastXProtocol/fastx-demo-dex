@@ -389,14 +389,16 @@ function* watchWithdrawalAsync(action) {
         if(unit == 'ETH'){
             useUtxo = yield fastx.getOrNewEthUtxo(price, {from:fastx.defaultAccount})
         }else if(unit == 'fastx'){
-            const utxos = yield getUTXOs();
-            for(const utxo of utxos){
-                const [blknum, txindex, oindex, contractAddress, amount, tokenid] = utxo;
-                if (blknum % 1000 == 0 && normalizeAddress(contractAddress).toString("hex") == normalizeAddress(chainOptions.erc20ContractAddress).toString("hex")) {
-                    console.log("UTXO", utxo);
-                    useUtxo = utxo;
-                }
-            }
+            useUtxo = yield fastx.getOrNewFastxUtxo(price, {from:fastx.defaultAccount})
+            
+            // const utxos = yield getUTXOs();
+            // for(const utxo of utxos){
+            //     const [blknum, txindex, oindex, contractAddress, amount, tokenid] = utxo;
+            //     if (blknum % 1000 == 0 && normalizeAddress(contractAddress).toString("hex") == normalizeAddress(chainOptions.erc20ContractAddress).toString("hex")) {
+            //         console.log("UTXO", utxo);
+            //         useUtxo = utxo;
+            //     }
+            // }
         }
         const [blknum, txindex, oindex, contractAddress, amount, tokenid] = useUtxo;
         yield fastx.startExit(blknum, txindex, oindex, contractAddress, amount, tokenid, {from:fastx.defaultAccount});
