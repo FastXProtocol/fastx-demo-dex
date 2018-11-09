@@ -162,7 +162,7 @@ const getFastxAssets = async() => {
 }
 
 const getETHBalance = async() => {
-    let balance = {}, ethBalance = 0, fastxBalance = 0;
+    let balance = {}, ethBalance = 0, fastxBalance = 0, fastxWei;
 
     try{
         let wei = await fastx.web3.eth.getBalance(fastx.defaultAccount)
@@ -171,8 +171,8 @@ const getETHBalance = async() => {
         balance['eth'] = ethBalance
 
         let erc20Contract = fastx.getErc20Interface(chainOptions.erc20ContractAddress)
-        fastxBalance = await erc20Contract.methods.balanceOf(fastx.defaultAccount).call();
-        fastxBalance = await fastx.web3.utils.fromWei(wei, 'ether')
+        fastxWei = await erc20Contract.methods.balanceOf(fastx.defaultAccount).call();
+        fastxBalance = await fastx.web3.utils.fromWei(fastxWei, 'ether')
         fastxBalance = parseFloat(parseFloat(fastxBalance).toFixed(4))
         balance['fastx'] = fastxBalance
     }catch(err){
