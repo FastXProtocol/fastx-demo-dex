@@ -8,6 +8,7 @@ const NEXT_STEP = "NEXT_STEP"
 const RESET = "RESET"
 const EXCHANGE_RATE_RECEIVED = "EXCHANGE_RATE_RECEIVED"
 const TRANSACTION_RECEIVED = "TRANSACTION_RECEIVED"
+const TRANSACTION_STATUS_CHANGE = "TRANSACTION_STATUS_CHANGE"
 
 const initialState = {
     from: 'eth',
@@ -24,6 +25,7 @@ const initialState = {
     step: 1,
     rate: null,
     transaction: [],
+    isTrading: false
 };
 
 export default function exchange(state = initialState, action = {}) {
@@ -82,6 +84,11 @@ export default function exchange(state = initialState, action = {}) {
        return {
         ...state,
         transaction: action.transaction.slice(0)
+       }
+    case TRANSACTION_STATUS_CHANGE:
+       return {
+         ...state,
+         isTrading: action.status
        }
     default:
       return state;

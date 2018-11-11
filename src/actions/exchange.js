@@ -71,3 +71,10 @@ export const transactionChange = (transaction) => {
         transaction
     }
 }
+
+export const transactionStausChange = (status) => {
+    return {
+        type: "TRANSACTION_STATUS_CHANGE",
+        status
+    }
+}

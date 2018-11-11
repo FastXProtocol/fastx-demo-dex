@@ -114,6 +114,10 @@ function* transactionAsync(action) {
         type: 'TRANSACTION_RECEIVED',
         transaction: transaction,
     })
+    yield put({
+        type: 'TRANSACTION_STATUS_CHANGE',
+        status: false,
+    }) 
 }
 
 export default function * exchangeSaga (arg) {

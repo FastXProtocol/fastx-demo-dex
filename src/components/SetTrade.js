@@ -172,9 +172,15 @@ export default class SetTrade extends Component {
                   </div>
                 </form>
               </div> 
-              <button type="button" value="Start transaction" className="start" onClick={this.props.nextStep.bind(this, this.props.amountBuyInput)}>
+              {
+                this.props.isTrading
+                ? <button type="button" value="Start transaction" className="start" disabled={true}>
+                <Spinner/>
+                </button>
+                :  <button type="button" value="Start transaction" className="start" onClick={this.props.nextStep.bind(this, this.props.amountBuyInput)}>
                 START TRANSACTION
-              </button>
+                </button>
+              } 
             </section>
             }
           </React.Fragment>

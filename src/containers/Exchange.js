@@ -33,7 +33,8 @@ function mapStateToProps(state){
         step: state.exchange.step,
         trade: state.exchange.trade,
         rate: state.exchange.rate,
-        transaction: state.exchange.transaction
+        transaction: state.exchange.transaction,
+        isTrading: state.exchange.isTrading
     }
 }
 
@@ -59,6 +60,7 @@ function mapDispatchToProps(dispatch) {
         },
         nextStep: (amount) => {
             //dispatch(exchangeActions.nextStep())
+            dispatch(exchangeActions.transactionStausChange(true))
             dispatch(exchangeActions.transaction(amount))
         },
         reset: () => {
