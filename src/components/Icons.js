@@ -171,6 +171,22 @@ export class DAI extends PureComponent {
   }
 }
 
+export class FEX extends PureComponent {
+  render() {
+    return (
+      <svg width="100%" height="38" viewBox="0 0 22 22" xmlns="http://www.w3.org/2000/svg"
+           xmlnsXlink="http://www.w3.org/1999/xlink" className="fex">
+        <path
+          d="M11,0 C4.92380952,0 0,4.92380952 0,11 C0,17.0761905 4.92380952,22 11,22 C17.0761905,22 22,17.0761905 22,11 C22,4.92380952 17.0761905,0 11,0 Z"
+          id="Shape" fill="#347785"></path>
+        <g id="icon" transform="translate(5.000000, 5.000000)" fill="#FFFFFF" fillRule="nonzero">
+          <text x="6" y="12" fill="white" text-anchor="middle">F</text>
+        </g>
+      </svg>
+    )
+  }
+}
+
 //TODO: This would be nice to be removed from here and extracted as part of the landing page component.
 export class Logo extends PureComponent {
   render() {
