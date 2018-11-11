@@ -107,7 +107,9 @@ function* getExchangeRateAsync(action) {
 function* transactionAsync(action) {
     yield getAccount()
     let transaction = yield transactionTx(action);
-
+    yield put({
+        type: 'GET_BALANCE'
+    })
     yield put({
         type: 'TRANSACTION_RECEIVED',
         transaction: transaction,
