@@ -9,7 +9,7 @@ export default class Exchange extends Component {
         let transactions = this.props.transaction
         let transactionChange = this.props.transactionChange
         let transactionHtml = transactions.map(function(v,index){
-            let content = `您花费${v.eth} ETH交易到了${v.fastx} fastx`
+            let content = `You have bought ${v.fastx} FEX with ${v.eth} ETH`
             const handleDismiss = ()=>{
               transactions.splice(index, 1)
               transactionChange(transactions)
