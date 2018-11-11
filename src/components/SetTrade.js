@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import ReactTooltip from 'react-tooltip';
 import {
-    Ether, MKR, DAI, SwapArrows, IdentityIcon, Circle, Attention,
+    Ether, MKR, DAI, FEX, SwapArrows, IdentityIcon, Circle, Attention,
   } from './Icons';
 import Spinner from './Spinner';
 import TokenAmount from './TokenAmount';
@@ -15,7 +15,7 @@ const tokens = {
       name: "Ether",
     },
     fastx: {
-      icon: <DAI/>,
+      icon: <FEX/>,
       symbol: "FEX",
       name: "FastX",
     },
