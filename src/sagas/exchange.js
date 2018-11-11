@@ -65,14 +65,17 @@ const logBalance = async () => {
 
 const transactionTx = async(action) => {
     const tAmount = parseFloat(await fastx.web3.utils.toWei((action.amount+''), 'ether'));
+    console.log("tAmount", tAmount);
     let psTx = await fastx.createExchangePartiallySignedTransaction('0x0',chainOptions.erc20ContractAddress,tAmount)
     if(psTx){
-        psTx = psTx.data.result
-        let fromUTXO = await getFromUTXO(tAmount);
+        psTx = psTx.data.result;
+        let fromUTXO = await fastx.getOrNewEthUtxo(tAmount, {from:fastx.defaultAccount});
         if(!fromUTXO){
-            await fastx.deposit("0x0", tAmount, 0, {from: fastx.defaultAccount});
-            await delay(1000);
-            fromUTXO = await getFromUTXO(tAmount);
+            alert("You don't have enough ETH in FastX");
+            return [];
+            // await fastx.deposit("0x0", tAmount, 0, {from: fastx.defaultAccount});
+            // await delay(1000);
+            // fromUTXO = await getFromUTXO(tAmount);
         }
         console.log("fromUTXO", fromUTXO);
         const [blknum, txindex, oindex, contractAddress, amount, tokenid] = fromUTXO;
@@ -87,6 +90,7 @@ const transactionTx = async(action) => {
         return transaction
     }else{
         console.error("no psTx")
+        return [];
     }
 }
 
@@ -102,7 +106,7 @@ function* getExchangeRateAsync(action) {
 
 function* transactionAsync(action) {
     yield getAccount()
-    let transaction = yield transactionTx(action)
+    let transaction = yield transactionTx(action);
 
     yield put({
         type: 'TRANSACTION_RECEIVED',
