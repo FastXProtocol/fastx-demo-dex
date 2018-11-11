@@ -16,8 +16,8 @@ const tokens = {
     },
     fastx: {
       icon: <DAI/>,
-      symbol: "fastx",
-      name: "fastx",
+      symbol: "FEX",
+      name: "FastX",
     },
 }
 
@@ -129,7 +129,7 @@ export default class SetTrade extends Component {
                           </ReactTooltip>
                         </span>
                         <span  style={{lineHeight: "14px",  fontSize:"12px"}}> ~ <TokenAmount number={this.props.rate} decimal={2}
-                                    token={'eth/fastx'}/>
+                                    token={'ETH/FEX'}/>
                         </span>
                       </span>
                      
