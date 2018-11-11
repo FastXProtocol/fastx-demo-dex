@@ -329,9 +329,9 @@ function* unlockWallet() {
 
     ks.passwordProvider = (callback) => {
         const ksPassword = store.getState().wallet.password;
-        const pw = prompt('Enter password to continue', ksPassword);
-        callback(null, pw);
-        //callback(null, ksPassword);
+        // const pw = prompt('Enter password to continue', ksPassword);
+        // callback(null, pw);
+        callback(null, ksPassword);
     };
     const rpcAddress = network[store.getState().network.networkName].rpc;
     setProvider(ks, rpcAddress)
