@@ -9,13 +9,16 @@ let script = `
   <script>
     function confirm() {
         window.opener.ksPasswordCallback(null, window.document.getElementById('passwordInput').value)
-        cancel()
+        this.close()
     }
 
     function cancel() {
+        this.close()
+    }
+
+    window.onbeforeunload =function() {
         window.opener.ksPasswordCallback = null
         window.opener.passwordWindow = null
-        this.close()
     }
   </script>
 `
