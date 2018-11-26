@@ -26,11 +26,11 @@ let script = `
 let passwordWindow
 
 function pwdPrompt() {
-    if(window.opener.passwordWindow)return;
-    window.opener.passwordWindow = window.open('','_blank',"toolbar=no,menubar=no,scrollbars=yes,resizable=yes,location=no,status=no,top=500,left=500,width=400,height=200")
-    window.opener.passwordWindow.document.write(html)
-    window.opener.passwordWindow.document.write(script)
-    window.opener.passwordWindow.document.title = '输入密码'
+    if(window.passwordWindow)return;
+    window.passwordWindow = window.open('','_blank',"toolbar=no,menubar=no,scrollbars=yes,resizable=yes,location=no,status=no,top=500,left=500,width=400,height=200")
+    window.passwordWindow.document.write(html)
+    window.passwordWindow.document.write(script)
+    window.passwordWindow.document.title = '输入密码'
 }
 
 export default pwdPrompt
