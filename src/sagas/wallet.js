@@ -5,6 +5,7 @@ import lightwallet from 'eth-lightwallet'
 
 import { network } from '../config'
 import generateString from '../utils/crypto'
+import pwdPrompt from '../utils/pwdPrompt'
 
 import {
   generateWalletSucces,
@@ -113,9 +114,10 @@ export function* genKeystore() {
     }
 
     ks.passwordProvider = (callback) => {
-      // const password = yield select(makeSelectPassword());
-      const pw = prompt('Please enter keystore password', ''); // eslint-disable-line
-      callback(null, pw);
+      // const pw = prompt('Please enter keystore password', ''); // eslint-disable-line
+      // callback(null, pw);
+      window.ksPasswordCallback = callback
+      pwdPrompt()
     };
 
     const pwDerivedKey = yield call(keyFromPasswordPromise, password);
@@ -272,12 +274,16 @@ function* generateAddress() {
 function* lockWallet() {
     const ks = store.getState().wallet.keystore;
     ks.passwordProvider = (callback) => {
-      const pw = prompt('Please enter keystore password', ''); // eslint-disable-line
-      callback(null, pw);
+      // const pw = prompt('Please enter keystore password', ''); // eslint-disable-line
+      // callback(null, pw);
+      window.ksPasswordCallback = callback
+      pwdPrompt()
     };
     const rpcAddress = network[store.getState().network.networkName].rpc;
     setProvider(ks, rpcAddress)
 }
+
+
 
 function* unlockWallet() {
   try {
@@ -294,9 +300,12 @@ function* unlockWallet() {
     ks.passwordProvider = (callback) => {
       let ksPassword = store.getState().wallet.password;
       if(!ksPassword){
-          ksPassword = prompt('Please enter keystore password', '');
+          //ksPassword = prompt('Please enter keystore password', '');
+          window.ksPasswordCallback = callback
+          pwdPrompt()
+      }else{
+          callback(null, ksPassword);
       }
-      callback(null, ksPassword);
     };
     const passwordProvider = ks.passwordProvider;
 

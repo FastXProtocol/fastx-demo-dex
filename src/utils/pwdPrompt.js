@@ -1,48 +1,33 @@
-var promptCount = 0;
-const pwdPrompt = (title, defaultValue, callback) => {
-    var prompt = document.createElement("div")
-    prompt.className = "pw_prompt"
-    prompt.style.position = "fixed"
-    prompt.style.left = "50%"
-    prompt.style.top = "0%"
-    prompt.style.marginLeft = "-200px"
-    prompt.style.padding = "15px"
-    prompt.style.width = "400px"
-    prompt.style.height = "160px"
-    prompt.style.border = "1px solid #ccc"
-    prompt.style.backgroundColor = "white"
-    prompt.style.zIndex = "999"
-    prompt.style.boxShadow = "1px 0px 12px #ccc"
+let html = `
+<div style='padding: 16px;'>
+    <input id='passwordInput' type='password' placeholder='请输入密码' style='width: 100%;height: 30px; padding: 6px;' />
+    <button style='width: 170px;height: 30px;margin-top: 20px;background-color: #2185d0;color: #fff;text-shadow: none;background-image: none;' onclick='confirm()'>确定</button>
+    <button style='width: 170px;height: 30px;margin-top: 20px;background-color: #fff;color: #333;text-shadow: none;background-image: none;' onclick='cancel()'>取消</button>
+</div>
+`
+let script = `
+  <script>
+    function confirm() {
+        window.opener.ksPasswordCallback(null, window.document.getElementById('passwordInput').value)
+        cancel()
+    }
 
-    var submit = function() {
-        callback(input.value);
-        document.body.removeChild(prompt);
-    };
+    function cancel() {
+        window.opener.ksPasswordCallback = null
+        window.opener.passwordWindow = null
+        this.close()
+    }
+  </script>
+`
 
-    var label = document.createElement("label");
-    label.textContent = title;
-    label.for = "pw_prompt_input" + (++promptCount);
-    label.style.display = "block"
-    label.style.marginBottom = "5px"
-    prompt.appendChild(label);
+let passwordWindow
 
-    var input = document.createElement("input");
-    input.id = "pw_prompt_input" + (promptCount);
-    input.type = "password";
-    input.defaultValue = defaultValue;
-    input.style.width = "100%"
-    input.style.marginBottom = "5px"
-    input.addEventListener("keyup", function(e) {
-        if (e.keyCode == 13) submit();
-    }, false);
-    prompt.appendChild(input);
-
-    var button = document.createElement("button");
-    button.textContent = "确定";
-    button.addEventListener("click", submit, false);
-    prompt.appendChild(button);
-
-    document.body.appendChild(prompt);
+function pwdPrompt() {
+    if(window.opener.passwordWindow)return;
+    window.opener.passwordWindow = window.open('','_blank',"toolbar=no,menubar=no,scrollbars=yes,resizable=yes,location=no,status=no,top=500,left=500,width=400,height=200")
+    window.opener.passwordWindow.document.write(html)
+    window.opener.passwordWindow.document.write(script)
+    window.opener.passwordWindow.document.title = '输入密码'
 }
 
 export default pwdPrompt
