@@ -290,7 +290,14 @@ function* unlockWallet() {
     if (!ks) {
       throw new Error('No keystore to unlock');
     }
-
+    
+    ks.passwordProvider = (callback) => {
+      let ksPassword = store.getState().wallet.password;
+      if(!ksPassword){
+          ksPassword = prompt('Please enter keystore password', '');
+      }
+      callback(null, ksPassword);
+    };
     const passwordProvider = ks.passwordProvider;
 
     function passwordProviderPromise() { // eslint-disable-line no-inner-declarations
@@ -327,12 +334,6 @@ function* unlockWallet() {
 
     yield put(unlockWalletSuccess(userPassword));
 
-    ks.passwordProvider = (callback) => {
-        const ksPassword = store.getState().wallet.password;
-        // const pw = prompt('Enter password to continue', ksPassword);
-        // callback(null, pw);
-        callback(null, ksPassword);
-    };
     const rpcAddress = network[store.getState().network.networkName].rpc;
     setProvider(ks, rpcAddress)
   } catch (err) {
