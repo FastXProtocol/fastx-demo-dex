@@ -30,6 +30,7 @@ async function waitNetworkReady() {
 }
 
 const getAssent = async (NFT) => {
+    console.group('sagas_account_getAssent')
     let assets = [];
     try {
         for(let value of NFT){
@@ -43,9 +44,9 @@ const getAssent = async (NFT) => {
             assets.push(kitty);
         }
     } catch(err) {
-        console.log("get assent info err:",err)
+        console.error("get assent info err:",err)
     }
-
+    console.groupEnd()
     return assets;
 }
 
@@ -61,7 +62,8 @@ const normalizeAddress = (address) => {
 }
 
 const depositNFT = async (asset_contract, tokenid) => {
-    console.log('asset_contract:',asset_contract)
+    console.group('sagas_account_depositNFT')
+    console.dir({'asset_contract':asset_contract})
     const ownerAddress = fastx.defaultAccount;
     let nft_contract = fastx.getErc721TokenInterface(asset_contract);
 
@@ -69,7 +71,7 @@ const depositNFT = async (asset_contract, tokenid) => {
     await fastx.approve(asset_contract, 0, tokenid, {from: ownerAddress})
         .on('transactionHash', console.log);
     console.log( 'Approved address: ', await nft_contract.methods.getApproved(tokenid).call() );
-
+    console.groupEnd()
     await fastx.deposit(asset_contract, 0, tokenid, {from: ownerAddress});
     return {
         category: asset_contract,
@@ -78,19 +80,22 @@ const depositNFT = async (asset_contract, tokenid) => {
 }
 
 const logBalance = async (address) => {
-	let res = (await fastx.getBalance(address));
+    console.group('sagas_account_logBalance')
+    let res = (await fastx.getBalance(address));
     console.log("\naddress: "+ (address || fastx.defaultAccount) );
     console.log("balance: ", res);
+    console.groupEnd()
 }
 
 const postNftAd = async (contract, tokenid, end, price, options={}) => {
+    console.group('sagas_account_postNftAd')
 	let from = options.from || fastx.defaultAccount;
     let categoryContract;
     console.log(contract)
     try{
         categoryContract = normalizeAddress(contract).toString('hex');
     }catch (e){
-        console.log(e)
+        console.error(e)
     }
     console.log('from: '+from + ', contract: '+categoryContract+', tokenid: '+tokenid);
 
@@ -100,7 +105,7 @@ const postNftAd = async (contract, tokenid, end, price, options={}) => {
     }, { from: from });
     console.log('\nUTXO',utxo);
     const [_blknum, _txindex, _oindex, _contract, _balance, _tokenid] = utxo;
-
+    console.groupEnd()
     return fastx.sendPsTransaction(
         _blknum, _txindex, _oindex,
         from, '0'.repeat(40), price, 0, // sell for the price in eth
@@ -119,13 +124,14 @@ const postAd = async (data) => {
 }
 
 const getFastxBalance = async() => {
+    console.group('sagas_account_getFastxBalance')
     let balanceFT = [],balanceRes;
     try {
         balanceRes = await fastx.getBalance(fastx.defaultAccount);
         console.log('balanceRes:',balanceRes);
         balanceFT = balanceRes.FT;
     }catch(err){
-        console.log("getBalanceErr:",err)
+        console.error("getBalanceErr:",err)
     }
 
     let balance = {},ethBalance = 0,fastxBalance = 0;
@@ -144,26 +150,28 @@ const getFastxBalance = async() => {
     fastxBalance = await fastx.web3.utils.fromWei((fastxBalance+''), 'ether')
     balance['eth'] = ethBalance
     balance['fastx'] = fastxBalance
+    console.groupEnd()
     return balance
 }
 
 const getFastxAssets = async() => {
+    console.group('sagas_account_getFastxAssets')
     let balanceNFT = [],balanceRes;
     try {
         balanceRes = await fastx.getBalance(fastx.defaultAccount);
         balanceNFT = balanceRes.NFT
     }catch(err){
-        console.log("getBalanceErr:",err)
+        console.error("getBalanceErr:",err)
     }
 
     let assets = await getAssent(balanceNFT);
-
+    console.groupEnd()
     return assets
 }
 
 const getETHBalance = async() => {
+    console.group('sagas_account_getETHBalance')
     let balance = {}, ethBalance = 0, fastxBalance = 0, fastxWei;
-
     try{
         let wei = await fastx.web3.eth.getBalance(fastx.defaultAccount)
         ethBalance = await fastx.web3.utils.fromWei(wei, 'ether')
@@ -176,20 +184,21 @@ const getETHBalance = async() => {
         fastxBalance = parseFloat(parseFloat(fastxBalance).toFixed(4))
         balance['fastx'] = fastxBalance
     }catch(err){
-        console.log(err);
+        console.error(err);
     }
-
+    console.groupEnd()
     return balance
 }
 
 const getETHAssets = async() => {
+    console.group('sagas_account_getETHAssets')
     let assets = [];
-
     try{
         const contract = fastx.getErc721TokenInterface(chainCategory);
         let tokenIndex = await contract.methods.balanceOf(fastx.defaultAccount).call();
         tokenIndex = parseInt(tokenIndex, 10);
         while(tokenIndex > 0){
+            console.count()
             tokenIndex--;
             let token = await contract.methods.tokenOfOwnerByIndex(fastx.defaultAccount, tokenIndex).call();
             let kittyRes = await axios({
@@ -202,9 +211,9 @@ const getETHAssets = async() => {
             assets.push(kitty);
         }
     }catch(err){
-        console.log(err);
+        console.error(err);
     }
-
+    console.groupEnd()
     return assets
 }
 
@@ -267,6 +276,7 @@ function* getAssetsAsync() {
 }
 
 export function* getAccountAsync() {
+    console.group('sagas_account_getAccountAsync')
     yield getFastx();
     let accounts = [];
     for (let i = 1; i<=retry.count; i++){
@@ -275,7 +285,7 @@ export function* getAccountAsync() {
             break;
         }catch(err){
             if(i <= retry.count) {
-                console.log("getAccountErr:",i,err)
+                console.error("getAccountErr:",i,err)
                 yield delay(retry.time);
             }else{
                 throw new Error('getAccount request failed');
@@ -292,9 +302,11 @@ export function* getAccountAsync() {
       ownerAddress: fastx.defaultAccount
     })
     yield put(setFastx(fastx));
+    console.groupEnd()
 }
 
 function* watchSellAssetAsync(data) {
+    console.group('sagas_account_watchSellAssetAsync')
     yield getFastx();
     yield put({
       type: 'ASSETS_STATUS',
@@ -314,18 +326,20 @@ function* watchSellAssetAsync(data) {
             let result = yield postNftAd(data.params.category, data.params.sellId, end, price);
             console.log("postNftAdResult:",result);
         }catch(err){
-            console.log(err);
+            console.error(err);
         }
         yield put({
           type: 'ASSETS_STATUS',
           status: 'sent'
         })
     }
+    console.groupEnd()
 }
 
 const depositChannel = channel();
 
 function* watchDepositAsync(action) {
+    console.group('sagas_account_watchDepositAsync')
     yield getFastx();
     const unit = store.getState().account.depositUnit;
     yield put({
@@ -339,7 +353,7 @@ function* watchDepositAsync(action) {
 
     let price = yield fastx.web3.utils.toWei((action.depositPrice+''), 'ether');
     let accounts = yield fastx.web3.eth.getAccounts()
-    console.log(accounts)
+    console.dir({accounts})
     try{
         if(unit == 'ETH'){
             fastx.deposit("0x0", price, 0, { from: fastx.defaultAccount}).on('transactionHash', function (hash){
@@ -360,8 +374,9 @@ function* watchDepositAsync(action) {
             });
         }
     }catch (err){
-        console.log("deposit error:",err)
+        console.error("deposit error:",err)
     }
+    console.groupEnd()
 }
 
 function* watchDepositChannel() {
@@ -372,6 +387,7 @@ function* watchDepositChannel() {
 }
 
 function* watchWithdrawalAsync(action) {
+    console.group('sagas_account_watchWithdrawalAsync')
     yield getFastx();
     const unit = store.getState().account.withdrawalUnit;
   
@@ -403,14 +419,14 @@ function* watchWithdrawalAsync(action) {
         const [blknum, txindex, oindex, contractAddress, amount, tokenid] = useUtxo;
         yield fastx.startExit(blknum, txindex, oindex, contractAddress, amount, tokenid, {from:fastx.defaultAccount});
     } catch (e) {
-        console.log(e)
-        alert(e)
+        console.error(e)
     } finally {
         yield put({
             type: 'SET_CUR_STEP',
             curStep: 2
         })
     }
+    console.groupEnd()
 }
 
 export default function * accountSaga (arg) {

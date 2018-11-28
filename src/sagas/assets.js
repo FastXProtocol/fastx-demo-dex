@@ -8,18 +8,22 @@ import { getAccountAsync } from './account'
 let store,fastx;
 
 const allPsTransactions = async () => {
+    console.group('sagas_assets_allPsTransactions')
     let allPsRes;
     try{
         allPsRes = await fastx.getAllPsTransactions();
         console.log('allPsRes:',allPsRes)
+        console.groupEnd()
         return allPsRes.data.result;
     }catch(e) {
-        console.log('allPsTransactionsError',e)
+        console.error('allPsTransactionsError',e)
+        console.groupEnd()
         return [];
     }
 }
 
 function* getAssetsAsync(params) {
+    console.group('sagas_assets_getAssetsAsync')
     yield getFastx();
 
     let assets = [];
@@ -52,7 +56,7 @@ function* getAssetsAsync(params) {
             kitty.category = value.contractaddress2;
             assets.push(kitty);
         } catch (error) {
-            console.log(error)
+            console.error(error)
             yield put({ type: 'ASSET_CATEGORIES_REQUEST_FAILED', error })
         }
     }
@@ -66,6 +70,8 @@ function* getAssetsAsync(params) {
       type: 'SET_ASSETS_LOADING',
       isLoading: false
     })
+
+    console.groupEnd()
 }
 
 function* getAssetsDetailAsync(action) {
@@ -82,7 +88,7 @@ function* getAssetsDetailAsync(action) {
             url: 'https://api.cryptokitties.co/kitties/'+action.id
         })
     } catch (e) {
-        console.log('getAssetsDetailError:',e)
+        console.error('getAssetsDetailError:',e)
         return yield put({ type: 'ASSET_CATEGORIES_REQUEST_FAILED', e })
     }
 
@@ -126,6 +132,7 @@ function* getAssetsDetailAsync(action) {
 }
 
 const bidAd = async (category,tokenId,fillTx) => {
+    console.group('sagas_assets_bidAd')
     let receiverAddress = fastx.defaultAccount;
     console.log('receiverAddress',receiverAddress);
     transactionChannel.put({
@@ -149,8 +156,9 @@ const bidAd = async (category,tokenId,fillTx) => {
         })
         console.log(res);
     }else {
-        console.log('utxo not found')
+        console.error('utxo not found')
     }
+    console.groupEnd()
 }
 
 function* assetBuyAsync(action) {
@@ -162,7 +170,7 @@ function* assetBuyAsync(action) {
     try{
         yield bidAd(action.category, action.id, action.fillTx);
     }catch(err){
-        console.log('assetBuyAsync: ',err)
+        console.error('assetBuyAsync: ',err)
         yield put({
           type: 'TRANSACTION_ERROR',
           transactionErr: err.message
@@ -240,7 +248,7 @@ function* watchCheckBlanceEnough(action) {
     try{
         yield fastx.getOrNewEthUtxo(action.amount, {from:fastx.defaultAccount})
     }catch(err) {
-        console.log("CheckBlanceEnough:",err);
+        console.error("CheckBlanceEnough:",err);
         yield put({
           type: 'BID_AD_ERROR',
           error: err
@@ -255,6 +263,7 @@ function* watchCheckBlanceEnough(action) {
 }
 
 const depositNFT = async (asset_contract, tokenid) => {
+    console.group('depositNFT')
     transactionChannel.put({
       type: 'SET_STEPS',
       steps: [{'title':'Confirm','desc':'Approve the contract to access your asset'},{'title':'Confirm','desc':'deposit the contract to access your asset'}]
@@ -280,6 +289,7 @@ const depositNFT = async (asset_contract, tokenid) => {
         type: 'SET_CUR_STEP',
         curStep: 3
     })
+    console.groupEnd()
     return {
         category: asset_contract,
         tokenId: tokenid
@@ -326,13 +336,13 @@ function* watchTakeOutAsync(action) {
         }
 
     }catch(err){
-        console.log(err);
+        console.error(err);
     }
 }
 
 function* getReviewAssetsAsync() {
     yield getFastx();
-
+    console.group('getReviewAssetsAsync')
     // let utxoPos = yield fastx.getUtxoPos(blknum, txindex, oindex);
     // let exit = yield fastx.rootChainInfo.getExit(utxoPos);
     // console.log('getExit:',exit);
@@ -360,7 +370,7 @@ function* getReviewAssetsAsync() {
             }
         }
     }catch(err){
-        console.log(err)
+        console.error(err)
     }
 
     reviewAssets[accounts[0]] = newReviewAssets;
@@ -374,6 +384,7 @@ function* getReviewAssetsAsync() {
         type: 'SET_REVIEW_ASSETS',
         results: reviewAssets
     })
+    console.groupEnd()
 }
 
 async function getFastx(func) {

@@ -53,7 +53,6 @@ function mapDispatchToProps(dispatch) {
             dispatch(accountActions.setSellEnd(moment().add(days, 'days')));
         },
         sellCheck: (params, hasPublished, locationParams) => {
-          console.log('hasPublished:',hasPublished)
           if(hasPublished){
             dispatch(modalActions.open('这件商品您已经过发布广告了'));
           }else{

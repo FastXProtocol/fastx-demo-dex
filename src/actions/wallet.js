@@ -315,7 +315,6 @@ export function saveKs(ks) {
  * @return {object} An action object with a type of SAVE_WALLET_ERROR
  */
 export function saveWalletError(error) {
-  console.warn(error);
   return {
     type: 'SAVE_WALLET_ERROR',
     error,
@@ -350,7 +349,6 @@ export function loadWalletSuccess() {
  * @return {object} An action object with a type of LOAD_WALLET_ERROR
  */
 export function loadWalletError(error) {
-  console.log(error);
   return {
     type: 'LOAD_WALLET_ERROR',
     error,

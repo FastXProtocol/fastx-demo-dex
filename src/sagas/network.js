@@ -75,7 +75,7 @@ export function setProvider (keystore, rpcAddress) {
 
         fastx.setProvider(provider);
     }catch(err){
-        console.log(err)
+        console.error(err)
 
     }
 }
@@ -116,7 +116,7 @@ function* loadNetworkAsync(action) {
             throw new Error('keystore not initiated - Create wallet before connecting');
         }
     } catch (err) {
-        console.log(err)
+        console.error(err)
         const errorString = `loadNetwork error - ${err.message}`;
         yield put(loadNetworkError(err.message));
     }
@@ -136,7 +136,7 @@ function* pollData() {
     yield call(delay, timeBetweenCheckbalances);
     yield put(checkBalances());
   } catch (error) {
-    console.log(error);
+    console.error(error);
   }
 }
 
@@ -243,7 +243,7 @@ export function* SendTransaction() {
 
         yield put(sendTransactionSuccess(tx));
     } catch (err) {
-        console.log(err)
+        console.error(err)
         const loc = err.message.indexOf('at runCall');
         const errMsg = (loc > -1) ? err.message.slice(0, loc) : err.message;
         yield put(sendTransactionError(errMsg));

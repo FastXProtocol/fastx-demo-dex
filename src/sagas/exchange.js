@@ -44,6 +44,7 @@ const getUTXOs = async (address) => {
 };
 
 const getFromUTXO = async(fromAmount) => {
+    console.group('getFromUTXO')
     console.log(fastx.defaultAccount)
     const utxos = await getUTXOs(fastx.defaultAccount);
     console.log(utxos)
@@ -53,17 +54,21 @@ const getFromUTXO = async(fromAmount) => {
             return utxo
         }
     }
+    console.groupEnd()
     return null;
 }
 
 const logBalance = async () => {
+    console.group('logBalance')
     console.log("\naddress: ", fastx.defaultAccount);
     console.log("balance: ", await fastx.getEthBalance(fastx.defaultAccount));
     let utxos = (await fastx.getAllUTXO(fastx.defaultAccount)).data.result;
     console.log('\n', utxos);
+    console.groupEnd()
 }
 
 const transactionTx = async(action) => {
+    console.group('transactionTx')
     const tAmount = parseFloat(await fastx.web3.utils.toWei((action.amount+''), 'ether'));
     console.log("tAmount", tAmount);
     let psTx = await fastx.createExchangePartiallySignedTransaction('0x0',chainOptions.erc20ContractAddress,tAmount)
@@ -72,6 +77,7 @@ const transactionTx = async(action) => {
         let fromUTXO = await fastx.getOrNewEthUtxo(tAmount, {from:fastx.defaultAccount});
         if(!fromUTXO){
             alert("You don't have enough ETH in FastX");
+            console.groupEnd()
             return [];
             // await fastx.deposit("0x0", tAmount, 0, {from: fastx.defaultAccount});
             // await delay(1000);
@@ -87,9 +93,11 @@ const transactionTx = async(action) => {
             eth: action.amount,
             fastx: action.amount*10
         })
+        console.groupEnd()
         return transaction
     }else{
         console.error("no psTx")
+        console.groupEnd()
         return [];
     }
 }
