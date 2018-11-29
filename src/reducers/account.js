@@ -19,7 +19,7 @@ const SWITCH_UNIT = 'SWITCH_UNIT';
 const initialState = {
   balance: {
     eth: 0,
-    fastx: 0,
+    fex: 0,
   },
   ownerAddress: '',
   end: moment().add(1,'days').format("YYYY-MM-DD"),

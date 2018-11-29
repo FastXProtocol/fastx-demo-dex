@@ -149,7 +149,7 @@ const getFastxBalance = async() => {
     ethBalance = await fastx.web3.utils.fromWei((ethBalance+''), 'ether')
     fastxBalance = await fastx.web3.utils.fromWei((fastxBalance+''), 'ether')
     balance['eth'] = ethBalance
-    balance['fastx'] = fastxBalance
+    balance['fex'] = fastxBalance
     console.groupEnd()
     return balance
 }
@@ -363,7 +363,7 @@ function* watchDepositAsync(action) {
                   curStep: 2
                 })
             });
-        }else if(unit == 'fastx'){
+        }else if(unit == 'FEX'){
             yield fastx.approve(chainOptions.erc20ContractAddress, price, 0, { from: fastx.defaultAccount});
             fastx.deposit(normalizeAddress(chainOptions.erc20ContractAddress).toString("hex"), price, 0, { from: fastx.defaultAccount}).on('transactionHash', function (hash){
                 //在回调中无法直接yield put更新，所以使用channel的方式处理
@@ -404,9 +404,10 @@ function* watchWithdrawalAsync(action) {
         let useUtxo
         if(unit == 'ETH'){
             useUtxo = yield fastx.getOrNewEthUtxo(price, {from:fastx.defaultAccount})
-        }else if(unit == 'fastx'){
+            console.log({eth_utxo:useUtxo})
+        }else if(unit == 'FEX'){
             useUtxo = yield fastx.getOrNewFastxUtxo(price, {from:fastx.defaultAccount})
-            
+            console.log({fastx_utxo:useUtxo})
             // const utxos = yield getUTXOs();
             // for(const utxo of utxos){
             //     const [blknum, txindex, oindex, contractAddress, amount, tokenid] = utxo;

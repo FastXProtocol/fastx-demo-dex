@@ -32,7 +32,7 @@ export const retry = {
 
 export const tokensOptions = [
     { key: 'ETH', text: 'ETH', value: 'ETH' },
-    { key: 'fastx', text: 'fastx', value: 'fastx' },
+    { key: 'FEX', text: 'FEX', value: 'FEX' },
 ]
 
 export const network = {
