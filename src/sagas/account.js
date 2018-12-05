@@ -136,7 +136,7 @@ const getFastxBalance = async() => {
 
     let balance = {},ethBalance = 0,fastxBalance = 0;
     const eth = '0'.repeat(40);
-    const fastxToken = chainOptions.erc20ContractAddress.replace('0x','').toLocaleLowerCase();
+    const fastxToken = chainOptions.fexContractAddress.replace('0x','').toLocaleLowerCase();
     for(let value of balanceFT){
         const [_currency, _amount] = value;
         if(_currency == eth){
@@ -178,7 +178,7 @@ const getETHBalance = async() => {
         ethBalance = parseFloat(parseFloat(ethBalance).toFixed(4))
         balance['eth'] = ethBalance
 
-        let erc20Contract = fastx.getErc20Interface(chainOptions.erc20ContractAddress)
+        let erc20Contract = fastx.getErc20Interface(chainOptions.fexContractAddress)
         fastxWei = await erc20Contract.methods.balanceOf(fastx.defaultAccount).call();
         fastxBalance = await fastx.web3.utils.fromWei(fastxWei, 'ether')
         fastxBalance = parseFloat(parseFloat(fastxBalance).toFixed(4))
@@ -364,8 +364,8 @@ function* watchDepositAsync(action) {
                 })
             });
         }else if(unit == 'FEX'){
-            yield fastx.approve(chainOptions.erc20ContractAddress, price, 0, { from: fastx.defaultAccount});
-            fastx.deposit(normalizeAddress(chainOptions.erc20ContractAddress).toString("hex"), price, 0, { from: fastx.defaultAccount}).on('transactionHash', function (hash){
+            yield fastx.approve(chainOptions.fexContractAddress, price, 0, { from: fastx.defaultAccount});
+            fastx.deposit(normalizeAddress(chainOptions.fexContractAddress).toString("hex"), price, 0, { from: fastx.defaultAccount}).on('transactionHash', function (hash){
                 //在回调中无法直接yield put更新，所以使用channel的方式处理
                 depositChannel.put({
                   type: 'SET_CUR_STEP',
@@ -403,19 +403,11 @@ function* watchWithdrawalAsync(action) {
         let price = yield fastx.web3.utils.toWei((action.withdrawalPrice+''), 'ether');
         let useUtxo
         if(unit == 'ETH'){
-            useUtxo = yield fastx.getOrNewEthUtxo(price, {from:fastx.defaultAccount})
+            useUtxo = yield fastx.getOrNewUtxo(price, {from:fastx.defaultAccount})
             console.log({eth_utxo:useUtxo})
         }else if(unit == 'FEX'){
-            useUtxo = yield fastx.getOrNewFastxUtxo(price, {from:fastx.defaultAccount})
+            useUtxo = yield fastx.getOrNewUtxo(price, {from:fastx.defaultAccount,category: chainOptions.fexContractAddress})
             console.log({fastx_utxo:useUtxo})
-            // const utxos = yield getUTXOs();
-            // for(const utxo of utxos){
-            //     const [blknum, txindex, oindex, contractAddress, amount, tokenid] = utxo;
-            //     if (blknum % 1000 == 0 && normalizeAddress(contractAddress).toString("hex") == normalizeAddress(chainOptions.erc20ContractAddress).toString("hex")) {
-            //         console.log("UTXO", utxo);
-            //         useUtxo = utxo;
-            //     }
-            // }
         }
         const [blknum, txindex, oindex, contractAddress, amount, tokenid] = useUtxo;
         yield fastx.startExit(blknum, txindex, oindex, contractAddress, amount, tokenid, {from:fastx.defaultAccount});

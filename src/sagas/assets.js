@@ -140,7 +140,7 @@ const bidAd = async (category,tokenId,fillTx) => {
         curStep: 1
     })
 
-    let utxo = await fastx.getOrNewEthUtxo(fillTx.amount1, {from:fastx.defaultAccount})
+    let utxo = await fastx.getOrNewUtxo(fillTx.amount1, {from:fastx.defaultAccount})
     transactionChannel.put({
         type: 'SET_CUR_STEP',
         curStep: 2
@@ -246,7 +246,7 @@ function* watchCheckBlanceEnough(action) {
     })
 
     try{
-        yield fastx.getOrNewEthUtxo(action.amount, {from:fastx.defaultAccount})
+        yield fastx.getOrNewUtxo(action.amount, {from:fastx.defaultAccount})
     }catch(err) {
         console.error("CheckBlanceEnough:",err);
         yield put({

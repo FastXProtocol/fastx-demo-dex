@@ -23,7 +23,7 @@ class TokensSelector extends React.Component {
                   }
                 </div>
                 {
-                  ['fastx'].map((token, index) => {
+                  ['fex'].map((token, index) => {
                     return (
                       <div key={index} className='token' onClick={() => {
                         this.props.select(token)

@@ -61,7 +61,7 @@ const getFromUTXO = async(fromAmount) => {
 const logBalance = async () => {
     console.group('logBalance')
     console.log("\naddress: ", fastx.defaultAccount);
-    console.log("balance: ", await fastx.getEthBalance(fastx.defaultAccount));
+    console.log("ethBalance: ", await fastx.getTokenBalance(fastx.defaultAccount));
     let utxos = (await fastx.getAllUTXO(fastx.defaultAccount)).data.result;
     console.log('\n', utxos);
     console.groupEnd()
@@ -71,10 +71,10 @@ const transactionTx = async(action) => {
     console.group('transactionTx')
     const tAmount = parseFloat(await fastx.web3.utils.toWei((action.amount+''), 'ether'));
     console.log("tAmount", tAmount);
-    let psTx = await fastx.createExchangePartiallySignedTransaction('0x0',chainOptions.erc20ContractAddress,tAmount)
+    let psTx = await fastx.createExchangePartiallySignedTransaction('0x0',chainOptions.fexContractAddress,tAmount)
     if(psTx){
         psTx = psTx.data.result;
-        let fromUTXO = await fastx.getOrNewEthUtxo(tAmount, {from:fastx.defaultAccount});
+        let fromUTXO = await fastx.getOrNewUtxo(tAmount, {from:fastx.defaultAccount});
         if(!fromUTXO){
             alert("You don't have enough ETH in FastX");
             console.groupEnd()
@@ -104,7 +104,7 @@ const transactionTx = async(action) => {
 
 function* getExchangeRateAsync(action) {
     yield getFastx()
-    let rate = yield fastx.getExchangeRate('0x0',chainOptions.erc20ContractAddress,action.amount)
+    let rate = yield fastx.getExchangeRate('0x0',chainOptions.fexContractAddress,action.amount)
 
     yield put({
       type: 'EXCHANGE_RATE_RECEIVED',
@@ -113,19 +113,28 @@ function* getExchangeRateAsync(action) {
 }
 
 function* transactionAsync(action) {
+    console.group('saga_exchange_transactionAsync')
     yield getAccount()
-    let transaction = yield transactionTx(action);
-    yield put({
-        type: 'GET_BALANCE'
-    })
-    yield put({
-        type: 'TRANSACTION_RECEIVED',
-        transaction: transaction,
-    })
-    yield put({
-        type: 'TRANSACTION_STATUS_CHANGE',
-        status: false,
-    }) 
+    let transaction
+    try{
+        transaction = yield transactionTx(action)
+    }catch(err){
+        console.error(err)
+        alert(err)
+    }finally{
+        yield put({
+            type: 'GET_BALANCE'
+        })
+        yield put({
+            type: 'TRANSACTION_RECEIVED',
+            transaction: transaction,
+        })
+        yield put({
+            type: 'TRANSACTION_STATUS_CHANGE',
+            status: false,
+        })
+        console.groupEnd()
+    }
 }
 
 export default function * exchangeSaga (arg) {

@@ -50,7 +50,7 @@ function mapDispatchToProps(dispatch) {
             dispatch(exchangeActions.setSelectedSide(side, token))
         },    
         swapTokens: () => {
-            // dispatch(exchangeActions.swapTokens())
+            dispatch(exchangeActions.swapTokens())
         },
         setBuyAmount: (amount) => {
             dispatch(exchangeActions.setBuyAmount(amount))

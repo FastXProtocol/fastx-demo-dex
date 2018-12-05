@@ -14,7 +14,7 @@ const tokens = {
       symbol: "ETH",
       name: "Ether",
     },
-    fastx: {
+    fex: {
       icon: <FEX/>,
       symbol: "FEX",
       name: "FastX",

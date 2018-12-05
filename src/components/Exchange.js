@@ -32,10 +32,10 @@ export default class Exchange extends Component {
             }
             <Grid columns={2}>
               <Grid.Row>
-                <Grid.Column>
+                <Grid.Column style={{'zIndex':'100'}}>
                   <SetTrade {...this.props} />
                 </Grid.Column>
-                <Grid.Column>
+                <Grid.Column style={{'zIndex':'1'}}>
                   {transactionHtml}
                 </Grid.Column>
               </Grid.Row>

@@ -12,7 +12,7 @@ const TRANSACTION_STATUS_CHANGE = "TRANSACTION_STATUS_CHANGE"
 
 const initialState = {
     from: 'eth',
-    to: 'fastx',
+    to: 'fex',
     amountPay: 0,
     amountBuyInput: 0,
     amountPayInput: 0,
