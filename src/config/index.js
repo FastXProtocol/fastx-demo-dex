@@ -41,3 +41,16 @@ export const network = {
     'Ropsten Testnet': { rpc: 'https://ropsten.infura.io/GjiCzFxpQAUkPtDUpKEP', tx_explorer: 'https://ropsten.etherscan.io/tx/' },
     'Main Net': { rpc: 'https://mainnet.infura.io/GjiCzFxpQAUkPtDUpKEP', tx_explorer: 'https://etherscan.io/tx/' }
 }
+
+//去除eth
+export const tokenToAddressMap = {
+    'fex': '0x395B650707cAA0d300615bBa2901398DFf64CF7c'
+}
+
+//全小写
+export const contractToTokenMap = {
+    '0000000000000000000000000000000000000000': 'eth',
+    '395b650707caa0d300615bba2901398dff64cf7c': 'fex'
+}
+
+export const serverUrl = window.location.protocol+'//'+window.location.hostname+':3001/api/';

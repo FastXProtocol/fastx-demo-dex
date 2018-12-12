@@ -8,19 +8,6 @@ import TokenAmount from './TokenAmount';
 import TokensSelector from './TokensSelector';
 import './Exchange.css';
 
-const tokens = {
-    eth: {
-      icon: <Ether/>,
-      symbol: "ETH",
-      name: "Ether",
-    },
-    fex: {
-      icon: <FEX/>,
-      symbol: "FEX",
-      name: "FastX",
-    },
-}
-
 export default class SetTrade extends Component {
     constructor() {
         super()
@@ -55,6 +42,7 @@ export default class SetTrade extends Component {
     select = (selectedToken) => {
       const oppositeSide = this.props.selectedSide === 'from' ? 'to' : 'from';
       const tokenOnTheOppositeSide = this.props[oppositeSide];
+      this.props.changeRate(this.props)
       if (this.props[this.props.selectedSide] === selectedToken) {
           this.props.closeTokenSelector()
           return;
@@ -71,6 +59,15 @@ export default class SetTrade extends Component {
     }
 
     render() {
+        let tokens = []
+        for(let token of this.props.receivedTokens){
+          tokens[token.symbol.toLocaleLowerCase()] = {
+            icon: <FEX/>,
+            symbol: token.symbol,
+            name: token.title,
+          }
+        }
+
         return (
           <React.Fragment>
             {
@@ -98,12 +95,12 @@ export default class SetTrade extends Component {
                       this.props.errorInputSell === 'funds'
                         ?
                         <span
-                          className="label"> You don't have enough <strong>{tokens[this.props.from].name} </strong> in your Wallet</span>
+                          className="label"> You don't have enough <strong>{tokens[this.props.from]?tokens[this.props.from].name:''} </strong> in your Wallet</span>
                         :
                         this.props.errorInputSell === 'gasCost'
                           ? <span className="label"> You won't have enough ETH to pay for the gas!</span>
                           : <span className="label">
-                              {tokens[this.props.from].symbol}&nbsp;
+                              {tokens[this.props.from]?tokens[this.props.from].symbol:''}&nbsp;
                               Minimum Value: {this.props.errorInputSell.replace('minValue:', '')}
                             </span>
                     )
@@ -111,7 +108,7 @@ export default class SetTrade extends Component {
                   {
                     !this.props.errorOrders && !this.props.errorInputSell && this.props.errorInputBuy &&
                     <span className="label">
-                      {tokens[this.props.to].symbol}&nbsp;
+                      {tokens[this.props.to]?tokens[this.props.to].symbol:''}&nbsp;
                       Minimum Value: {this.props.errorInputBuy.replace('minValue:', '')}
                     </span>
                   }
@@ -129,7 +126,7 @@ export default class SetTrade extends Component {
                           </ReactTooltip>
                         </span>
                         <span  style={{lineHeight: "14px",  fontSize:"12px"}}> ~ <TokenAmount number={this.props.rate} decimal={2}
-                                    token={'ETH/FEX'}/>
+                                    token={this.props.rateToken}/>
                         </span>
                       </span>
                      
@@ -143,8 +140,8 @@ export default class SetTrade extends Component {
                     <div className="token" onClick={() => {
                       this.props.pickToken('from')
                     }}>
-                      <span className="token-icon">{tokens[this.props.from].icon}</span>
-                      <TokenAmount className="token-name" number={this.props.balances[this.props.from]} token={tokens[this.props.from].symbol}/>
+                      <span className="token-icon">{tokens[this.props.from]?tokens[this.props.from].icon:''}</span>
+                      <TokenAmount className="token-name" number={this.props.balances[this.props.from]} token={tokens[this.props.from]?tokens[this.props.from].symbol:''}/>
                     </div>
                     <div>
                     <input type="number"
@@ -153,7 +150,7 @@ export default class SetTrade extends Component {
                     </div>
                   </div>
                   <div className='separator'>
-                    <span className="swap-tokens" onClick={this.props.swapTokens}>
+                    <span className="swap-tokens" onClick={this.props.swapTokens.bind(this,this.props)}>
                       <SwapArrows/>
                     </span>
                   </div>
@@ -161,8 +158,8 @@ export default class SetTrade extends Component {
                     <div className="token" onClick={() => {
                       this.props.pickToken('to');
                     }}>
-                      <span className="token-icon">{tokens[this.props.to].icon}</span>
-                      <TokenAmount className="token-name" number={this.props.balances[this.props.to]} token={tokens[this.props.to].symbol}/>
+                      <span className="token-icon">{tokens[this.props.to]?tokens[this.props.to].icon:''}</span>
+                      <TokenAmount className="token-name" number={this.props.balances[this.props.to]} token={tokens[this.props.to]?tokens[this.props.to].symbol:''}/>
                     </div>
                     <div>
                       <input type="number"
@@ -177,7 +174,7 @@ export default class SetTrade extends Component {
                 ? <button type="button" value="Start transaction" className="start" disabled={true}>
                 <Spinner/>
                 </button>
-                :  <button type="button" value="Start transaction" className="start" onClick={this.props.nextStep.bind(this, this.props.amountBuyInput)}>
+                :  <button type="button" value="Start transaction" className="start" onClick={this.props.nextStep.bind(this, this.props.amountBuyInput, this.props)}>
                 START TRANSACTION
                 </button>
               } 

@@ -58,10 +58,13 @@ export const getExchangeRate = (amount) => {
     }
 }
 
-export const transaction = (amount) => {
+export const transaction = (amount,rate,contractAddress1,contractAddress2) => {
     return {
         type: "TRANSACTION",
-        amount
+        amount,
+        rate,
+        contractAddress1,
+        contractAddress2
     }
 }
 
@@ -78,3 +81,27 @@ export const transactionStausChange = (status) => {
         status
     }
 }
+
+export const setToekns = (tokens) => {
+    return {
+        type: "TOKENS_RECEIVED",
+        tokens
+    }
+}
+
+export const setTransactionPair = (tokens) => {
+    return {
+        type: "TRANSACTION_PAIR_RECEIVED",
+        tokens
+    }
+}
+
+export const changeRate = (rate,token1,token2) => {
+    return {
+        type: "EXCHANGE_RATE_RECEIVED",
+        rate,
+        token1,
+        token2
+    }
+}
+

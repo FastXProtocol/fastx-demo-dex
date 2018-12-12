@@ -71,23 +71,20 @@ const transactionTx = async(action) => {
     console.group('transactionTx')
     const tAmount = parseFloat(await fastx.web3.utils.toWei((action.amount+''), 'ether'));
     console.log("tAmount", tAmount);
-    let psTx = await fastx.createExchangePartiallySignedTransaction('0x0',chainOptions.fexContractAddress,tAmount)
-    if(psTx){
-        psTx = psTx.data.result;
-        let fromUTXO = await fastx.getOrNewUtxo(tAmount, {from:fastx.defaultAccount});
-        if(!fromUTXO){
-            alert("You don't have enough ETH in FastX");
-            console.groupEnd()
-            return [];
-            // await fastx.deposit("0x0", tAmount, 0, {from: fastx.defaultAccount});
-            // await delay(1000);
-            // fromUTXO = await getFromUTXO(tAmount);
-        }
-        console.log("fromUTXO", fromUTXO);
-        const [blknum, txindex, oindex, contractAddress, amount, tokenid] = fromUTXO;
-        logBalance()
-        await fastx.sendPsTransactionFill(psTx, blknum, txindex, oindex, fastx.defaultAccount, fastx.defaultAccount);
-        logBalance()
+    const offerPsTx = await fastx.makeSwapPsTransaction(
+        action.contractAddress2, tAmount*action.rate, 0,
+        action.contractAddress1, tAmount, 0);
+    console.log("offerPsTx", offerPsTx);
+    if(offerPsTx){
+        const fillUtxo = await fastx.getOrNewUtxo(tAmount, fastx.defaultAccount);
+        console.log("fillUtxo", fillUtxo);
+       
+        const [fillBlknum, fillTxindex, fillOindex, fillContractAddress, fillAmount, fillTokenid] = fillUtxo;
+        console.log((await fastx.sendPsTransactionFill(
+            offerPsTx,
+            fillBlknum, fillTxindex, fillOindex,
+            fastx.defaultAccount, fastx.defaultAccount)).data);
+
         let transaction = store.getState().exchange.transaction;
         transaction.push({
             eth: action.amount,
@@ -96,21 +93,21 @@ const transactionTx = async(action) => {
         console.groupEnd()
         return transaction
     }else{
-        console.error("no psTx")
+        console.error("no offerPsTx")
         console.groupEnd()
         return [];
     }
 }
 
-function* getExchangeRateAsync(action) {
-    yield getFastx()
-    let rate = yield fastx.getExchangeRate('0x0',chainOptions.fexContractAddress,action.amount)
+// function* getExchangeRateAsync(action) {
+//     yield getFastx()
+//     let rate = yield fastx.getExchangeRate('0x0',chainOptions.fexContractAddress,action.amount)
 
-    yield put({
-      type: 'EXCHANGE_RATE_RECEIVED',
-      rate: rate
-    })
-}
+//     yield put({
+//       type: 'EXCHANGE_RATE_RECEIVED',
+//       rate: rate
+//     })
+// }
 
 function* transactionAsync(action) {
     console.group('saga_exchange_transactionAsync')
@@ -139,6 +136,6 @@ function* transactionAsync(action) {
 
 export default function * exchangeSaga (arg) {
     store = arg;
-    yield takeLatest('GET_EXCHANGE_RATE', getExchangeRateAsync)
+    // yield takeLatest('GET_EXCHANGE_RATE', getExchangeRateAsync)
     yield takeLatest('TRANSACTION', transactionAsync)
 }

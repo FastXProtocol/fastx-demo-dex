@@ -3,6 +3,8 @@ import { connect } from 'react-redux';
 import {   
     Container,
 } from 'semantic-ui-react';
+import request from '../utils/request'
+import { serverUrl } from '../config'
 import { bindActionCreators } from 'redux';
 import { push } from 'react-router-redux';
 
@@ -11,13 +13,25 @@ import * as exchangeActions from '../actions/exchange'
 import * as accountActions from '../actions/account'
 
 class ExchangeContiner extends Component {
-  render() {
-    return (
-        <Container style={{ marginTop: '1em' }}>
-            <ExchangeCompontent {...this.props} />
-        </Container>
-    )
-  }
+    componentDidMount() {
+        request(serverUrl+'asset')
+        .then((res) => {
+            this.props.setToekns(res)
+        })
+
+        request(serverUrl+'transaction_pair')
+        .then((res) => {
+            this.props.setTransactionPair(res)
+        })
+    }
+
+    render() {
+        return (
+            <Container style={{ marginTop: '1em' }}>
+                <ExchangeCompontent {...this.props} />
+            </Container>
+        )
+    }
 }
 
 function mapStateToProps(state){
@@ -33,13 +47,22 @@ function mapStateToProps(state){
         step: state.exchange.step,
         trade: state.exchange.trade,
         rate: state.exchange.rate,
+        rateToken: state.exchange.rateToken,
         transaction: state.exchange.transaction,
-        isTrading: state.exchange.isTrading
+        isTrading: state.exchange.isTrading,
+        receivedTokens: state.exchange.receivedTokens,
+        transactionPair: state.exchange.transactionPair
     }
 }
 
 function mapDispatchToProps(dispatch) {
     return {
+        setToekns: (tokens) => {
+            dispatch(exchangeActions.setToekns(tokens))
+        },
+        setTransactionPair: (tokens) => {
+            dispatch(exchangeActions.setTransactionPair(tokens))
+        },
         pickToken: (tokenType) => {
             dispatch(exchangeActions.pickToken(tokenType))
         },
@@ -52,16 +75,23 @@ function mapDispatchToProps(dispatch) {
         swapTokens: () => {
             dispatch(exchangeActions.swapTokens())
         },
+        changeRate: (props) => {
+            for(let v of props.transactionPair){
+                if(v.sell.toLocaleLowerCase() == props.from && v.buy.toLocaleLowerCase() == props.to){
+                    dispatch(exchangeActions.changeRate(v.rate/100, v.sell, v.buy))
+                }
+            }
+        },
         setBuyAmount: (amount) => {
             dispatch(exchangeActions.setBuyAmount(amount))
         },
         setPayAmount: (amount) => {
             dispatch(exchangeActions.setPayAmount(amount))
         },
-        nextStep: (amount) => {
+        nextStep: (amount,props) => {
             //dispatch(exchangeActions.nextStep())
             dispatch(exchangeActions.transactionStausChange(true))
-            dispatch(exchangeActions.transaction(amount))
+            dispatch(exchangeActions.transaction(amount,props.rate,'0000000000000000000000000000000000000000','0x395B650707cAA0d300615bBa2901398DFf64CF7c'))
         },
         reset: () => {
             dispatch(exchangeActions.reset())

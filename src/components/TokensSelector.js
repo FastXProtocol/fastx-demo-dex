@@ -4,6 +4,9 @@ import Spinner from './Spinner';
 
 class TokensSelector extends React.Component {
   render() {
+    let minorTokens = Object.keys(this.props.tokens)
+    minorTokens.splice(minorTokens.indexOf('eth'),1)
+
     return (
       <div className="frame">
         <div className="token-selector">
@@ -23,7 +26,7 @@ class TokensSelector extends React.Component {
                   }
                 </div>
                 {
-                  ['fex'].map((token, index) => {
+                  minorTokens.map((token, index) => {
                     return (
                       <div key={index} className='token' onClick={() => {
                         this.props.select(token)
