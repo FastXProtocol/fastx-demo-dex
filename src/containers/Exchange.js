@@ -14,14 +14,18 @@ import * as accountActions from '../actions/account'
 
 class ExchangeContiner extends Component {
     componentDidMount() {
+        let props = this.props
         request(serverUrl+'asset')
         .then((res) => {
-            this.props.setToekns(res)
-        })
-
-        request(serverUrl+'transaction_pair')
-        .then((res) => {
-            this.props.setTransactionPair(res)
+            props.setToekns(res)
+            console.log('tokenList:',res)
+            props.setSelectedSide('from', res[0]?res[0].symbol.toLocaleLowerCase():'eth')
+            props.setSelectedSide('to', res[1]?res[1].symbol.toLocaleLowerCase():'eth')
+            request(serverUrl+'transaction_pair')
+            .then((pairRes) => {
+                props.setTransactionPair(pairRes)
+                props.getExchangeRate()
+            })
         })
     }
 
@@ -75,12 +79,18 @@ function mapDispatchToProps(dispatch) {
         swapTokens: () => {
             dispatch(exchangeActions.swapTokens())
         },
-        changeRate: (props) => {
-            for(let v of props.transactionPair){
-                if(v.sell.toLocaleLowerCase() == props.from && v.buy.toLocaleLowerCase() == props.to){
-                    dispatch(exchangeActions.changeRate(v.rate/100, v.sell, v.buy))
-                }
-            }
+        changeRate: (props, transactionPair) => {
+            // let pairs = transactionPair || props.transactionPair
+            // dispatch(exchangeActions.changeRate(null, 'NA', 'NA'))
+            // // props.rate = null
+            // // props.rateToken = 'NA/NA'
+            // setTimeout(function(){
+            //     for(let v of pairs){
+            //         if(v.sell.toLocaleLowerCase() == props.from && v.buy.toLocaleLowerCase() == props.to){
+            //             dispatch(exchangeActions.changeRate(v.rate/100, v.sell, v.buy))
+            //         }
+            //     }
+            // },1000)
         },
         setBuyAmount: (amount) => {
             dispatch(exchangeActions.setBuyAmount(amount))
@@ -88,16 +98,16 @@ function mapDispatchToProps(dispatch) {
         setPayAmount: (amount) => {
             dispatch(exchangeActions.setPayAmount(amount))
         },
-        nextStep: (amount,props) => {
+        nextStep: (amount) => {
             //dispatch(exchangeActions.nextStep())
             dispatch(exchangeActions.transactionStausChange(true))
-            dispatch(exchangeActions.transaction(amount,props.rate,'0000000000000000000000000000000000000000','0x395B650707cAA0d300615bBa2901398DFf64CF7c'))
+            dispatch(exchangeActions.transaction(amount))
         },
         reset: () => {
             dispatch(exchangeActions.reset())
         },
-        getExchangeRate: (amount) => {
-            dispatch(exchangeActions.getExchangeRate(amount))
+        getExchangeRate: () => {
+            dispatch(exchangeActions.getExchangeRate())
             dispatch(accountActions.getBalance())
         },
         transactionChange: (transaction) => {

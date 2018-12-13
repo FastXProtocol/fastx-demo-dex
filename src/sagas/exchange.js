@@ -1,8 +1,9 @@
 import { put, takeLatest, take} from 'redux-saga/effects';
 import { delay, channel} from 'redux-saga';
-import { chainOptions} from '../config';
+import { chainOptions, serverUrl} from '../config';
 import moment from 'moment';
 import axios from 'axios';
+import request from '../utils/request'
 
 import {
     setFastx
@@ -71,9 +72,27 @@ const transactionTx = async(action) => {
     console.group('transactionTx')
     const tAmount = parseFloat(await fastx.web3.utils.toWei((action.amount+''), 'ether'));
     console.log("tAmount", tAmount);
-    const offerPsTx = await fastx.makeSwapPsTransaction(
-        action.contractAddress2, tAmount*action.rate, 0,
-        action.contractAddress1, tAmount, 0);
+    let props = store.getState().exchange
+    let contractAddress1,contractAddress2
+    for(let token of props.receivedTokens){
+        if(props.from == token.symbol.toLocaleLowerCase()) 
+            contractAddress1 = token.contractAddress
+        if(props.to == token.symbol.toLocaleLowerCase()) 
+            contractAddress2 = token.contractAddress
+    }
+    let data = {
+        amount: tAmount,
+        contractAddress1,
+        contractAddress2
+    }
+
+    let offerPsTx = await request(serverUrl+'offerPsTx', {
+        method: 'POST',
+        body: JSON.stringify(data), // data can be `string` or {object}!
+        headers: new Headers({
+          'Content-Type': 'application/json'
+        })
+    })
     console.log("offerPsTx", offerPsTx);
     if(offerPsTx){
         const fillUtxo = await fastx.getOrNewUtxo(tAmount, fastx.defaultAccount);
@@ -87,8 +106,8 @@ const transactionTx = async(action) => {
 
         let transaction = store.getState().exchange.transaction;
         transaction.push({
-            eth: action.amount,
-            fastx: action.amount*10
+            [props.from]: action.amount,
+            [props.to]: action.amount*props.rate/100
         })
         console.groupEnd()
         return transaction
@@ -99,15 +118,26 @@ const transactionTx = async(action) => {
     }
 }
 
-// function* getExchangeRateAsync(action) {
-//     yield getFastx()
-//     let rate = yield fastx.getExchangeRate('0x0',chainOptions.fexContractAddress,action.amount)
-
-//     yield put({
-//       type: 'EXCHANGE_RATE_RECEIVED',
-//       rate: rate
-//     })
-// }
+function* getExchangeRateAsync(action) {
+    let props = store.getState().exchange
+    yield put({
+      type: 'EXCHANGE_RATE_RECEIVED',
+      rate: null,
+      token1: 'NA',
+      token2: 'NA'
+    })
+    console.log(props)
+    for(let v of props.transactionPair){
+        if(v.sell.toLocaleLowerCase() == props.from && v.buy.toLocaleLowerCase() == props.to){
+            yield put({
+                type: 'EXCHANGE_RATE_RECEIVED',
+                rate: v.rate/100,
+                token1: v.sell,
+                token2: v.buy
+            })
+        }
+    }
+}
 
 function* transactionAsync(action) {
     console.group('saga_exchange_transactionAsync')
@@ -136,6 +166,8 @@ function* transactionAsync(action) {
 
 export default function * exchangeSaga (arg) {
     store = arg;
-    // yield takeLatest('GET_EXCHANGE_RATE', getExchangeRateAsync)
+    yield takeLatest('GET_EXCHANGE_RATE', getExchangeRateAsync)
+    yield takeLatest('SWAP_TOKENS', getExchangeRateAsync)
+    yield takeLatest('SET_SELECTED_SIDE', getExchangeRateAsync)
     yield takeLatest('TRANSACTION', transactionAsync)
 }

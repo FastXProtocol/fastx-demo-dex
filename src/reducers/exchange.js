@@ -13,8 +13,8 @@ const TOKENS_RECEIVED = "TOKENS_RECEIVED"
 const TRANSACTION_PAIR_RECEIVED = "TRANSACTION_PAIR_RECEIVED"
 
 const initialState = {
-    from: 'eth',
-    to: 'fex',
+    from: '',
+    to: '',
     amountPay: 0,
     amountBuyInput: 0,
     amountPayInput: 0,

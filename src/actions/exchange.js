@@ -51,10 +51,9 @@ export const reset = () => {
     }
 }
 
-export const getExchangeRate = (amount) => {
+export const getExchangeRate = () => {
     return {
-        type: "GET_EXCHANGE_RATE",
-        amount
+        type: "GET_EXCHANGE_RATE"
     }
 }
 

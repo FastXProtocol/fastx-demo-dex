@@ -14,7 +14,7 @@ export default class SetTrade extends Component {
     } 
 
     componentWillMount() {
-      this.props.getExchangeRate(1)
+      //this.props.getExchangeRate(1)
     }
 
     calculateBuyAmount = (e) => {   
@@ -42,7 +42,7 @@ export default class SetTrade extends Component {
     select = (selectedToken) => {
       const oppositeSide = this.props.selectedSide === 'from' ? 'to' : 'from';
       const tokenOnTheOppositeSide = this.props[oppositeSide];
-      this.props.changeRate(this.props)
+      
       if (this.props[this.props.selectedSide] === selectedToken) {
           this.props.closeTokenSelector()
           return;
@@ -174,7 +174,7 @@ export default class SetTrade extends Component {
                 ? <button type="button" value="Start transaction" className="start" disabled={true}>
                 <Spinner/>
                 </button>
-                :  <button type="button" value="Start transaction" className="start" onClick={this.props.nextStep.bind(this, this.props.amountBuyInput, this.props)}>
+                :  <button type="button" value="Start transaction" className="start" onClick={this.props.nextStep.bind(this, this.props.amountBuyInput)}>
                 START TRANSACTION
                 </button>
               } 
