@@ -95,7 +95,7 @@ const transactionTx = async(action) => {
     })
     console.log("offerPsTx", offerPsTx);
     if(offerPsTx){
-        const fillUtxo = await fastx.getOrNewUtxo(tAmount, fastx.defaultAccount);
+        const fillUtxo = await fastx.getOrNewUtxo(tAmount, contractAddress1);
         console.log("fillUtxo", fillUtxo);
        
         const [fillBlknum, fillTxindex, fillOindex, fillContractAddress, fillAmount, fillTokenid] = fillUtxo;
