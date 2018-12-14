@@ -22,7 +22,10 @@ class TokensSelector extends React.Component {
                     (this.props.balances.eth >=0 )
                       ? <TokenAmount className="token-name" number={this.props.balances.eth.valueOf()}
                                       token={"ETH"}/>
-                      : <Spinner/>
+                      : 
+                      // <Spinner/>
+                      <TokenAmount className="token-name" number={0}
+                                      token={"ETH"}/>
                   }
                 </div>
                 {
@@ -36,7 +39,10 @@ class TokensSelector extends React.Component {
                           (this.props.balances[token] >=0 )
                             ? <TokenAmount className="token-name" number={this.props.balances[token].valueOf()}
                                             token={token.toUpperCase()}/>
-                            : <Spinner/>
+                            : 
+                            // <Spinner/>
+                            <TokenAmount className="token-name" number={0}
+                                            token={token.toUpperCase()}/>
                         }
                       </div>
                     )
