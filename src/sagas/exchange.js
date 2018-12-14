@@ -80,6 +80,7 @@ const transactionTx = async(action) => {
         if(props.to == token.symbol.toLocaleLowerCase()) 
             contractAddress2 = token.contractAddress
     }
+
     let data = {
         amount: tAmount,
         contractAddress1,
@@ -95,22 +96,29 @@ const transactionTx = async(action) => {
     })
     console.log("offerPsTx", offerPsTx);
     if(offerPsTx){
-        const fillUtxo = await fastx.getOrNewUtxo(tAmount, contractAddress1);
-        console.log("fillUtxo", fillUtxo);
-       
-        const [fillBlknum, fillTxindex, fillOindex, fillContractAddress, fillAmount, fillTokenid] = fillUtxo;
-        console.log((await fastx.sendPsTransactionFill(
-            offerPsTx,
-            fillBlknum, fillTxindex, fillOindex,
-            fastx.defaultAccount, fastx.defaultAccount)).data);
-
         let transaction = store.getState().exchange.transaction;
-        transaction.push({
-            [props.from]: action.amount,
-            [props.to]: action.amount*props.rate/100
-        })
-        console.groupEnd()
-        return transaction
+        try{
+            const fillUtxo = await fastx.getOrNewUtxo(tAmount, contractAddress1);
+            console.log("fillUtxo", fillUtxo);
+           
+            const [fillBlknum, fillTxindex, fillOindex, fillContractAddress, fillAmount, fillTokenid] = fillUtxo;
+            console.log('...')
+            const result = (await fastx.sendPsTransactionFill(
+                offerPsTx,
+                fillBlknum, fillTxindex, fillOindex,
+                fastx.defaultAccount, fastx.defaultAccount)).data
+            console.log(result);
+
+            transaction.push({
+                'spend':[props.from, action.amount],
+                'bought':[props.to,action.amount*props.rate]  
+            })
+        }catch(err){
+            console.error(err)
+        }finally{
+            console.groupEnd()
+            return transaction
+        }  
     }else{
         console.error("no offerPsTx")
         console.groupEnd()
