@@ -108,11 +108,14 @@ const transactionTx = async(action) => {
                 fillBlknum, fillTxindex, fillOindex,
                 fastx.defaultAccount, fastx.defaultAccount)).data
             console.log(result);
-
-            transaction.push({
-                'spend':[props.from, action.amount],
-                'bought':[props.to,action.amount*props.rate]  
-            })
+            if(result.error){
+                alert(result.error.data.message)
+            }else{
+                transaction.push({
+                    'spend':[props.from, action.amount],
+                    'bought':[props.to,action.amount*props.rate]  
+                })
+            } 
         }catch(err){
             console.error(err)
         }finally{

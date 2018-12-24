@@ -18,8 +18,8 @@ if (process.env.ENV.toLowerCase() === "local") {
     chainOptions = {
         ...chainOptions,
         gethRpc: "http://localhost:8545",
-        fastXRpc: "https://fastx-rinkeby.msan.cn/jsonrpc",
-        rootChainAddress: "0xffc5DE2513F5F256dB660CDd566D6C54fBa90405",
+        fastXRpc: "http://localhost:8546/jsonrpc",
+        rootChainAddress: "0x15AB8DFbb99D72423eb618591836689a5E87dC7a",
     }
 
     chainCategory = "0x952CE607bD9ab82e920510b2375cbaD234d28c8F"
