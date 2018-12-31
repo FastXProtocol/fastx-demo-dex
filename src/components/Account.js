@@ -22,6 +22,7 @@ export default class Account extends Component {
     componentDidMount() {
         this.props.getBalance();
         this.props.getReviewAssets();
+        tokensOptions = [];
         for(let v of this.props.receivedTokens){
             tokensOptions.push({
                 key: v.symbol, text: v.symbol, value: v.symbol

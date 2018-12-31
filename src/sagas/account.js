@@ -421,9 +421,9 @@ function* watchWithdrawalAsync(action) {
         if(unit == 'ETH'){
             useUtxo = yield fastx.getOrNewUtxo(price, {from:fastx.defaultAccount})
             console.log({eth_utxo:useUtxo})
-        }else if(unit == 'FEX'){
+        }else{
             let receivedTokens = store.getState().exchange.receivedTokens;
-            let contractAddress = receivedTokens[unit.toLocaleLowerCase()]
+            let contractAddress
             for(let v of receivedTokens){
                 if(v.symbol.toLocaleLowerCase() == unit.toLocaleLowerCase()){
                     contractAddress = v.contractAddress
@@ -433,6 +433,7 @@ function* watchWithdrawalAsync(action) {
             console.log({fastx_utxo:useUtxo})
         }
         const [blknum, txindex, oindex, contractAddress, amount, tokenid] = useUtxo;
+        yield delay(4000);
         yield fastx.startExit(blknum, txindex, oindex, contractAddress, amount, tokenid, {from:fastx.defaultAccount});
     } catch (e) {
         console.error(e)
