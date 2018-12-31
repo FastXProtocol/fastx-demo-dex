@@ -1,6 +1,6 @@
 import { put, takeLatest, take} from 'redux-saga/effects';
 import { delay, channel} from 'redux-saga';
-import { chainOptions, retry, chainCategory, tokenToAddressMap, contractToTokenMap} from '../config';
+import { chainOptions, retry, chainCategory} from '../config';
 import moment from 'moment';
 import axios from 'axios';
 
@@ -184,12 +184,13 @@ const getETHBalance = async() => {
         ethBalance = await fastx.web3.utils.fromWei(wei, 'ether')
         ethBalance = parseFloat(parseFloat(ethBalance).toFixed(4))
         balance['eth'] = ethBalance
-        for(let i in tokenToAddressMap){
-            let erc20Contract = fastx.getErc20Interface(tokenToAddressMap[i])
+        let receivedTokens = store.getState().exchange.receivedTokens;
+        for(let v of receivedTokens){
+            let erc20Contract = fastx.getErc20Interface(v.contractAddress)
             fastxWei = await erc20Contract.methods.balanceOf(fastx.defaultAccount).call();
             fastxBalance = await fastx.web3.utils.fromWei(fastxWei, 'ether')
             fastxBalance = parseFloat(parseFloat(fastxBalance).toFixed(4))
-            balance[i] = fastxBalance
+            balance[v.symbol] = fastxBalance
         }
     }catch(err){
         console.error(err);
@@ -372,7 +373,13 @@ function* watchDepositAsync(action) {
                 })
             });
         }else{
-            let contractAddress = tokenToAddressMap[unit.toLocaleLowerCase()]
+            let receivedTokens = store.getState().exchange.receivedTokens;
+            let contractAddress = receivedTokens[unit.toLocaleLowerCase()]
+            for(let v of receivedTokens){
+                if(v.symbol.toLocaleLowerCase() == unit.toLocaleLowerCase()){
+                    contractAddress = v.contractAddress
+                }
+            }
             yield fastx.approve(contractAddress, price, 0, { from: fastx.defaultAccount});
             fastx.deposit(normalizeAddress(contractAddress).toString("hex"), price, 0, { from: fastx.defaultAccount}).on('transactionHash', function (hash){
                 //在回调中无法直接yield put更新，所以使用channel的方式处理
@@ -415,7 +422,13 @@ function* watchWithdrawalAsync(action) {
             useUtxo = yield fastx.getOrNewUtxo(price, {from:fastx.defaultAccount})
             console.log({eth_utxo:useUtxo})
         }else if(unit == 'FEX'){
-            let contractAddress = tokenToAddressMap[unit.toLocaleLowerCase()]
+            let receivedTokens = store.getState().exchange.receivedTokens;
+            let contractAddress = receivedTokens[unit.toLocaleLowerCase()]
+            for(let v of receivedTokens){
+                if(v.symbol.toLocaleLowerCase() == unit.toLocaleLowerCase()){
+                    contractAddress = v.contractAddress
+                }
+            }
             useUtxo = yield fastx.getOrNewUtxo(price, {from:fastx.defaultAccount,category: contractAddress})
             console.log({fastx_utxo:useUtxo})
         }
