@@ -3,14 +3,13 @@ export let chainOptions = {
 }
 
 export let chainCategory = ""
-
-if (process.env.ENV.toLowerCase() === "local") {
-    chainOptions = {
+let ENV = "rinkeby"
+if (ENV === "local") {
+	chainOptions = {
         ...chainOptions,
         gethRpc: "http://localhost:8545",
         fastXRpc: "http://localhost:8546/jsonrpc",
         rootChainAddress: "0xA3B2a1804203b75b494028966C0f62e677447A39",
-        fexContractAddress: "0x395B650707cAA0d300615bBa2901398DFf64CF7c"
     }
 
     chainCategory = "0xd641205E8F36A858c5867945782C917E3F63d1e8"
@@ -18,7 +17,7 @@ if (process.env.ENV.toLowerCase() === "local") {
     chainOptions = {
         ...chainOptions,
         gethRpc: "http://localhost:8545",
-        fastXRpc: "http://localhost:8546/jsonrpc",
+        fastXRpc: "http://dev.msan.cn:8546/jsonrpc",
         rootChainAddress: "0x15AB8DFbb99D72423eb618591836689a5E87dC7a",
     }
 

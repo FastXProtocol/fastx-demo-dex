@@ -135,10 +135,23 @@ const getFastxBalance = async() => {
     }
 
     let balance = {},ethBalance = 0,fastxBalance = 0;
-
+    let tokens = store.getState().exchange.receivedTokens;
     for(let value of balanceFT){
         const [_currency, _amount] = value;
-        let token = contractToTokenMap[_currency]
+        let currency = _currency
+        let token
+        if(currency == "0000000000000000000000000000000000000000"){
+            currency = '0x0';
+        }else{
+            currency = '0x'+currency;
+        }
+
+        for(let value of tokens){
+            if(value.contractAddress == currency){
+                token = tokens[currency]
+            }
+        }
+         
         if(token){
             balance[token] = await fastx.web3.utils.fromWei((_amount+''), 'ether');
         }
