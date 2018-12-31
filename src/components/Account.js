@@ -15,12 +15,19 @@ import {
 import Asset from '../components/Asset';
 import '../components/Card.css';
 import '../components/Label.css';
-import { tokensOptions } from '../config';
+// import { tokensOptions } from '../config';
 
+let tokensOptions = [];
 export default class Account extends Component {
     componentDidMount() {
         this.props.getBalance();
         this.props.getReviewAssets();
+        for(let v of this.props.receivedTokens){
+            tokensOptions.push({
+                key: v.symbol, text: v.symbol, value: v.symbol
+            })
+        }
+         
     }
 
     render() {

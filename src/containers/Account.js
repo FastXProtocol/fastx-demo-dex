@@ -52,6 +52,7 @@ function mapStateToProps(state){
         isLoading: state.assets.isLoading,
         currency: state.account.currency,
         unit: state.account.unit,
+        receivedTokens: state.exchange.receivedTokens,
         userReviewAssets: state.reviewAssets.userReviewAssets
     }
 }

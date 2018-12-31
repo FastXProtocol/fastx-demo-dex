@@ -29,10 +29,10 @@ export const retry = {
 	time: 1000
 }
 
-export const tokensOptions = [
-    { key: 'ETH', text: 'ETH', value: 'ETH' },
-    { key: 'FEX', text: 'FEX', value: 'FEX' },
-]
+// export const tokensOptions = [
+//     { key: 'ETH', text: 'ETH', value: 'ETH' },
+//     { key: 'FEX', text: 'FEX', value: 'FEX' },
+// ]
 
 export const network = {
     'Offline': { rpc: 'offline', tx_explorer: null },
