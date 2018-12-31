@@ -135,7 +135,7 @@ const getFastxBalance = async() => {
     }
 
     let balance = {},ethBalance = 0,fastxBalance = 0;
-    let tokens = store.getState().exchange.receivedTokens;
+    let receivedTokens = store.getState().exchange.receivedTokens;
     for(let value of balanceFT){
         const [_currency, _amount] = value;
         let currency = _currency
@@ -146,9 +146,9 @@ const getFastxBalance = async() => {
             currency = '0x'+currency;
         }
 
-        for(let value of tokens){
-            if(value.contractAddress == currency){
-                token = tokens[currency]
+        for(let v of receivedTokens){
+            if(v.contractAddress.toLocaleLowerCase() == currency){
+                token = v.symbol
             }
         }
          

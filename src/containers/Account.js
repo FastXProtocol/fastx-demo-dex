@@ -1,15 +1,40 @@
+import React, { Component } from 'react';
 import { connect } from 'react-redux';
+import {   
+    Container,
+} from 'semantic-ui-react';
 import { bindActionCreators } from 'redux';
 import { push } from 'react-router-redux';
 import moment from 'moment';
+import request from '../utils/request'
+import { serverUrl } from '../config'
 import Account from '../components/Account';
 import '../components/Card.css';
 import * as accountActions from '../actions/account';
 import * as assetsActions from '../actions/assets';
+import * as exchangeActions from '../actions/exchange';
 import '../components/Label.css';
 
 const getDays = (date) => {
     return moment(date).diff(moment(), 'days') + 1;
+}
+
+class AccountContiner extends Component {
+    componentDidMount() {
+        let props = this.props
+        request(serverUrl+'asset')
+        .then((res) => {
+            props.setToekns(res)
+        })
+    }
+
+    render() {
+        return (
+            <Container style={{ marginTop: '1em' }}>
+                <Account {...this.props} />
+            </Container>
+        )
+    }
 }
 
 function mapStateToProps(state){
@@ -33,6 +58,9 @@ function mapStateToProps(state){
 
 function mapDispatchToProps(dispatch) {
     return {
+        setToekns: (tokens) => {
+            dispatch(exchangeActions.setToekns(tokens))
+        },
         goto: (url,currency) => {
             if(currency && currency!=='FastX'){
                 dispatch(push(url+'?currency='+currency));
@@ -68,4 +96,4 @@ function mapDispatchToProps(dispatch) {
 export default connect(
     mapStateToProps,
     mapDispatchToProps
-)(Account)
+)(AccountContiner)
