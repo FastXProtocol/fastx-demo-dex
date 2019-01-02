@@ -18,8 +18,13 @@ const SWITCH_UNIT = 'SWITCH_UNIT';
 
 const initialState = {
   balance: {
-    eth: 0,
-    fex: 0,
+    eth: 0
+  },
+  fastxBalance: {
+    eth: 0
+  },
+  ethBalance: {
+    eth: 0
   },
   ownerAddress: '',
   end: moment().add(1,'days').format("YYYY-MM-DD"),
@@ -44,7 +49,9 @@ export default function account(state = initialState, action = {}) {
     case BALANCE_RECEIVED:
       return {
         ...state,
-        balance: action.balance
+        balance: action.balance,
+        fastxBalance: action.fastxBalance?action.fastxBalance:state.fastxBalance,
+        ethBalance: action.ethBalance?action.ethBalance:state.ethBalance
       };
     case GET_ACCOUNT:
       return {

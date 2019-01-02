@@ -42,7 +42,7 @@ function mapStateToProps(state){
     return {
         from: state.exchange.from,
         to: state.exchange.to,
-        balances: state.account.balance,
+        balances: state.account.fastxBalance,
         amountPay: state.exchange.amountPay,
         amountBuyInput: state.exchange.amountBuyInput,
         amountPayInput: state.exchange.amountPayInput,

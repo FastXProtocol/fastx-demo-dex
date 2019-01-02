@@ -153,7 +153,7 @@ const getFastxBalance = async() => {
         }
          
         if(token){
-            balance[token] = await fastx.web3.utils.fromWei((_amount+''), 'ether');
+            balance[token.toLocaleLowerCase()] = await fastx.web3.utils.fromWei((_amount+''), 'ether');
         }
     }
 
@@ -237,19 +237,23 @@ function* getBalanceAsync() {
     let balance;
     yield getAccountAsync();
 
+    let params = {
+        type: 'BALANCE_RECEIVED'
+    }
     switch(currency){
         case 'Ethereum':
             balance = yield getETHBalance();
+            params['balance'] = balance;
+            params['ethBalance'] = balance;
             break;
         case 'FastX':
         default:
             balance = yield getFastxBalance();
+            params['balance'] = balance;
+            params['fastxBalance'] = balance;
     }
 
-    yield put({
-      type: 'BALANCE_RECEIVED',
-      balance: balance
-    })
+    yield put(params)
 }
 
 function* getAssetsAsync() {

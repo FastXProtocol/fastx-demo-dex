@@ -102,7 +102,7 @@ const transactionTx = async(action) => {
             console.log("fillUtxo", fillUtxo);
            
             const [fillBlknum, fillTxindex, fillOindex, fillContractAddress, fillAmount, fillTokenid] = fillUtxo;
-            console.log('...')
+
             const result = (await fastx.sendPsTransactionFill(
                 offerPsTx,
                 fillBlknum, fillTxindex, fillOindex,
@@ -137,7 +137,7 @@ function* getExchangeRateAsync(action) {
       token1: 'NA',
       token2: 'NA'
     })
-    console.log(props)
+
     for(let v of props.transactionPair){
         if(v.sell.toLocaleLowerCase() == props.from && v.buy.toLocaleLowerCase() == props.to){
             yield put({
