@@ -136,25 +136,23 @@ const getFastxBalance = async() => {
 
     let balance = {},ethBalance = 0,fastxBalance = 0;
     let receivedTokens = store.getState().exchange.receivedTokens;
-    for(let value of balanceFT){
-        const [_currency, _amount] = value;
-        let currency = _currency
-        let token
-        if(currency == "0000000000000000000000000000000000000000"){
-            currency = '0x0';
-        }else{
-            currency = '0x'+currency;
-        }
 
-        for(let v of receivedTokens){
-            if(v.contractAddress.toLocaleLowerCase() == currency){
-                token = v.symbol
+    for(let v of receivedTokens){
+        let currency, token = v.symbol, amount = 0;
+        for(let value of balanceFT){
+            const [_currency, _amount] = value;
+            currency = _currency
+            if(currency == "0000000000000000000000000000000000000000"){
+                currency = '0x0';
+            }else{
+                currency = '0x'+currency;
             }
+    
+            if(v.contractAddress.toLocaleLowerCase() == currency){
+                amount = _amount
+            }  
         }
-         
-        if(token){
-            balance[token.toLocaleLowerCase()] = await fastx.web3.utils.fromWei((_amount+''), 'ether');
-        }
+        balance[token.toLocaleLowerCase()] = await fastx.web3.utils.fromWei((amount+''), 'ether');
     }
 
     console.groupEnd()
@@ -186,11 +184,13 @@ const getETHBalance = async() => {
         balance['eth'] = ethBalance
         let receivedTokens = store.getState().exchange.receivedTokens;
         for(let v of receivedTokens){
-            let erc20Contract = fastx.getErc20Interface(v.contractAddress)
-            fastxWei = await erc20Contract.methods.balanceOf(fastx.defaultAccount).call();
-            fastxBalance = await fastx.web3.utils.fromWei(fastxWei, 'ether')
-            fastxBalance = parseFloat(parseFloat(fastxBalance).toFixed(4))
-            balance[v.symbol] = fastxBalance
+            if(v.contractAddress != '0x0'){
+                let erc20Contract = fastx.getErc20Interface(v.contractAddress)
+                fastxWei = await erc20Contract.methods.balanceOf(fastx.defaultAccount).call();
+                fastxBalance = await fastx.web3.utils.fromWei(fastxWei, 'ether')
+                fastxBalance = parseFloat(parseFloat(fastxBalance).toFixed(4))
+                balance[v.symbol.toLocaleLowerCase()] = fastxBalance
+            } 
         }
     }catch(err){
         console.error(err);
