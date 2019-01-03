@@ -145,7 +145,7 @@ export default class SetTrade extends Component {
                     </div>
                     <div>
                     <input type="number"
-                           value={this.props.amountBuyInput || ''}
+                           value={this.props.amountBuyInput}
                            onChange={(e) => this.calculateBuyAmount(e)} placeholder="deposit amount"/>
                     </div>
                   </div>
@@ -163,7 +163,7 @@ export default class SetTrade extends Component {
                     </div>
                     <div>
                       <input type="number"
-                            value={this.props.amountPayInput || ''}
+                            value={this.props.amountPayInput}
                             onChange={(e) => this.calculatePayAmount(e)} placeholder="receive amount"/>
                     </div>
                   </div>

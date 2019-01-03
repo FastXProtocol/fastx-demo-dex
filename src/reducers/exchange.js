@@ -16,8 +16,8 @@ const initialState = {
     from: '',
     to: '',
     amountPay: 0,
-    amountBuyInput: 0,
-    amountPayInput: 0,
+    amountBuyInput: null,
+    amountPayInput: null,
     selectedSide: null,
     shouldDisplayTokenSelector: false,
     trade: {
@@ -50,16 +50,16 @@ export default function exchange(state = initialState, action = {}) {
       return {
         ...state,
         [action.side]: action.token,
-        amountBuyInput: 0,
-        amountPayInput: 0,
+        amountBuyInput: null,
+        amountPayInput: null,
       }
     case SWAP_TOKENS:
       return {
           ...state,
           from: state.to, 
           to: state.from,
-          amountBuyInput: 0,
-          amountPayInput: 0,
+          amountBuyInput: null,
+          amountPayInput: null,
       }
     case SET_BUY_AMOUNT:
        return {
