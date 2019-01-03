@@ -433,7 +433,7 @@ function* watchWithdrawalAsync(action) {
                     contractAddress = v.contractAddress
                 }
             }
-            useUtxo = yield fastx.getOrNewUtxo(price, {from:fastx.defaultAccount,category: contractAddress})
+            useUtxo = yield fastx.getOrNewUtxo(price, contractAddress, {from:fastx.defaultAccount})
             console.log({fastx_utxo:useUtxo})
         }
         const [blknum, txindex, oindex, contractAddress, amount, tokenid] = useUtxo;
