@@ -21,17 +21,17 @@ let tokensOptions = [];
 export default class Account extends Component {
     componentDidMount() {
         this.props.getBalance();
-        this.props.getReviewAssets();
+        this.props.getReviewAssets();  
+    }
+
+    render() {
         tokensOptions = [];
         for(let v of this.props.receivedTokens){
             tokensOptions.push({
                 key: v.symbol, text: v.symbol, value: v.symbol
             })
         }
-         
-    }
 
-    render() {
         let cards = this.props.items.map((item, i) => {
             let url = '/assets/'+item.category+'/'+item.id;
             return (
