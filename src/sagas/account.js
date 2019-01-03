@@ -422,7 +422,7 @@ function* watchWithdrawalAsync(action) {
     try {
         let price = yield fastx.web3.utils.toWei((action.withdrawalPrice+''), 'ether');
         let useUtxo
-        if(unit == 'ETH'){
+        if(unit.toLocaleLowerCase() == 'eth'){
             useUtxo = yield fastx.getOrNewUtxo(price, {from:fastx.defaultAccount})
             console.log({eth_utxo:useUtxo})
         }else{
