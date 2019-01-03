@@ -4,6 +4,7 @@ import { Web3Provider } from 'react-web3';
 import { connect } from 'react-redux'
 import { bindActionCreators } from 'redux'
 
+import {requireNetworkId, networkIds} from './config';
 import Header from './containers/Header';
 import SiteFooter from './components/SiteFooter';
 import Deposit from './containers/Deposit';
@@ -19,16 +20,29 @@ import Web3 from 'web3'
 
 import * as walletActions from './actions/wallet'
 
-window.addEventListener('load', function () {
-    if (typeof window.web3 !== 'undefined') {
-        window.web3 = new Web3(window.web3.currentProvider)
-    }
-});
+// window.addEventListener('load', function () {
+//     if (typeof window.web3 !== 'undefined') {
+//         window.web3 = new Web3(window.web3.currentProvider)
+//     }
+// });
+if (window.web3) {
+    // Then replace the old injected version by the local Web3.JS version 1.0.0-beta.N
+    window.web3 = new Web3(window.web3.currentProvider);
+}
+
+function getCurNetId () {
+    return window.web3.eth.net.getId()
+}
 
 class AppInitView extends Component {
-    componentDidMount() {
+    async componentDidMount() {
         if(typeof window.Web3 === 'undefined'){
             this.props.onLoadWallet()
+        }
+
+        const netId = await getCurNetId()
+        if(netId != requireNetworkId){
+            alert('请使用'+networkIds[requireNetworkId]['name']+'网络')
         }
     }
 

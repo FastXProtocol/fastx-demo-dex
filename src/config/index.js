@@ -41,6 +41,31 @@ export const network = {
     'Main Net': { rpc: 'https://mainnet.infura.io/GjiCzFxpQAUkPtDUpKEP', tx_explorer: 'https://etherscan.io/tx/' }
 }
 
+export const requireNetworkId = 4
+
+export const networkIds = {
+    'null': {
+        name: 'private',
+        type: 'network'
+    },
+    '1': {
+        name: 'main ethereum',
+        type: 'main net'
+    },
+    '3': {
+        name: 'ropsten',
+        type: 'test net'
+    },
+    '4': {
+        name: 'rinkeby',
+        type: 'test net'
+    },
+    '42': {
+        name: 'kovan',
+        type: 'test net'
+    }
+}
+
 // //去除eth
 // export const tokenToAddressMap = {
 //     'fex': '0x395B650707cAA0d300615bBa2901398DFf64CF7c'
